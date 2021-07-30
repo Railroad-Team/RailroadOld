@@ -1,0 +1,11 @@
+{
+	"test": "test",
+	"hello": 1,
+	"hey": [
+		true,
+		false
+	],
+	"nope": {
+		"yeps": false
+	}
+}

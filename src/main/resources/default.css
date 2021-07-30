@@ -1,0 +1,127 @@
+.root {
+    -fx-base: #181A1B;
+}
+
+#codeArea .text {
+	-fx-fill: white;
+}
+
+#codeArea .java-keyword {
+    -fx-fill: #c792ea;
+}
+
+#codeArea .java-var {
+	-fx-fill: #eeffff;
+}
+
+#codeArea .java-semicolon {
+	-fx-fill: #89ddff;
+    -fx-font-weight: bold;
+}
+
+#codeArea .java-paren {
+	-fx-fill: #89ddff;
+}
+
+#codeArea .java-bracket {
+    -fx-fill: #89ddff;
+}
+
+#codeArea .java-brace {
+    -fx-fill: #89ddff;
+}
+
+#codeArea .java-string {
+    -fx-fill: #c3e88d;
+}
+
+#codeArea .java-comment {
+	-fx-fill: #616161;
+}
+
+#codeArea .java-annotation {
+	-fx-fill: #c792ea;
+}
+
+#codeArea .java-method {
+	-fx-fill: #82aaff;
+}
+
+#codeArea .java-genericconstr {
+	-fx-fill: #78ffff;
+}
+
+#codeArea .java-variable {
+	-fx-fill: #21aaff;
+}
+
+#codeArea .java-constvar {
+	-fx-fill: #f78c6c;
+}
+
+#codeArea .java-diamond {
+	-fx-fill: #ffcc00;
+}
+
+#codeArea .java-literal {
+	-fx-fill: #f78c6c;
+	-fx-font-weight: bold;
+}
+
+#codeArea .java-number {
+	-fx-fill: #509cb3;
+}
+
+#codeArea .json-value {
+	-fx-fill: #21aaff;
+}
+
+#codeArea .json-key {
+	-fx-fill: #9a28d1;
+}
+
+#codeArea .json-literal {
+	-fx-fill: #0166a3;
+	-fx-font-weight: bold;
+}
+
+#codeArea .json-brace {
+	-fx-fill: #ff8400;
+	-fx-font-weight: bold;
+}
+
+#codeArea .json-bracket {
+	-fx-fill: #ff6200;
+	-fx-font-weight: bold;
+}
+
+.paragraph-box:has-caret {
+    -fx-background-color: #32373b;
+}
+
+.code-area {
+	-fx-background-color: #262936;
+}
+
+.code-area .paragraph-box .text {
+	-fx-font-size: 18px;
+}
+
+.code-area .paragraph-box .text.match {
+    -rtfx-background-color: #00000033;
+}
+
+.lineno {
+	-fx-background-color: #20222d;
+	-fx-fill: white;
+}
+
+#projectTitleLabel {
+	-fx-font-weight: bold;
+	-fx-font-size: 18px;
+}
+
+#projectDescriptionLabel {
+	-fx-font-size: 14px;
+	-fx-padding: 0 0 10px 0;
+}
