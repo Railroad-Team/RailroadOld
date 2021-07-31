@@ -1,4 +1,4 @@
-package io.github.railroad.utility;
+package io.github.railroad.objects;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;

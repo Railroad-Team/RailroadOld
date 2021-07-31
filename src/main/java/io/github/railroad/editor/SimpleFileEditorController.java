@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+import io.github.railroad.objects.RailroadCodeArea;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.stage.FileChooser;

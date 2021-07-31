@@ -1,4 +1,4 @@
-package io.github.railroad.editor;
+package io.github.railroad.objects;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,6 +9,8 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.EditableStyledDocument;
 import org.fxmisc.richtext.model.StyledDocument;
 import org.jetbrains.annotations.Nullable;
+
+import io.github.railroad.editor.TextInsertionListener;
 
 public class RailroadCodeArea extends CodeArea {
 

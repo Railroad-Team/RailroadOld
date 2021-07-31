@@ -15,6 +15,7 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 
 import io.github.railroad.editor.regex.JavaRegex;
 import io.github.railroad.editor.regex.JsonRegex;
+import io.github.railroad.objects.RailroadCodeArea;
 import javafx.concurrent.Task;
 
 public class CodeEditor {
