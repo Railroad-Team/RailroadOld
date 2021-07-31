@@ -1,4 +1,4 @@
-package io.github.railroad.utility;
+package io.github.railroad.objects;
 
 import org.fxmisc.flowless.Virtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;

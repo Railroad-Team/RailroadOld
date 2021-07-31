@@ -1,4 +1,4 @@
-package io.github.railroad.project.explorer;
+package io.github.railroad.objects;
 
 import java.awt.Canvas;
 import java.awt.Graphics2D;

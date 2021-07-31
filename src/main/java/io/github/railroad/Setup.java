@@ -9,15 +9,19 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Triple;
 
 import io.github.railroad.editor.CodeEditor;
-import io.github.railroad.editor.RailroadCodeArea;
 import io.github.railroad.editor.SimpleFileEditorController;
+import io.github.railroad.objects.ProjectExplorer;
+import io.github.railroad.objects.RailroadAnchorPane;
+import io.github.railroad.objects.RailroadBorderPane;
+import io.github.railroad.objects.RailroadCodeArea;
+import io.github.railroad.objects.RailroadMenuBar;
+import io.github.railroad.objects.RailroadMenuBar.FileMenu;
+import io.github.railroad.objects.RailroadScrollPane;
+import io.github.railroad.objects.RailroadSplitPane;
+import io.github.railroad.objects.RailroadTabPane;
+import io.github.railroad.objects.ProjectExplorer.ExplorerTreeItem;
 import io.github.railroad.project.Project;
-import io.github.railroad.project.explorer.ProjectExplorer;
-import io.github.railroad.project.explorer.ProjectExplorer.ExplorerTreeItem;
 import io.github.railroad.project.settings.ThemeSettings;
-import io.github.railroad.utility.RailroadMenuBar;
-import io.github.railroad.utility.RailroadMenuBar.FileMenu;
-import io.github.railroad.utility.RailroadScrollPane;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -29,13 +33,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.Screen;
@@ -47,14 +48,14 @@ public class Setup {
 	private final SimpleFileEditorController baseController;
 	private final List<SimpleFileEditorController> fileControllers = new ArrayList<>();
 	protected final Rectangle2D primaryScreenBounds;
-	protected final BorderPane mainPane;
-	private final TabPane editorTabPane;
+	protected final RailroadBorderPane mainPane;
+	private final RailroadTabPane editorTabPane;
 	private RailroadCodeArea baseCodeArea;
 	private RailroadScrollPane<RailroadCodeArea> baseCodeScrollPane;
 	private final RailroadMenuBar menuBar;
 	private final TreeView<String> projectExplorer;
-	private final SplitPane mainSplitPane;
-	private final AnchorPane anchorPane;
+	private final RailroadSplitPane mainSplitPane;
+	private final RailroadAnchorPane anchorPane;
 	private final Triple<Label, ProgressBar, Button> fileLoadItems;
 	// Add this back if I find it is needed anywhere
 	// private final HBox fileLoadPlacement;
@@ -68,7 +69,7 @@ public class Setup {
 
 		// Code Editor
 		this.codeEditor = new CodeEditor(Executors.newSingleThreadExecutor());
-		this.editorTabPane = new TabPane();
+		this.editorTabPane = new RailroadTabPane();
 		this.baseController = new SimpleFileEditorController();
 		this.baseCodeArea = this.codeEditor.createCodeArea();
 		this.baseController.textArea = this.baseCodeArea;
@@ -79,7 +80,7 @@ public class Setup {
 		this.projectExplorer = createProjectExplorer();
 
 		// Primary
-		this.mainPane = new BorderPane();
+		this.mainPane = new RailroadBorderPane();
 		this.menuBar = createTopMenu();
 		this.mainSplitPane = createMainSplit();
 		this.anchorPane = anchorMainSplit();
@@ -89,8 +90,8 @@ public class Setup {
 		onProjectExplorerAction();
 	}
 
-	private AnchorPane anchorMainSplit() {
-		final var localAnchorPane = new AnchorPane(this.mainSplitPane);
+	private RailroadAnchorPane anchorMainSplit() {
+		final var localAnchorPane = new RailroadAnchorPane(this.mainSplitPane);
 		AnchorPane.setBottomAnchor(this.mainSplitPane, 5.0D);
 		AnchorPane.setLeftAnchor(this.mainSplitPane, 5.0D);
 		AnchorPane.setRightAnchor(this.mainSplitPane, 5.0D);
@@ -99,12 +100,12 @@ public class Setup {
 		return localAnchorPane;
 	}
 
-	private void createCodeArea(final TabPane tabPane, final RailroadScrollPane<RailroadCodeArea> scrollPane,
+	private void createCodeArea(final RailroadTabPane tabPane, final RailroadScrollPane<RailroadCodeArea> scrollPane,
 			final File file) {
 		if (file != null) {
-			if (tabPane.getParent() == null && scrollPane.getRealParent() instanceof SplitPane
-					&& scrollPane.getRealParent().getParent() instanceof AnchorPane) {
-				final var parent = (SplitPane) scrollPane.getRealParent();
+			if (tabPane.getParent() == null && scrollPane.getRealParent() instanceof RailroadSplitPane
+					&& scrollPane.getRealParent().getParent() instanceof RailroadAnchorPane) {
+				final var parent = (RailroadSplitPane) scrollPane.getRealParent();
 				final var scrollPaneIndex = parent.getItems().indexOf(scrollPane);
 				parent.getItems().remove(scrollPaneIndex);
 
@@ -136,7 +137,7 @@ public class Setup {
 				}
 				parent.getItems().add(scrollPaneIndex, tabPane);
 			} else if (tabPane.getParent() != null && tabPane.getTabs().isEmpty()) {
-				final var parent = (SplitPane) tabPane.getParent();
+				final var parent = (RailroadSplitPane) tabPane.getParent();
 				final var tabPaneIndex = parent.getItems().indexOf(tabPane);
 				parent.getItems().remove(tabPaneIndex);
 				parent.getItems().add(tabPaneIndex, scrollPane);
@@ -223,8 +224,8 @@ public class Setup {
 		return Triple.of(statusMessage, progressBar, loadChangesBtn);
 	}
 
-	private SplitPane createMainSplit() {
-		final var splitPane = new SplitPane(this.projectExplorer, this.baseCodeScrollPane);
+	private RailroadSplitPane createMainSplit() {
+		final var splitPane = new RailroadSplitPane(this.projectExplorer, this.baseCodeScrollPane);
 		this.baseCodeScrollPane.setRealParent(splitPane);
 		timedDividerAdjust(splitPane);
 		return splitPane;
@@ -249,7 +250,7 @@ public class Setup {
 		dividerAdjust(this.mainSplitPane);
 	}
 
-	private void dividerAdjust(final SplitPane split) {
+	private void dividerAdjust(final RailroadSplitPane split) {
 		new Timeline(new KeyFrame(Duration.millis(10), event -> split.setDividerPosition(0, 0.15D))).play();
 	}
 
@@ -336,7 +337,7 @@ public class Setup {
 		timedDividerAdjust(this.mainSplitPane);
 	}
 
-	private void timedDividerAdjust(final SplitPane split) {
+	private void timedDividerAdjust(final RailroadSplitPane split) {
 		split.setDividerPosition(0, 0.15D);
 		new Timeline(new KeyFrame(Duration.millis(10), event -> split.setDividerPosition(0, 0.15D))).play();
 	}
