@@ -95,7 +95,7 @@ public class RailroadTabPane extends TabPane {
 			invertX = true;
 		}
 
-		if (pos.getX() > pos.getY())
+		if (pos.getX() > (float)pos.getY() * (float)dimension.getX() / (float)dimension.getY())
 			return invertY ? Placement.BOTTOM : Placement.TOP;
 
 		return invertX ? Placement.RIGHT : Placement.LEFT;
