@@ -3,6 +3,9 @@ package io.github.railroad.objects;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 
+/**
+ * @author TurtyWurty
+ */
 public class RailroadTab extends Tab {
 
 	public RailroadTab() {

@@ -19,12 +19,21 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+/**
+ * @author TurtyWurty
+ */
 public class Project {
 
 	private final ThemeSettings theme;
 
 	private File projectFolder;
 
+	/**
+	 * Creates the Project Settings and displays the initial "Project Directory
+	 * Chooser".
+	 *
+	 * @param themeSettings - The {@link ThemeSettings} to apply.
+	 */
 	public Project(final ThemeSettings themeSettings) {
 		this.theme = themeSettings;
 
@@ -96,10 +105,16 @@ public class Project {
 		window.showAndWait();
 	}
 
+	/**
+	 * @return The Folder used for this {@link Project}.
+	 */
 	public File getProjectFolder() {
 		return this.projectFolder;
 	}
 
+	/**
+	 * @return The {@link ThemeSettings} used for this {@link Project}.
+	 */
 	public ThemeSettings getTheme() {
 		return this.theme;
 	}

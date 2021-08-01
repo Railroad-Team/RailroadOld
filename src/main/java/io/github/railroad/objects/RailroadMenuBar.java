@@ -4,6 +4,9 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 
+/**
+ * @author TurtyWurty
+ */
 public class RailroadMenuBar extends MenuBar {
 
 	public static class FileMenu extends Menu {

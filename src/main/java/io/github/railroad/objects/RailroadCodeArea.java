@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 
 import io.github.railroad.editor.TextInsertionListener;
 
+/**
+ * @author TurtyWurty
+ */
 public class RailroadCodeArea extends CodeArea {
 
 	private final List<TextInsertionListener> insertionListeners;
@@ -31,15 +34,24 @@ public class RailroadCodeArea extends CodeArea {
 		this.insertionListeners = new ArrayList<>();
 	}
 
+	/**
+	 * @param listener - The text listener that is to be added to this code area.
+	 */
 	public void addTextInsertionListener(final TextInsertionListener listener) {
 		this.insertionListeners.add(listener);
 	}
 
+	/**
+	 * @return The file that this code area will display.
+	 */
 	@Nullable
 	public File getFile() {
 		return this.file;
 	}
 
+	/**
+	 * @param listener - The text listener to remove from this code area.
+	 */
 	public void removeTextInsertionListener(final TextInsertionListener listener) {
 		this.insertionListeners.remove(listener);
 	}
@@ -55,6 +67,10 @@ public class RailroadCodeArea extends CodeArea {
 		super.replace(start, end, replacement);
 	}
 
+	/**
+	 * @param file - The file that is to be used to display content for this code
+	 *             area.
+	 */
 	public void setFile(final File file) {
 		this.file = file;
 	}

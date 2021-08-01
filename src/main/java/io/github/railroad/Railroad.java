@@ -8,12 +8,20 @@ import net.arikia.dev.drpc.DiscordEventHandlers;
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
 
+/**
+ * @author TurtyWurty
+ */
 public class Railroad extends Application {
 
 	public DiscordEventHandlers discordHandlers;
 	public DiscordRichPresence discordRichPresense;
 	private Setup setup;
 
+	/**
+	 * Sets up the Discord Rich Presense <br>
+	 * <br>
+	 * TODO: Update presense for project and current file name.
+	 */
 	private void setupDiscord() {
 		this.discordHandlers = new DiscordEventHandlers.Builder()
 				.setReadyEventHandler(user -> System.out.println(user.username + "#" + user.discriminator)).build();
@@ -26,7 +34,6 @@ public class Railroad extends Application {
 		DiscordRPC.discordUpdatePresence(this.discordRichPresense);
 	}
 
-	// Test
 	@Override
 	public void start(final Stage primaryStage) throws Exception {
 		this.setup = new Setup(true);

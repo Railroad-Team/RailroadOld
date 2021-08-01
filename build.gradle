@@ -8,16 +8,14 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-apply plugin: 'application'
-
 dependencies {
-    implementation(group: 'org.jetbrains', name: 'annotations', version: '20.1.0')
-    implementation(group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.6')
-    implementation(group: 'org.json', name: 'json', version: '20210307')
-    implementation(group: 'com.google.code.gson', name: "gson", version: '2.8.6')
-    implementation(group: 'commons-io', name: 'commons-io', version: '2.8.0')
-    implementation(group: 'org.drombler.fx', name: 'drombler-fx-core-application', version: '1.0')
-    implementation(group: 'com.github.Vatuu', name: 'discord-rpc', version: '1.6.2')
+    implementation(group: 'org.jetbrains', name: 'annotations', version: 'latest.release')
+    implementation(group: 'org.fxmisc.richtext', name: 'richtextfx', version: 'latest.release')
+    implementation(group: 'org.json', name: 'json', version: 'latest.release')
+    implementation(group: 'com.google.code.gson', name: "gson", version: 'latest.release')
+    implementation(group: 'commons-io', name: 'commons-io', version: 'latest.release')
+    implementation(group: 'org.drombler.fx', name: 'drombler-fx-core-application', version: 'latest.release')
+    implementation(group: 'com.github.Vatuu', name: 'discord-rpc', version: 'latest.release')
 
     testImplementation(platform('org.junit:junit-bom:5.7.1'))
     testImplementation(group: 'org.junit.jupiter',name: 'junit-jupiter')
@@ -31,7 +29,7 @@ javafx {
 run {
     if (javafx.platform.classifier == 'win') {
         // Temporal fix for Eclipse with JDK 1.8 and Windows 
-        systemProperty "java.library.path", "C:\tmp"
+        systemProperty "java.library.path", "C:\\tmp"
     }
 }
 
@@ -43,4 +41,4 @@ jar {
     }
 }
 
-sourceCompatibility = JavaVersion.VERSION_15
+sourceCompatibility = JavaVersion.VERSION_16
