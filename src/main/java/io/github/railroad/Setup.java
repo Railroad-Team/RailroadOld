@@ -11,6 +11,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import io.github.railroad.editor.CodeEditor;
 import io.github.railroad.editor.SimpleFileEditorController;
 import io.github.railroad.objects.ProjectExplorer;
+import io.github.railroad.objects.ProjectExplorer.ExplorerTreeItem;
 import io.github.railroad.objects.RailroadAnchorPane;
 import io.github.railroad.objects.RailroadBorderPane;
 import io.github.railroad.objects.RailroadCodeArea;
@@ -18,12 +19,13 @@ import io.github.railroad.objects.RailroadMenuBar;
 import io.github.railroad.objects.RailroadMenuBar.FileMenu;
 import io.github.railroad.objects.RailroadScrollPane;
 import io.github.railroad.objects.RailroadSplitPane;
+import io.github.railroad.objects.RailroadTab;
 import io.github.railroad.objects.RailroadTabPane;
-import io.github.railroad.objects.ProjectExplorer.ExplorerTreeItem;
 import io.github.railroad.project.Project;
 import io.github.railroad.project.settings.ThemeSettings;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -33,7 +35,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.AnchorPane;
@@ -57,6 +58,7 @@ public class Setup {
 	private final RailroadSplitPane mainSplitPane;
 	private final RailroadAnchorPane anchorPane;
 	private final Triple<Label, ProgressBar, Button> fileLoadItems;
+	private final RailroadTabPane leftTabPane;
 	// Add this back if I find it is needed anywhere
 	// private final HBox fileLoadPlacement;
 
@@ -78,6 +80,7 @@ public class Setup {
 
 		// Project Explorer
 		this.projectExplorer = createProjectExplorer();
+		this.leftTabPane = createLeftTabPane();
 
 		// Primary
 		this.mainPane = new RailroadBorderPane();
@@ -110,7 +113,7 @@ public class Setup {
 				parent.getItems().remove(scrollPaneIndex);
 
 				if (tabPane.getTabs().isEmpty()) {
-					final var newTab = new Tab(file.getName(), scrollPane);
+					final var newTab = new RailroadTab(file.getName(), scrollPane);
 					tabPane.getTabs().add(newTab);
 					onTabAction(newTab);
 					scrollPane.setRealParent(tabPane);
@@ -130,7 +133,7 @@ public class Setup {
 					controller.setFile(file);
 
 					final var newScrollPane = new RailroadScrollPane<>(newCodeArea);
-					final var newTab = new Tab(file.getName(), newScrollPane);
+					final var newTab = new RailroadTab(file.getName(), newScrollPane);
 					tabPane.getTabs().add(newTab);
 					onTabAction(newTab);
 					newScrollPane.setRealParent(tabPane);
@@ -152,7 +155,7 @@ public class Setup {
 			} else if (!tabPane.getTabs().isEmpty()) {
 				final var newCodeArea = this.codeEditor.createCodeArea();
 				final var newScrollPane = new RailroadScrollPane<>(newCodeArea);
-				final var newTab = new Tab(file.getName(), newScrollPane);
+				final var newTab = new RailroadTab(file.getName(), newScrollPane);
 				tabPane.getTabs().add(newTab);
 				onTabAction(newTab);
 				newScrollPane.setRealParent(tabPane);
@@ -224,8 +227,16 @@ public class Setup {
 		return Triple.of(statusMessage, progressBar, loadChangesBtn);
 	}
 
+	private RailroadTabPane createLeftTabPane() {
+		final var tabPane = new RailroadTabPane();
+		final var projExplTab = new RailroadTab("Project Explorer", this.projectExplorer);
+		projExplTab.setOnCloseRequest(Event::consume);
+		tabPane.getTabs().add(projExplTab);
+		return tabPane;
+	}
+
 	private RailroadSplitPane createMainSplit() {
-		final var splitPane = new RailroadSplitPane(this.projectExplorer, this.baseCodeScrollPane);
+		final var splitPane = new RailroadSplitPane(this.leftTabPane, this.baseCodeScrollPane);
 		this.baseCodeScrollPane.setRealParent(splitPane);
 		timedDividerAdjust(splitPane);
 		return splitPane;
@@ -314,7 +325,7 @@ public class Setup {
 		});
 	}
 
-	private void onTabAction(final Tab tab) {
+	private void onTabAction(final RailroadTab tab) {
 		tab.setOnClosed(event -> createCodeArea(this.editorTabPane, this.baseCodeScrollPane, null));
 	}
 
