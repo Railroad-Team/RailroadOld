@@ -99,7 +99,7 @@ public class SimpleFileEditorController {
 				this.textArea.setEditable(true);
 				this.textArea.setFile(fileToLoad);
 			} catch (InterruptedException | ExecutionException | IOException e) {
-				Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, e);
+				Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getLocalizedMessage(), e);
 				this.textArea.replaceText(0, this.textArea.getText().length(),
 						"Could not load file from:\n " + (fileToLoad == null ? "N/A" : fileToLoad.getAbsolutePath()));
 				this.textArea.setEditable(false);

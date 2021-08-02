@@ -41,9 +41,9 @@ public class Project {
 
 		final var dirChooser = new DirectoryChooser();
 		dirChooser.setTitle("Choose your project folder");
-		dirChooser.setInitialDirectory(new File(System.getProperty("user.home") + "\\Desktop"));
+		dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
-		final var textField = new TextField(System.getProperty("user.home") + "\\Desktop");
+		final var textField = new TextField(System.getProperty("user.home"));
 		textField.autosize();
 		textField.deselect();
 
