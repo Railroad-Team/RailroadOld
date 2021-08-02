@@ -267,7 +267,7 @@ public class Setup {
 	 */
 	private RailroadSplitPane createMainSplit() {
 		final var splitPane = new RailroadSplitPane(this.projectExplorer, this.baseCodeScrollPane);
-		splitPane.setOrientation(Orientation.VERTICAL);
+		splitPane.setOrientation(Orientation.HORIZONTAL);
 		this.baseCodeScrollPane.setRealParent(splitPane);
 		timedDividerAdjust(splitPane);
 		return splitPane;
