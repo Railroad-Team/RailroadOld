@@ -38,8 +38,8 @@ body:
   - type: dropdown
     id: branch
     attributes:
-      label: Version
-      description: What version(s) did this bug occur on?
+      label: Branch
+      description: What branch(es) did this bug occur on?
       multiple: true
       options:
         - main (Default)
