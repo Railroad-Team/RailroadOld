@@ -12,7 +12,7 @@ body:
         Thanks for taking the time to create this bug report and help us improve
         Railroad IDE!
   - type: textarea
-    id: what-happened
+    id: reproduce
     attributes:
       label: Steps to reproduce.
       description: What are the steps that we can use to reproduce the bug?
@@ -28,9 +28,9 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: version
+    id: branch
     attributes:
-      label: Version
+      label: Branch
       description: What branch(es) did this bug occur on?
       multiple: true
       options:
