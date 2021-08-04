@@ -12,6 +12,14 @@ body:
         Thanks for taking the time to create this bug report and help us improve
         Railroad IDE!
   - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot or Video.
+      description: Provide us a screenshot or video of the issue.
+      placeholder: Drag and drop your file here!
+    validations:
+      required: true
+  - type: textarea
     id: reproduce
     attributes:
       label: Steps to reproduce.
