@@ -7,10 +7,12 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Triple;
+import org.fxmisc.richtext.CodeArea;
 
 import io.github.railroad.editor.CodeEditor;
 import io.github.railroad.editor.SimpleFileEditorController;
 import io.github.railroad.objects.ProjectExplorer;
+import io.github.railroad.objects.ProjectExplorer.ExplorerTreeItem;
 import io.github.railroad.objects.RailroadAnchorPane;
 import io.github.railroad.objects.RailroadBorderPane;
 import io.github.railroad.objects.RailroadCodeArea;
@@ -19,21 +21,25 @@ import io.github.railroad.objects.RailroadMenuBar.FileMenu;
 import io.github.railroad.objects.RailroadScrollPane;
 import io.github.railroad.objects.RailroadSplitPane;
 import io.github.railroad.objects.RailroadTabPane;
-import io.github.railroad.objects.ProjectExplorer.ExplorerTreeItem;
 import io.github.railroad.project.Project;
 import io.github.railroad.project.settings.ThemeSettings;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.AnchorPane;
@@ -42,6 +48,9 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Screen;
 import javafx.util.Duration;
 
+/**
+ * @author TurtyWurty
+ */
 public class Setup {
 
 	protected final CodeEditor codeEditor;
@@ -57,11 +66,16 @@ public class Setup {
 	private final RailroadSplitPane mainSplitPane;
 	private final RailroadAnchorPane anchorPane;
 	private final Triple<Label, ProgressBar, Button> fileLoadItems;
-	// Add this back if I find it is needed anywhere
+	// TODO: Add this back if I find it is needed anywhere
 	// private final HBox fileLoadPlacement;
 
 	private final Project project;
 
+	/**
+	 * Sets up the core layout and project settings.
+	 *
+	 * @param darkMode - Whether or not dark mode should be enabled.
+	 */
 	public Setup(final boolean darkMode) {
 		// Core
 		this.primaryScreenBounds = Screen.getPrimary().getVisualBounds();
@@ -90,6 +104,11 @@ public class Setup {
 		onProjectExplorerAction();
 	}
 
+	/**
+	 * Create the {@link AnchorPane} for the primary vertical {@link SplitPane}.
+	 *
+	 * @return The created {@link AnchorPane}.
+	 */
 	private RailroadAnchorPane anchorMainSplit() {
 		final var localAnchorPane = new RailroadAnchorPane(this.mainSplitPane);
 		AnchorPane.setBottomAnchor(this.mainSplitPane, 5.0D);
@@ -100,12 +119,21 @@ public class Setup {
 		return localAnchorPane;
 	}
 
+	/**
+	 * Creates a {@link CodeArea} for the file as well as shuffling around the main
+	 * split pane in order to let the file be opened.
+	 *
+	 * @param tabPane    - The primary {@link TabPane} that holds the code editors.
+	 * @param scrollPane - The base {@link ScrollPane} that holds the base code
+	 *                   editor.
+	 * @param file       - The {@link File} that this Code Area is being created
+	 *                   for.
+	 */
 	private void createCodeArea(final RailroadTabPane tabPane, final RailroadScrollPane<RailroadCodeArea> scrollPane,
 			final File file) {
 		if (file != null) {
-			if (tabPane.getParent() == null && scrollPane.getRealParent() instanceof RailroadSplitPane
+			if (tabPane.getParent() == null && scrollPane.getRealParent()instanceof final RailroadSplitPane parent
 					&& scrollPane.getRealParent().getParent() instanceof RailroadAnchorPane) {
-				final var parent = (RailroadSplitPane) scrollPane.getRealParent();
 				final var scrollPaneIndex = parent.getItems().indexOf(scrollPane);
 				parent.getItems().remove(scrollPaneIndex);
 
@@ -174,6 +202,13 @@ public class Setup {
 		// dividerAdjust();
 	}
 
+	/**
+	 * <strong>Currently unused</strong> method to create the (File Loading): Status
+	 * Message, {@link ProgressBar} and Load Changes {@link Button}.
+	 *
+	 * @return A {@link Triple} containing the Loading Status, {@link ProgressBar}
+	 *         and Load Changes {@link Button}.
+	 */
 	private Triple<Label, ProgressBar, Button> createFileLoad() {
 		final var statusMessage = new Label("Checking for Changes...");
 		statusMessage.prefWidth(150);
@@ -224,19 +259,36 @@ public class Setup {
 		return Triple.of(statusMessage, progressBar, loadChangesBtn);
 	}
 
+	/**
+	 * Creates the primary vertical {@link SplitPane} that holds the
+	 * {@link ProjectExplorer}, {@link CodeEditor} and any other panel on the right.
+	 *
+	 * @return The created vertical {@link SplitPane}.
+	 */
 	private RailroadSplitPane createMainSplit() {
 		final var splitPane = new RailroadSplitPane(this.projectExplorer, this.baseCodeScrollPane);
+		splitPane.setOrientation(Orientation.HORIZONTAL);
 		this.baseCodeScrollPane.setRealParent(splitPane);
 		timedDividerAdjust(splitPane);
 		return splitPane;
 	}
 
+	/**
+	 * Creates the {@link ProjectExplorer} tab.
+	 *
+	 * @return The {@link ProjectExplorer} as a {@link TreeView}.
+	 */
 	private TreeView<String> createProjectExplorer() {
 		final var localProjectExplorer = new ProjectExplorer().createProjectExplorer(this.project);
 		localProjectExplorer.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		return localProjectExplorer;
 	}
 
+	/**
+	 * Creates the top {@link MenuBar} for all of the context menus.
+	 *
+	 * @return The top {@link MenuBar}.
+	 */
 	private RailroadMenuBar createTopMenu() {
 		final var openItem = new MenuItem("Open");
 		final var saveItem = new MenuItem("Save");
@@ -246,14 +298,26 @@ public class Setup {
 		return localMenuBar;
 	}
 
+	/**
+	 * Resets the main {@link SplitPane}'s divider position.
+	 */
 	private void dividerAdjust() {
 		dividerAdjust(this.mainSplitPane);
 	}
 
+	/**
+	 * Resets the {@link SplitPane}'s divider position.
+	 *
+	 * @param split - The split pane to have reset.
+	 */
 	private void dividerAdjust(final RailroadSplitPane split) {
 		new Timeline(new KeyFrame(Duration.millis(10), event -> split.setDividerPosition(0, 0.15D))).play();
 	}
 
+	/**
+	 * Creates the functionality for the {@link MenuItem}s in the top
+	 * {@link MenuBar}.
+	 */
 	private void onMenuAction() {
 		this.menuBar.fileMenu.openItem.setOnAction(event -> {
 			final SimpleFileEditorController controller;
@@ -302,6 +366,10 @@ public class Setup {
 		});
 	}
 
+	/**
+	 * Creates the functionality for what happens when double clicking on a file in
+	 * the {@link ProjectExplorer}.
+	 */
 	private void onProjectExplorerAction() {
 		this.projectExplorer.setOnMouseClicked(event -> {
 			if (event.getClickCount() == 2) {
@@ -314,10 +382,20 @@ public class Setup {
 		});
 	}
 
+	/**
+	 * Creates the functionality for what happens when a {@link Tab} is closed.
+	 *
+	 * @param tab - The tab to create the close functionality for.
+	 */
 	private void onTabAction(final Tab tab) {
 		tab.setOnClosed(event -> createCodeArea(this.editorTabPane, this.baseCodeScrollPane, null));
 	}
 
+	/**
+	 * Creates the placement area for the file loading items.
+	 *
+	 * @return The resulting {@link HBox} layout.
+	 */
 	private HBox placeFileLoad() {
 		final var hboxLeft = new HBox(this.fileLoadItems.getLeft(), this.fileLoadItems.getMiddle());
 		hboxLeft.setAlignment(Pos.CENTER_LEFT);
@@ -333,10 +411,22 @@ public class Setup {
 		return hbox;
 	}
 
+	/**
+	 * Resets the main {@link SplitPane}'s divider position with delay.<br>
+	 * <br>
+	 * -- Used for properly updating the divider.
+	 */
 	private void timedDividerAdjust() {
 		timedDividerAdjust(this.mainSplitPane);
 	}
 
+	/**
+	 * Resets the {@link SplitPane}'s divider position.<br>
+	 * <br>
+	 * -- Used for properly updating the divider.
+	 *
+	 * @param split - The {@link SplitPane} to reset.
+	 */
 	private void timedDividerAdjust(final RailroadSplitPane split) {
 		split.setDividerPosition(0, 0.15D);
 		new Timeline(new KeyFrame(Duration.millis(10), event -> split.setDividerPosition(0, 0.15D))).play();

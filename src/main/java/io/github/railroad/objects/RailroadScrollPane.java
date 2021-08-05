@@ -6,6 +6,9 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 
+/**
+ * @author TurtyWurty
+ */
 public class RailroadScrollPane<V extends Node & Virtualized> extends VirtualizedScrollPane<V> {
 
 	public Parent realParent;

@@ -3,6 +3,9 @@ package io.github.railroad.objects;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 
+/**
+ * @author TurtyWurty
+ */
 public class RailroadBorderPane extends BorderPane {
 
 	public RailroadBorderPane() {

@@ -2,6 +2,9 @@ package io.github.railroad.editor.regex;
 
 import java.util.regex.Pattern;
 
+/**
+ * @author TurtyWurty
+ */
 public final class JsonRegex {
 
 	private static final String KEY_PATTERN = "[\\w-\\\".]+?(?=:)";

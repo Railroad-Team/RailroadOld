@@ -2,6 +2,9 @@ package io.github.railroad.editor.regex;
 
 import java.util.regex.Pattern;
 
+/**
+ * @author TurtyWurty
+ */
 public final class JavaRegex {
 	private static final String[] KEYWORDS = new String[] { "abstract", "assert", "boolean", "break", "byte", "case",
 			"catch", "char", "class", "const", "continue", "default", "do", "double", "else", "enum", "extends", "final",

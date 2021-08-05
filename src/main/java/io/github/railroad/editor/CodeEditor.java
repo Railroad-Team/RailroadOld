@@ -18,6 +18,9 @@ import io.github.railroad.editor.regex.JsonRegex;
 import io.github.railroad.objects.RailroadCodeArea;
 import javafx.concurrent.Task;
 
+/**
+ * @author TurtyWurty
+ */
 public class CodeEditor {
 
 	public final ExecutorService executor;
@@ -26,10 +29,23 @@ public class CodeEditor {
 		this.executor = service;
 	}
 
+	/**
+	 * Sets the styles.
+	 *
+	 * @param area         - The {@link CodeArea} to highlight.
+	 * @param highlighting - The style that is used to highlight it.
+	 */
 	private void applyHighlighting(final CodeArea area, final StyleSpans<Collection<String>> highlighting) {
 		area.setStyleSpans(0, highlighting);
 	}
 
+	/**
+	 * Computes what should be highlighted with what style using regular
+	 * expressions.
+	 *
+	 * @param codeArea - The {@link CodeArea} to compute.
+	 * @return The created styles.
+	 */
 	private StyleSpans<Collection<String>> computeHighlighting(final RailroadCodeArea codeArea) {
 		final String text = codeArea.getText();
 		var lastKwEnd = 0;
@@ -117,6 +133,12 @@ public class CodeEditor {
 		return spansBuilder.create();
 	}
 
+	/**
+	 * Asynchronously computes the highlighting.
+	 *
+	 * @param area - The {@link CodeArea} tp compute.
+	 * @return The {@link Task} that is used to do the calculation.
+	 */
 	private Task<StyleSpans<Collection<String>>> computeHighlightingAsync(final RailroadCodeArea area) {
 		final Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
 			@Override
@@ -128,6 +150,9 @@ public class CodeEditor {
 		return task;
 	}
 
+	/**
+	 * @return The default {@link CodeArea}.
+	 */
 	public RailroadCodeArea createCodeArea() {
 		final var codeArea = new RailroadCodeArea();
 		codeArea.replaceText(0, codeArea.getText().length(), "Load a file using the File menu!");
