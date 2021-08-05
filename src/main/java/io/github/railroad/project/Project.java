@@ -2,6 +2,8 @@ package io.github.railroad.project;
 
 import java.io.File;
 
+import com.sun.javafx.stage.*;
+import com.sun.javafx.tk.*;
 import io.github.railroad.Railroad;
 import io.github.railroad.project.settings.ThemeSettings;
 import javafx.animation.KeyFrame;
@@ -28,7 +30,7 @@ public class Project {
 	public Project(final ThemeSettings themeSettings) {
 		this.theme = themeSettings;
 
-		final var window = new Stage(StageStyle.UNIFIED);
+		final var window = new Stage();
 
 		final var dirChooser = new DirectoryChooser();
 		dirChooser.setTitle("Choose your project folder");
@@ -85,6 +87,7 @@ public class Project {
 		scene.getStylesheets().add(Railroad.class.getResource("/default.css").toExternalForm());
 
 		window.setOnCloseRequest(event -> {
+			Toolkit.getToolkit().exitAllNestedEventLoops();
 			window.close();
 			System.exit(0);
 		});
