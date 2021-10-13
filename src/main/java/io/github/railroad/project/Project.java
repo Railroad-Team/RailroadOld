@@ -2,6 +2,8 @@ package io.github.railroad.project;
 
 import java.io.File;
 
+import com.sun.javafx.stage.*;
+import com.sun.javafx.tk.*;
 import io.github.railroad.Railroad;
 import io.github.railroad.project.settings.ThemeSettings;
 import javafx.animation.KeyFrame;
@@ -19,22 +21,31 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+/**
+ * @author TurtyWurty
+ */
 public class Project {
 
 	private final ThemeSettings theme;
 
 	private File projectFolder;
 
+	/**
+	 * Creates the Project Settings and displays the initial "Project Directory
+	 * Chooser".
+	 *
+	 * @param themeSettings - The {@link ThemeSettings} to apply.
+	 */
 	public Project(final ThemeSettings themeSettings) {
 		this.theme = themeSettings;
 
-		final var window = new Stage(StageStyle.UNIFIED);
+		final var window = new Stage();
 
 		final var dirChooser = new DirectoryChooser();
 		dirChooser.setTitle("Choose your project folder");
-		dirChooser.setInitialDirectory(new File(System.getProperty("user.home") + "\\Desktop"));
+		dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
-		final var textField = new TextField(System.getProperty("user.home") + "\\Desktop");
+		final var textField = new TextField(System.getProperty("user.home"));
 		textField.autosize();
 		textField.deselect();
 
@@ -85,6 +96,7 @@ public class Project {
 		scene.getStylesheets().add(Railroad.class.getResource("/default.css").toExternalForm());
 
 		window.setOnCloseRequest(event -> {
+			Toolkit.getToolkit().exitAllNestedEventLoops();
 			window.close();
 			System.exit(0);
 		});
@@ -96,10 +108,16 @@ public class Project {
 		window.showAndWait();
 	}
 
+	/**
+	 * @return The Folder used for this {@link Project}.
+	 */
 	public File getProjectFolder() {
 		return this.projectFolder;
 	}
 
+	/**
+	 * @return The {@link ThemeSettings} used for this {@link Project}.
+	 */
 	public ThemeSettings getTheme() {
 		return this.theme;
 	}

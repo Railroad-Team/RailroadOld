@@ -10,3 +10,4 @@ bin
 Testing
 *.classpath
 *.project
+.idea

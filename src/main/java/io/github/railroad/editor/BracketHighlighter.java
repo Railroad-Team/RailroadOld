@@ -8,6 +8,9 @@ import java.util.List;
 import io.github.railroad.objects.RailroadCodeArea;
 import javafx.application.Platform;
 
+/**
+ * @author TurtyWurty
+ */
 public class BracketHighlighter {
 
 	/**
@@ -38,14 +41,12 @@ public class BracketHighlighter {
 
 	}
 
-	// constants
 	private static final List<String> CLEAR_STYLE = Collections.emptyList();
 
 	private static final List<String> MATCH_STYLE = Collections.singletonList("match");
 	private static final String BRACKET_PAIRS = "(){}[]<>";
 	private final RailroadCodeArea codeArea;
 
-	// the list of highlighted bracket pairs
 	private final List<BracketPair> bracketPairs;
 
 	/**

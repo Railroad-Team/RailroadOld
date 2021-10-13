@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.lang3.tuple.Triple;
+import org.fxmisc.richtext.CodeArea;
 
 import com.panemu.tiwulfx.control.dock.DetachableTab;
 import com.panemu.tiwulfx.control.dock.DetachableTabPane;
@@ -23,13 +24,16 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.Event;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TreeItem;
@@ -41,6 +45,9 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Screen;
 import javafx.util.Duration;
 
+/**
+ * @author TurtyWurty
+ */
 public class Setup {
 
     protected final CodeEditor codeEditor;
