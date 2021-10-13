@@ -83,7 +83,6 @@ public class CodeEditor {
 
         Matcher matcher;
 
-        System.out.println(FilenameUtils.getExtension(codeArea.getFile().getName()));
         switch (FilenameUtils.getExtension(codeArea.getFile().getName())) {
             case "java":
                 matcher = JavaRegex.PATTERN.matcher(text);
@@ -128,22 +127,16 @@ public class CodeEditor {
                 break;
             case "json":
                 matcher = JsonRegex.PATTERN.matcher(text);
-                System.out.println(matcher.toString());
                 while (matcher.find()) {
                     if (matcher.group("KEY") != null) {
-                        System.out.println("hey1");
                         styleClass = "json-key";
                     } else if (matcher.group("VALUE") != null) {
-                        System.out.println("hey2");
                         styleClass = "json-value";
                     } else if (matcher.group("BRACE") != null) {
-                        System.out.println("hey3");
                         styleClass = "json-brace";
                     } else if (matcher.group("BRACKET") != null) {
-                        System.out.println("hey4");
                         styleClass = "json-bracket";
                     } else if (matcher.group("LITERAL") != null) {
-                        System.out.println("hey5");
                         styleClass = "json-literal";
                     }
                     spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
