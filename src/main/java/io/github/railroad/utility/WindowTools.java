@@ -12,35 +12,35 @@ import javafx.stage.Stage;
  */
 public final class WindowTools {
 
-	/**
-	 * Creates the quit confirmation window.
-	 *
-	 * @param windowToClose the window to be closed if clicked "Yes".
-	 */
-	public static void displayQuitWindow(final Stage windowToClose) {
-		final var stage = new Stage();
-		final var label = new Label("Are you sure you would like to quit Railroad IDE?");
-		final var yesBtn = new Button("Yes");
-		yesBtn.setOnAction(event -> {
-			windowToClose.close();
-			stage.close();
-		});
-		final var cancelBtn = new Button("Cancel");
-		cancelBtn.setOnAction(event -> stage.close());
-		final var vbox = new VBox(label, yesBtn, cancelBtn);
-		vbox.setAlignment(Pos.CENTER);
-		final var scene = new Scene(vbox);
-		stage.setScene(scene);
+    private WindowTools() {
+        throw new IllegalAccessError("Attempted to construct utility class!");
+    }
 
-		stage.sizeToScene();
-		stage.centerOnScreen();
-		stage.setTitle("Quit Railroad IDE");
-		stage.setAlwaysOnTop(true);
-		stage.requestFocus();
-		stage.showAndWait();
-	}
+    /**
+     * Creates the quit confirmation window.
+     *
+     * @param windowToClose the window to be closed if clicked "Yes".
+     */
+    public static void displayQuitWindow(final Stage windowToClose) {
+        final var stage = new Stage();
+        final var label = new Label("Are you sure you would like to quit Railroad IDE?");
+        final var yesBtn = new Button("Yes");
+        yesBtn.setOnAction(event -> {
+            windowToClose.close();
+            stage.close();
+        });
+        final var cancelBtn = new Button("Cancel");
+        cancelBtn.setOnAction(event -> stage.close());
+        final var vbox = new VBox(label, yesBtn, cancelBtn);
+        vbox.setAlignment(Pos.CENTER);
+        final var scene = new Scene(vbox);
+        stage.setScene(scene);
 
-	private WindowTools() {
-		throw new IllegalAccessError("Attempted to construct utility class!");
-	}
+        stage.sizeToScene();
+        stage.centerOnScreen();
+        stage.setTitle("Quit Railroad IDE");
+        stage.setAlwaysOnTop(true);
+        stage.requestFocus();
+        stage.showAndWait();
+    }
 }

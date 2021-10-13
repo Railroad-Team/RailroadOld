@@ -8,7 +8,7 @@ import javafx.scene.layout.AnchorPane;
  */
 public class RailroadAnchorPane extends AnchorPane {
 
-	public RailroadAnchorPane(final Node... children) {
-		super(children);
-	}
+    public RailroadAnchorPane(final Node... children) {
+        super(children);
+    }
 }

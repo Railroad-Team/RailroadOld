@@ -13,50 +13,51 @@ import net.arikia.dev.drpc.DiscordRichPresence;
  */
 public class Railroad extends Application {
 
-	public DiscordEventHandlers discordHandlers;
-	public DiscordRichPresence discordRichPresence;
-	private Setup setup;
+    public DiscordEventHandlers discordHandlers;
+    public DiscordRichPresence discordRichPresence;
+    private Setup setup;
 
-	/**
-	 * Sets up the Discord Rich Presense <br>
-	 * <br>
-	 * TODO: Update presense for project and current file name.
-	 */
-	private void setupDiscord() {
-		this.discordHandlers = new DiscordEventHandlers.Builder()
-				.setReadyEventHandler(user -> System.out.println(user.username + "#" + user.discriminator)).build();
-		DiscordRPC.discordInitialize("853387211897700394", this.discordHandlers, true);
-		DiscordRPC.discordRunCallbacks();
-		this.discordRichPresence = new DiscordRichPresence.Builder("Working on Untitled Project")
-				.setDetails("Making an amazing mod!").setBigImage("logo", "Railroad IDE")
-				.setSmallImage("logo", "An IDE built for modders, made by modders.").setParty("", 0, 0)
-				.setStartTimestamps(System.currentTimeMillis()).build();
-		DiscordRPC.discordUpdatePresence(this.discordRichPresence);
-	}
+    @Override
+    public void start(final Stage primaryStage) throws Exception {
+        this.setup = new Setup(true);
 
-	@Override
-	public void start(final Stage primaryStage) throws Exception {
-		this.setup = new Setup(true);
+        setupDiscord();
 
-		setupDiscord();
+        final var scene = new Scene(this.setup.mainPane);
+        scene.getStylesheets().add(Railroad.class.getResource("/default.css").toExternalForm());
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Railroad IDE");
+        primaryStage.setWidth(this.setup.primaryScreenBounds.getWidth());
+        primaryStage.setHeight(this.setup.primaryScreenBounds.getHeight());
+        primaryStage.centerOnScreen();
+        primaryStage.setOnCloseRequest(event -> {
+            event.consume();
+            WindowTools.displayQuitWindow(primaryStage);
+        });
+        primaryStage.show();
+    }
 
-		final var scene = new Scene(this.setup.mainPane);
-		scene.getStylesheets().add(Railroad.class.getResource("/default.css").toExternalForm());
-		primaryStage.setScene(scene);
-		primaryStage.setTitle("Railroad IDE");
-		primaryStage.setWidth(this.setup.primaryScreenBounds.getWidth());
-		primaryStage.setHeight(this.setup.primaryScreenBounds.getHeight());
-		primaryStage.centerOnScreen();
-		primaryStage.setOnCloseRequest(event -> {
-			event.consume();
-			WindowTools.displayQuitWindow(primaryStage);
-		});
-		primaryStage.show();
-	}
+    @Override
+    public void stop() {
+        this.setup.codeEditor.executor.shutdown();
+        DiscordRPC.discordShutdown();
+    }
 
-	@Override
-	public void stop() {
-		this.setup.codeEditor.executor.shutdown();
-		DiscordRPC.discordShutdown();
-	}
+    /**
+     * Sets up the Discord Rich Presense <br>
+     * <br>
+     * TODO: Update presense for project and current file name.
+     */
+    private void setupDiscord() {
+        this.discordHandlers = new DiscordEventHandlers.Builder()
+                .setReadyEventHandler(user -> System.out.println(user.username + "#" + user.discriminator))
+                .build();
+        DiscordRPC.discordInitialize("853387211897700394", this.discordHandlers, true);
+        DiscordRPC.discordRunCallbacks();
+        this.discordRichPresence = new DiscordRichPresence.Builder("Working on Untitled Project")
+                .setDetails("Making an amazing mod!").setBigImage("logo", "Railroad IDE")
+                .setSmallImage("logo", "An IDE built for modders, made by modders.").setParty("", 0, 0)
+                .setStartTimestamps(System.currentTimeMillis()).build();
+        DiscordRPC.discordUpdatePresence(this.discordRichPresence);
+    }
 }

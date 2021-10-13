@@ -9,21 +9,21 @@ import javafx.scene.control.MenuItem;
  */
 public class RailroadMenuBar extends MenuBar {
 
-	public static class FileMenu extends Menu {
-		public final MenuItem openItem;
-		public final MenuItem saveItem;
+    public final FileMenu fileMenu;
 
-		public FileMenu(final MenuItem openItem, final MenuItem saveItem) {
-			super("File", null, openItem, saveItem);
-			this.openItem = openItem;
-			this.saveItem = saveItem;
-		}
-	}
+    public RailroadMenuBar(final FileMenu fileMenu) {
+        super(fileMenu);
+        this.fileMenu = fileMenu;
+    }
 
-	public final FileMenu fileMenu;
+    public static class FileMenu extends Menu {
+        public final MenuItem openItem;
+        public final MenuItem saveItem;
 
-	public RailroadMenuBar(final FileMenu fileMenu) {
-		super(fileMenu);
-		this.fileMenu = fileMenu;
-	}
+        public FileMenu(final MenuItem openItem, final MenuItem saveItem) {
+            super("File", null, openItem, saveItem);
+            this.openItem = openItem;
+            this.saveItem = saveItem;
+        }
+    }
 }

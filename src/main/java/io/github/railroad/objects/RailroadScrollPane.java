@@ -11,17 +11,17 @@ import javafx.scene.Parent;
  */
 public class RailroadScrollPane<V extends Node & Virtualized> extends VirtualizedScrollPane<V> {
 
-	public Parent realParent;
+    public Parent realParent;
 
-	public RailroadScrollPane(final V content) {
-		super(content);
-	}
+    public RailroadScrollPane(final V content) {
+        super(content);
+    }
 
-	public Parent getRealParent() {
-		return this.realParent;
-	}
+    public Parent getRealParent() {
+        return this.realParent;
+    }
 
-	public void setRealParent(final Parent parent) {
-		this.realParent = parent;
-	}
+    public void setRealParent(final Parent parent) {
+        this.realParent = parent;
+    }
 }

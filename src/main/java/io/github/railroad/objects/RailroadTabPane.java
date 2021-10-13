@@ -8,7 +8,7 @@ import javafx.scene.control.TabPane;
  */
 public class RailroadTabPane extends TabPane {
 
-	public RailroadTabPane(final Tab... tabs) {
-		super(tabs);
-	}
+    public RailroadTabPane(final Tab... tabs) {
+        super(tabs);
+    }
 }
