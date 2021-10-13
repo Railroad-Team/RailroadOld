@@ -4,6 +4,7 @@ import java.awt.Canvas;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.stream.Stream;
 import javax.swing.Icon;
 import javax.swing.filechooser.FileSystemView;
 
-import org.softsmithy.lib.io.DirectoryFilter;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
 
 import io.github.railroad.project.Project;
 import javafx.collections.FXCollections;
@@ -99,13 +100,12 @@ public class ProjectExplorer {
 
 			setValue(this.actualName);
 			if (file.isDirectory()) {
-				final List<File> directoryList = Arrays.asList(file.listFiles(DirectoryFilter.getInstance()));
-				final List<File> fileList = Stream.of(file.listFiles()).filter(File::isFile).collect(Collectors.toList());
+				final List<File> directoryList = Arrays.asList(file.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY));
+				final List<File> fileList = Stream.of(file.listFiles()).filter(File::isFile).toList();
 
 				fileList.addAll(0, directoryList);
 
-				final String[] files = fileList.stream().map(File::getPath).collect(Collectors.toList())
-						.toArray(new String[0]);
+				final String[] files = fileList.stream().map(File::getPath).toList().toArray(new String[0]);
 
 				if (files != null) {
 					final ObservableList<ExplorerTreeItem> children = FXCollections.observableArrayList();

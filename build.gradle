@@ -14,21 +14,22 @@ dependencies {
     implementation(group: 'org.json', name: 'json', version: 'latest.release')
     implementation(group: 'com.google.code.gson', name: "gson", version: 'latest.release')
     implementation(group: 'commons-io', name: 'commons-io', version: 'latest.release')
-    implementation(group: 'org.drombler.fx', name: 'drombler-fx-core-application', version: 'latest.release')
     implementation(group: 'com.github.Vatuu', name: 'discord-rpc', version: 'latest.release')
+    implementation(group: 'com.panemu', name: 'tiwulfx-dock', version: 'latest.release')
+    implementation(group: 'org.apache.commons', name: 'commons-lang3', version: 'latest.release')
 
     testImplementation(platform('org.junit:junit-bom:5.7.1'))
     testImplementation(group: 'org.junit.jupiter',name: 'junit-jupiter')
 }
 
 javafx {
-    version = "16"
+    version = "17"
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.swing', 'javafx.graphics', 'javafx.web']
 }
 
 run {
     if (javafx.platform.classifier == 'win') {
-        // Temporal fix for Eclipse with JDK 1.8 and Windows 
+        // Temporal fix for Eclipse with JDK 1.8 and Windows
         systemProperty "java.library.path", "C:\\tmp"
     }
 }
@@ -41,4 +42,4 @@ jar {
     }
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_17

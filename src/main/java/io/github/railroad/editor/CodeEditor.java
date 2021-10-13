@@ -22,7 +22,6 @@ import javafx.concurrent.Task;
  * @author TurtyWurty
  */
 public class CodeEditor {
-
 	public final ExecutorService executor;
 
 	public CodeEditor(final ExecutorService service) {
