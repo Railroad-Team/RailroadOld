@@ -1,6 +1,7 @@
 package io.github.railroad;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -12,13 +13,13 @@ import com.panemu.tiwulfx.control.dock.DetachableTabPane;
 
 import io.github.railroad.editor.CodeEditor;
 import io.github.railroad.editor.SimpleFileEditorController;
-import io.github.railroad.objects.ProjectExplorer;
-import io.github.railroad.objects.ProjectExplorer.ExplorerTreeItem;
 import io.github.railroad.objects.RailroadCodeArea;
 import io.github.railroad.objects.RailroadMenuBar;
 import io.github.railroad.objects.RailroadMenuBar.FileMenu;
 import io.github.railroad.project.Project;
 import io.github.railroad.project.settings.ThemeSettings;
+import io.github.railroad.projectexplorer.LiveDirs;
+import io.github.railroad.projectexplorer.PathItem;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.Event;
@@ -30,7 +31,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -58,6 +58,7 @@ public class Setup {
     private final SplitPane mainSplitPane;
     private final AnchorPane anchorPane;
     private final Triple<Label, ProgressBar, Button> fileLoadItems;
+    public LiveDirs liveDirs;
     // Add this back if I find it is needed anywhere
     // private final HBox fileLoadPlacement;
 
@@ -249,9 +250,17 @@ public class Setup {
     }
 
     private TreeView<String> createProjectExplorer() {
-        final var localProjectExplorer = new ProjectExplorer().createProjectExplorer(this.project);
-        localProjectExplorer.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        return localProjectExplorer;
+        final var explorer = new TreeView<String>();
+        explorer.setShowRoot(false);
+        try {
+            final LiveDirs dirs = LiveDirs.getInstance(null);
+            dirs.addTopLevelDirectory(this.project.getProjectFolder().toPath());
+            explorer.setRoot(dirs.model().getRoot());
+            this.liveDirs = dirs;
+        } catch (final IOException ex) {
+            ex.printStackTrace();
+        }
+        return explorer;
     }
 
     private RailroadMenuBar createTopMenu() {
@@ -327,7 +336,7 @@ public class Setup {
                         .getSelectedItems();
                 for (final var item : items) {
                     createCodeArea(this.editorTabPane, this.baseCodeArea,
-                            new File(((ExplorerTreeItem) item).getFullName()));
+                            ((PathItem) item).getPath().toFile());
                 }
             }
         });

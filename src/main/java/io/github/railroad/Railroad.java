@@ -40,6 +40,7 @@ public class Railroad extends Application {
     @Override
     public void stop() {
         this.setup.codeEditor.executor.shutdown();
+        this.setup.liveDirs.dispose();
         DiscordRPC.discordShutdown();
     }
 
