@@ -1,4 +1,4 @@
-package io.github.railroad.projectexplorer;
+package io.github.railroad.projectexplorer.core;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -6,7 +6,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 
-class LiveDirsIO implements InitiatorTrackingIOFacility {
+import io.github.railroad.projectexplorer.utility.CompletionStageWithDefaultExecutor;
+import io.github.railroad.projectexplorer.utility.DirWatcher;
+import io.github.railroad.projectexplorer.utility.InitiatorTrackingIOFacility;
+
+public class LiveDirsIO implements InitiatorTrackingIOFacility {
     private final DirWatcher dirWatcher;
     private final LiveDirsModel model;
     private final Executor clientThreadExecutor;

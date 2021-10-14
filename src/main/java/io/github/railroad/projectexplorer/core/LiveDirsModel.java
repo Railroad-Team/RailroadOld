@@ -1,4 +1,4 @@
-package io.github.railroad.projectexplorer;
+package io.github.railroad.projectexplorer.core;
 
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
@@ -10,9 +10,15 @@ import java.util.stream.Stream;
 import org.reactfx.EventSource;
 import org.reactfx.EventStream;
 
+import io.github.railroad.projectexplorer.model.DirectoryModel;
+import io.github.railroad.projectexplorer.model.GraphicFactory;
+import io.github.railroad.projectexplorer.model.Update;
+import io.github.railroad.projectexplorer.ui.PathItem;
+import io.github.railroad.projectexplorer.ui.Reporter;
+import io.github.railroad.projectexplorer.ui.TopLevelDirItem;
 import javafx.scene.control.TreeItem;
 
-class LiveDirsModel implements DirectoryModel {
+public class LiveDirsModel implements DirectoryModel {
 
     private final TreeItem<String> root = new TreeItem<>();
     private final EventSource<Update> creations = new EventSource<>();
@@ -26,7 +32,8 @@ class LiveDirsModel implements DirectoryModel {
 
     private GraphicFactory graphicFactory = DEFAULT_GRAPHIC_FACTORY;
 
-    public LiveDirsModel(Path defaultInitiator, UnaryOperator<Path> projector, UnaryOperator<Path> injector) {
+    protected LiveDirsModel(Path defaultInitiator, UnaryOperator<Path> projector,
+            UnaryOperator<Path> injector) {
         this.defaultInitiator = defaultInitiator;
         this.projector = projector;
         this.injector = injector;

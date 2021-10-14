@@ -1,4 +1,4 @@
-package io.github.railroad.projectexplorer;
+package io.github.railroad.projectexplorer.core;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
@@ -22,6 +22,10 @@ import org.reactfx.EventSource;
 import org.reactfx.EventStream;
 import org.reactfx.EventStreams;
 
+import io.github.railroad.projectexplorer.model.DirectoryModel;
+import io.github.railroad.projectexplorer.utility.CompletionStageWithDefaultExecutor;
+import io.github.railroad.projectexplorer.utility.DirWatcher;
+import io.github.railroad.projectexplorer.utility.InitiatorTrackingIOFacility;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;

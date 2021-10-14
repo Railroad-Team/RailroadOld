@@ -1,4 +1,4 @@
-package io.github.railroad.projectexplorer;
+package io.github.railroad.projectexplorer.utility;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;

@@ -1,4 +1,4 @@
-package io.github.railroad.projectexplorer;
+package io.github.railroad.projectexplorer.utility;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -29,7 +29,7 @@ import java.util.function.Function;
  *
  * where {@code executor} is the executor this stage was created with.
  */
-class CompletionStageWithDefaultExecutor<T> implements CompletionStage<T> {
+public class CompletionStageWithDefaultExecutor<T> implements CompletionStage<T> {
     private final CompletionStage<T> original;
     private final Executor defaultExecutor;
 
