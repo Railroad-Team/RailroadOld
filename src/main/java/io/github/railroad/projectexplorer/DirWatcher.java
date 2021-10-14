@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystemException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -90,6 +91,7 @@ public class DirWatcher {
                 res.complete(PathNode.getTree(root));
             } catch (final IOException e) {
                 res.completeExceptionally(e);
+                e.printStackTrace();
             }
         });
         return res;
@@ -288,15 +290,25 @@ class PathNode {
     }
 
     public static PathNode getTree(Path root) throws IOException {
-        if (!Files.isDirectory(root))
-            return file(root, Files.getLastModifiedTime(root));
+        try {
+            if (!Files.isDirectory(root))
+                return file(root, Files.getLastModifiedTime(root));
+        } catch (final IOException e) {
+            return null;
+        }
+
         Path[] childPaths;
+
         try (Stream<Path> dirStream = Files.list(root)) {
             childPaths = dirStream.sorted(PATH_COMPARATOR).toArray(Path[]::new);
+        } catch (final FileSystemException exception) {
+            childPaths = new Path[0];
         }
+
         final List<PathNode> children = new ArrayList<>(childPaths.length);
-        for (final Path p : childPaths) {
-            children.add(getTree(p));
+        for (final Path path : childPaths) {
+            System.out.println(path);
+            children.add(getTree(path));
         }
         return directory(root, children);
     }
