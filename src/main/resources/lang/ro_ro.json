@@ -1,0 +1,7 @@
+{
+	"menuBar.fileMenu.name": "Fișier",
+	"menuBar.fileMenu.open": "Deschide",
+	"menuBar.fileMenu.save": "Salvează",
+
+	"editor.loadFileInfo": "Deschide un fișier folosind meniul!"
+}

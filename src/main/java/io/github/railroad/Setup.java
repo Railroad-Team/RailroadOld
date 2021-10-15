@@ -17,7 +17,8 @@ import io.github.railroad.objects.RailroadCodeArea;
 import io.github.railroad.objects.RailroadMenuBar;
 import io.github.railroad.objects.RailroadMenuBar.FileMenu;
 import io.github.railroad.project.Project;
-import io.github.railroad.project.settings.ThemeSettings;
+import io.github.railroad.project.lang.LangProvider;
+import io.github.railroad.project.settings.theme.Theme;
 import io.github.railroad.projectexplorer.core.LiveDirs;
 import io.github.railroad.projectexplorer.ui.PathItem;
 import javafx.animation.KeyFrame;
@@ -63,11 +64,19 @@ public class Setup {
     // private final HBox fileLoadPlacement;
 
     private final Project project;
+    
+    protected String language;
 
-    public Setup(final boolean darkMode) {
+    public Setup(final Theme theme, String language) {
+    	
+    	//Always cache the lang first (else there will be no text for the project selection)
+    	this.language = language;
+        LangProvider.cacheLang(language);
+        
         // Core
         this.primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        this.project = new Project(new ThemeSettings(darkMode));
+        	
+        this.project = new Project(theme);
 
         // Code Editor
         this.codeEditor = new CodeEditor(Executors.newSingleThreadExecutor());
@@ -182,7 +191,7 @@ public class Setup {
     }
 
     private Triple<Label, ProgressBar, Button> createFileLoad() {
-        final var statusMessage = new Label("Checking for Changes...");
+        final var statusMessage = new Label(LangProvider.fromLang("fileLoader.changesCheck"));
         statusMessage.prefWidth(150);
         statusMessage.setId("statusMessage");
         // this.fileControllers.get(0).statusMessage = statusMessage;
@@ -192,7 +201,7 @@ public class Setup {
         progressBar.setId("progressBar");
         // this.fileControllers.get(0).progressBar = progressBar;
 
-        final var loadChangesBtn = new Button("Load Changes");
+        final var loadChangesBtn = new Button(LangProvider.fromLang("buttons.loadChanges"));
         loadChangesBtn.setId("loadChangesButton");
         loadChangesBtn.setOnAction(event -> {
             if (this.fileControllers.isEmpty()) {
@@ -235,7 +244,7 @@ public class Setup {
 
     private DetachableTabPane createLeftTabPane() {
         final var tabPane = new DetachableTabPane();
-        final var projExplTab = new DetachableTab("Project Explorer", this.projectExplorer);
+        final var projExplTab = new DetachableTab(LangProvider.fromLang("tabs.projectExplorer.name"), this.projectExplorer);
         projExplTab.setOnCloseRequest(Event::consume);
         tabPane.getTabs().add(projExplTab);
         return tabPane;
@@ -264,15 +273,16 @@ public class Setup {
     }
 
     private RailroadMenuBar createTopMenu() {
-        final var openItem = new MenuItem("Open");
-        final var saveItem = new MenuItem("Save");
+        final var openItem = new MenuItem(LangProvider.fromLang("menuBar.fileMenu.open"));
+        final var saveItem = new MenuItem(LangProvider.fromLang("menuBar.fileMenu.save"));
         final var fileMenu = new FileMenu(openItem, saveItem);
         final var localMenuBar = new RailroadMenuBar(fileMenu);
         this.mainPane.setTop(localMenuBar);
         return localMenuBar;
     }
 
-    private void dividerAdjust() {
+    @SuppressWarnings("unused")
+	private void dividerAdjust() {
         dividerAdjust(this.mainSplitPane);
     }
 
@@ -361,7 +371,8 @@ public class Setup {
         return hbox;
     }
 
-    private void timedDividerAdjust() {
+    @SuppressWarnings("unused")
+	private void timedDividerAdjust() {
         timedDividerAdjust(this.mainSplitPane);
     }
 

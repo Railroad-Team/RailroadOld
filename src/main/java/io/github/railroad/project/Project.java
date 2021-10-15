@@ -5,7 +5,8 @@ import java.io.File;
 import com.sun.javafx.tk.Toolkit;
 
 import io.github.railroad.Railroad;
-import io.github.railroad.project.settings.ThemeSettings;
+import io.github.railroad.project.lang.LangProvider;
+import io.github.railroad.project.settings.theme.Theme;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -20,12 +21,14 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import static io.github.railroad.project.lang.LangProvider.fromLang;
+
 /**
  * @author TurtyWurty
  */
 public class Project {
 
-    private final ThemeSettings theme;
+    private final Theme theme;
 
     private File projectFolder;
 
@@ -33,28 +36,28 @@ public class Project {
      * Creates the Project Settings and displays the initial "Project Directory
      * Chooser".
      *
-     * @param themeSettings - The {@link ThemeSettings} to apply.
+     * @param themeSettings - The {@link Theme} to apply.
      */
-    public Project(final ThemeSettings themeSettings) {
+    public Project(final Theme themeSettings) {
         this.theme = themeSettings;
 
         final var window = new Stage();
 
         final var dirChooser = new DirectoryChooser();
-        dirChooser.setTitle("Choose your project folder");
+        dirChooser.setTitle(LangProvider.fromLang("project.chooseFolder"));
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
         final var textField = new TextField(System.getProperty("user.home"));
         textField.autosize();
         textField.deselect();
 
-        final var selectButton = new Button("Select");
+        final var selectButton = new Button(fromLang("project.selectFolder"));
         selectButton.setOnAction(event -> {
             this.projectFolder = new File(textField.getText());
             window.close();
         });
 
-        final var cancelButton = new Button("Cancel");
+        final var cancelButton = new Button(fromLang("project.cancelSelection"));
         cancelButton.setOnAction(event -> {
             window.close();
             System.exit(0);
@@ -68,7 +71,7 @@ public class Project {
         textField.deselect();
         new Timeline(new KeyFrame(Duration.millis(10), event -> textField.deselect())).play();
 
-        final var browseButton = new Button("Browse...");
+        final var browseButton = new Button(fromLang("project.browseFolders"));
         browseButton.setOnAction(event -> {
             final File chosenDir = dirChooser.showDialog(null);
             if (chosenDir != null) {
@@ -76,10 +79,9 @@ public class Project {
             }
         });
 
-        final var rootDirLabel = new Label("Root Directory:");
-        final var descriptionLabel = new Label(
-                "Specify the root directory of the mod that you want to work on!");
-        final var titleLabel = new Label("Select your project folder");
+        final var rootDirLabel = new Label(fromLang("project.rootDirectory"));
+        final var descriptionLabel = new Label(fromLang("project.description"));
+        final var titleLabel = new Label(fromLang("project.selectProjectFolder"));
         titleLabel.setId("projectTitleLabel");
         descriptionLabel.setId("projectDescriptionLabel");
         rootDirLabel.setWrapText(true);
@@ -102,7 +104,7 @@ public class Project {
         });
         window.setResizable(false);
         window.setScene(scene);
-        window.setTitle("Choose Project");
+        window.setTitle(fromLang("project.selectWindowTitle"));
         window.requestFocus();
         window.setAlwaysOnTop(true);
         window.showAndWait();
@@ -116,9 +118,9 @@ public class Project {
     }
 
     /**
-     * @return The {@link ThemeSettings} used for this {@link Project}.
+     * @return The {@link Theme} used for this {@link Project}.
      */
-    public ThemeSettings getTheme() {
+    public Theme getTheme() {
         return this.theme;
     }
 }

@@ -1,5 +1,6 @@
 package io.github.railroad.utility;
 
+import io.github.railroad.project.lang.LangProvider;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -23,13 +24,13 @@ public final class WindowTools {
      */
     public static void displayQuitWindow(final Stage windowToClose) {
         final var stage = new Stage();
-        final var label = new Label("Are you sure you would like to quit Railroad IDE?");
-        final var yesBtn = new Button("Yes");
+        final var label = new Label(fromQuitWindowLang("label"));
+        final var yesBtn = new Button(fromQuitWindowLang("yesBtn"));
         yesBtn.setOnAction(event -> {
             windowToClose.close();
             stage.close();
         });
-        final var cancelBtn = new Button("Cancel");
+        final var cancelBtn = new Button(fromQuitWindowLang("cancelBtn"));
         cancelBtn.setOnAction(event -> stage.close());
         final var vbox = new VBox(label, yesBtn, cancelBtn);
         vbox.setAlignment(Pos.CENTER);
@@ -38,9 +39,13 @@ public final class WindowTools {
 
         stage.sizeToScene();
         stage.centerOnScreen();
-        stage.setTitle("Quit Railroad IDE");
+        stage.setTitle(fromQuitWindowLang("title"));
         stage.setAlwaysOnTop(true);
         stage.requestFocus();
         stage.showAndWait();
+    }
+    
+    private static String fromQuitWindowLang(String key) {
+    	return LangProvider.fromLang("quitWindow." + key);
     }
 }

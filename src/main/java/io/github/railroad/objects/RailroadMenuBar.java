@@ -1,5 +1,6 @@
 package io.github.railroad.objects;
 
+import io.github.railroad.project.lang.LangProvider;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -21,7 +22,7 @@ public class RailroadMenuBar extends MenuBar {
         public final MenuItem saveItem;
 
         public FileMenu(final MenuItem openItem, final MenuItem saveItem) {
-            super("File", null, openItem, saveItem);
+            super(LangProvider.fromLang("menuBar.fileMenu.name"), null, openItem, saveItem);
             this.openItem = openItem;
             this.saveItem = saveItem;
         }

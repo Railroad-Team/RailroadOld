@@ -1,0 +1,28 @@
+{
+	"menuBar.fileMenu.name": "File",
+	"menuBar.fileMenu.open": "Open",
+	"menuBar.fileMenu.save": "Save",
+	
+	"tabs.projectExplorer.name": "Project Explorer",
+	
+	"project.chooseFolder": "Choose your project folder",
+	"project.selectFolder": "Select Folder",
+	"project.cancelSelection": "Cancel",
+	"project.browseFolders": "Browse",
+	"project.rootDirectory": "Root Directory:",
+	"project.description": "Specify the root directory of the mod that you want to work on!",
+	"project.selectProjectFolder": "Select your project folder",
+	"project.selectWindowTitle": "Choose Project",
+
+	"editor.loadFileInfo": "Load a file using the File menu!",
+	"editor.loadError": "Could not load file from:\n ",
+	
+	"fileLoader.changesCheck": "Checking for Changes...",
+	
+	"buttons.loadChanges": "Load Changes",
+	
+	"quitWindow.label": "Are you sure you would like to quit Railroad IDE?",
+	"quitWindow.yesBtn": "Yes",
+	"quitWindow.cancelBtn": "Cancel",
+	"quitWindow.title": "Quit Railroad IDE"
+}
