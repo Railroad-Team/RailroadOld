@@ -7,8 +7,10 @@
 	
 	"project.browseFolders": "Browse",
 	"project.chooseFolder": "Choose your project folder",
-	"project.configure": "Configure",
-	"project.home": "Home",
+	"project.createButton": "Create",
+	"project.openButton": "Open",
+	"project.openCreateLabel": "Would you like to open a project or create a new project?",
+	"project.openCreateSection": "Action",
 	"project.rootDirectory": "Root Directory:",
 	"project.selectProjectFolder": "Select your project folder",
 	"project.selectWindowTitle": "Choose Project",
