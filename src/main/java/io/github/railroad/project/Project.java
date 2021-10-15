@@ -1,27 +1,33 @@
 package io.github.railroad.project;
 
+import static io.github.railroad.project.lang.LangProvider.fromLang;
+
 import java.io.File;
+import java.util.List;
+
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import com.sun.javafx.tk.Toolkit;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXStepper;
+import io.github.palexdev.materialfx.controls.MFXStepperToggle;
+import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.utils.BindingUtils;
 import io.github.railroad.Railroad;
 import io.github.railroad.project.lang.LangProvider;
 import io.github.railroad.project.settings.theme.Theme;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.geometry.Insets;
+import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import static io.github.railroad.project.lang.LangProvider.fromLang;
 
 /**
  * @author TurtyWurty
@@ -40,67 +46,66 @@ public class Project {
      */
     public Project(final Theme themeSettings) {
         this.theme = themeSettings;
+        createWindow();
+    }
 
+    public Stage createWindow() {
         final var window = new Stage();
+
+        final var icon0 = new FontIcon("mdi2f-folder-home");
+        icon0.setIconSize(32);
+        icon0.setIconColor(Color.web("#1fb0b5"));
 
         final var dirChooser = new DirectoryChooser();
         dirChooser.setTitle(LangProvider.fromLang("project.chooseFolder"));
-        dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        dirChooser.setInitialDirectory(new File(System.getProperty("user.home") + "/Documents"));
 
-        final var textField = new TextField(System.getProperty("user.home"));
-        textField.autosize();
-        textField.deselect();
+        final var directoryField = new MFXTextField(System.getProperty("user.home") + "/Documents");
+        directoryField.autosize();
+        directoryField.deselect();
+        new Timeline(new KeyFrame(Duration.millis(10), event -> directoryField.deselect())).play();
 
-        final var selectButton = new Button(fromLang("project.selectFolder"));
-        selectButton.setOnAction(event -> {
-            this.projectFolder = new File(textField.getText());
-            window.close();
-        });
-
-        final var cancelButton = new Button(fromLang("project.cancelSelection"));
-        cancelButton.setOnAction(event -> {
-            window.close();
-            System.exit(0);
-        });
-        cancelButton.setId("projectCancelButton");
-
-        textField.setOnInputMethodTextChanged(event -> {
-            final var text = textField.getText();
-            selectButton.setDisable(!new File(text).exists());
-        });
-        textField.deselect();
-        new Timeline(new KeyFrame(Duration.millis(10), event -> textField.deselect())).play();
-
-        final var browseButton = new Button(fromLang("project.browseFolders"));
+        final var browseButton = new MFXButton(fromLang("project.browseFolders"));
+        browseButton.setTextFill(Color.BLACK);
         browseButton.setOnAction(event -> {
             final File chosenDir = dirChooser.showDialog(null);
             if (chosenDir != null) {
-                textField.setText(chosenDir.getPath());
+                directoryField.setText(chosenDir.getPath());
             }
         });
 
-        final var rootDirLabel = new Label(fromLang("project.rootDirectory"));
-        final var descriptionLabel = new Label(fromLang("project.description"));
-        final var titleLabel = new Label(fromLang("project.selectProjectFolder"));
-        titleLabel.setId("projectTitleLabel");
-        descriptionLabel.setId("projectDescriptionLabel");
-        rootDirLabel.setWrapText(true);
-        descriptionLabel.setWrapText(true);
-        titleLabel.setWrapText(true);
+        final var horizontal = new HBox(directoryField, browseButton);
+        horizontal.setAlignment(Pos.CENTER);
+        horizontal.setSpacing(20f);
+        final var content0 = new VBox(horizontal);
+        content0.setAlignment(Pos.CENTER);
+        final var toggle0 = new MFXStepperToggle("Home", icon0, content0);
+        directoryField.setOnInputMethodTextChanged(
+                event -> toggle0.getValidator().add(BindingUtils.toProperty(new BooleanBinding() {
+                    @Override
+                    protected boolean computeValue() {
+                        return new File(directoryField.getText()).exists();
+                    }
+                }), "You must supply a valid directory!"));
 
-        final var buttonLayout = new HBox(cancelButton, selectButton);
-        HBox.setMargin(cancelButton, new Insets(0, 5D, 0, 0));
-        buttonLayout.setAlignment(Pos.CENTER_RIGHT);
+        final var icon1 = new FontIcon("mdi2f-folder-cog");
+        icon1.setIconSize(32);
+        icon1.setIconColor(Color.web("#1fb0b5"));
+        final var button0 = new MFXButton();
+        final var button1 = new MFXButton();
+        final var button2 = new MFXButton();
+        final var content1 = new VBox(button0, button1, button2);
+        content1.setAlignment(Pos.CENTER);
+        final var toggle1 = new MFXStepperToggle("Configure", icon1, content1);
 
-        final var layout = new VBox(titleLabel, descriptionLabel,
-                new HBox(rootDirLabel, textField, browseButton), buttonLayout);
-        final var scene = new Scene(layout);
+        final var stepper = new MFXStepper(List.of(toggle0, toggle1));
+        final var scene = new Scene(stepper);
         scene.getStylesheets().add(Railroad.class.getResource("/default.css").toExternalForm());
-
+        window.setScene(scene);
         window.setOnCloseRequest(event -> {
             Toolkit.getToolkit().exitAllNestedEventLoops();
-            window.close();
             System.exit(0);
+            window.close();
         });
         window.setResizable(false);
         window.setScene(scene);
@@ -108,6 +113,7 @@ public class Project {
         window.requestFocus();
         window.setAlwaysOnTop(true);
         window.showAndWait();
+        return window;
     }
 
     /**
