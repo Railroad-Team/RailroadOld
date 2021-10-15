@@ -44,6 +44,11 @@ public class LangProvider {
 		}
 	}
 
+	/**
+	 * Retrieve a lang entry from the cached lang (or if it doesn't exist from the <b>en_us</b>
+	 * @param translationKey
+	 * @return
+	 */
 	public static String fromLang(String translationKey) {
 		if (SELECTED_LANG != null && SELECTED_LANG.has(translationKey))
 			return SELECTED_LANG.get(translationKey).getAsString();
