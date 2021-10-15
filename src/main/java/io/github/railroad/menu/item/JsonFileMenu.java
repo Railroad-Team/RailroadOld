@@ -84,7 +84,7 @@ public class JsonFileMenu extends MenuItem {
 		stage.close();
 		if (cb.getSelectionModel().getSelectedIndex() == 0) {
 			new ItemModelTemplate(selectedDirectory, fileName.getText()).openWindow(project);
-			return;
+			clearCache();
 		}
 	}
 

@@ -15,10 +15,10 @@ import net.arikia.dev.drpc.DiscordRichPresence;
  */
 public class Railroad extends Application {
 	
-	public static String RAILROAD_CONFIG_FOLDER = System.getProperty("user.home") + "/.railroad/";
+	public static final String RAILROAD_CONFIG_FOLDER = System.getProperty("user.home") + "/.railroad/";
 
-    public DiscordEventHandlers discordHandlers;
-    public DiscordRichPresence discordRichPresence;
+    private DiscordEventHandlers discordHandlers;
+    private DiscordRichPresence discordRichPresence;
     private Setup setup;
     
     private static Project project;
