@@ -18,5 +18,15 @@ public class ColorHelper {
 		return new java.awt.Color((float) fx.getRed(), (float) fx.getGreen(), (float) fx.getBlue(),
 				(float) fx.getOpacity());
 	}
+	
+	/**
+	 * Converts a {@link java.awt.Color} to a HEX value
+	 * @param awt the colour to convert
+	 * @return
+	 */
+	public static String toHex(java.awt.Color awt) {
+		String buf = Integer.toHexString(awt.getRGB());
+		return "#"+buf.substring(buf.length()-6);
+	}
 
 }

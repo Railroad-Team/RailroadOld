@@ -13,6 +13,7 @@ import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 
+import io.github.railroad.Railroad;
 import io.github.railroad.editor.regex.JavaRegex;
 import io.github.railroad.editor.regex.JsonRegex;
 import io.github.railroad.objects.RailroadCodeArea;
@@ -51,6 +52,8 @@ public class CodeEditor {
                 }).subscribe(style -> applyHighlighting(codeArea, style));
 
         new BracketHighlighter(codeArea);
+        
+        Railroad.resetDiscordPresence();
 
         return codeArea;
     }
