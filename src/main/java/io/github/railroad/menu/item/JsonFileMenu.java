@@ -24,7 +24,7 @@ public class JsonFileMenu extends MenuItem {
 
 	public JsonFileMenu(String text, Project project) {
 		super(text);
-		this.setOnAction(event -> executeClick(event));
+		this.setOnAction(this::executeClick);
 		this.project = project;
 	}
 
@@ -55,7 +55,7 @@ public class JsonFileMenu extends MenuItem {
 		browse.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
 
 		var next = new Button(LangProvider.fromLang("buttons.next"));
-		next.setOnAction(e -> nextButtonClick(e));
+		next.setOnAction(this::nextButtonClick);
 		next.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
 		
 		var cancel = new Button(LangProvider.fromLang("buttons.cancel"));
