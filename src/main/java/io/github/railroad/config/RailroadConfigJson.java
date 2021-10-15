@@ -16,7 +16,7 @@ import io.github.railroad.config.entry.ProjectSettingsEntry;
 public class RailroadConfigJson {
 	
 		private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
-		public static String CONFIG_PATH = Railroad.RAILROAD_CONFIG_FOLDER + "railroad-config.json";
+		public static final String CONFIG_PATH = Railroad.RAILROAD_CONFIG_FOLDER + "railroad-config.json";
 		
 		@Expose
 		private ProjectSettingsEntry projectSettings;

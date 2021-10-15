@@ -23,8 +23,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import static io.github.railroad.project.lang.LangProvider.fromLang;
-
 /**
  * @author TurtyWurty
  */
@@ -34,19 +32,19 @@ public class Project {
 	 * How to use the config
 	 * 
 	 * before showing the folder selector add this
-	 * 
-	 * if (JsonConfigs.GENERAL_CONFIG.getConfig() != null && JsonConfigs.GENERAL_CONFIG.getConfig().getProjectSettings().projectPath != null) {
-			this.projectFolder = new File(JsonConfigs.GENERAL_CONFIG.getConfig().getProjectSettings().projectPath);
-		} else {
-			implement the selector here.
+	 
+	if (JsonConfigs.GENERAL_CONFIG.getConfig() != null && JsonConfigs.GENERAL_CONFIG.getConfig().getProjectSettings().projectPath != null) {
+		this.projectFolder = new File(JsonConfigs.GENERAL_CONFIG.getConfig().getProjectSettings().projectPath);
+	} else {
+		implement the selector here.
 			
-			in order to save the path to the config.. execute this code:
+		in order to save the path to the config.. execute this code:
 			
-			JsonConfigs.GENERAL_CONFIG.writeConfig(new RailroadConfigJson(new ProjectSettingsEntry(this.projectFolder.getPath().toString()));
+		JsonConfigs.GENERAL_CONFIG.writeConfig(new RailroadConfigJson(new ProjectSettingsEntry(this.projectFolder.getPath().toString()));
 			
-		}
+	}
 		
-		i know that it is weird atm, but i will start working on making this system better after i pr this code (it will take some time)
+		i dont see a reason to format this. i just threw it here so you know how to use the <b>temporary</b> solution
 	 */
 
 	private final Theme theme;

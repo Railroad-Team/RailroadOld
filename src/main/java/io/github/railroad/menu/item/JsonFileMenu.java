@@ -28,15 +28,15 @@ public class JsonFileMenu extends MenuItem {
 		this.project = project;
 	}
 
-	Stage stage = new Stage();
-	ChoiceBox<String> cb = new ChoiceBox<String>();
-	DirectoryChooser directoryChooser = new DirectoryChooser();
-	File selectedDirectory;
-	TextField pathArea = new TextField();
-	TextField fileName = new TextField();
-	Label fileNameLabel = new Label(" " + LangProvider.fromLang("textArea.fileName") + ": ");
-	Label jsonType = new Label(" " + LangProvider.fromLang("menuItem.json.typeTextField"));
-	Label pathLabel = new Label(" " + LangProvider.fromLang("textArea.selectPath") + ": ");
+	private Stage stage = new Stage();
+	private ChoiceBox<String> cb = new ChoiceBox<String>();
+	private DirectoryChooser directoryChooser = new DirectoryChooser();
+	private File selectedDirectory;
+	private TextField pathArea = new TextField();
+	private TextField fileName = new TextField();
+	private Label fileNameLabel = new Label(" " + LangProvider.fromLang("textArea.fileName") + ": ");
+	private Label jsonType = new Label(" " + LangProvider.fromLang("menuItem.json.typeTextField"));
+	private Label pathLabel = new Label(" " + LangProvider.fromLang("textArea.selectPath") + ": ");
 
 	VBox vbox = new VBox();
 
@@ -45,18 +45,18 @@ public class JsonFileMenu extends MenuItem {
 
 		cb.getItems().add("Item Model");
 
-		Button browse = new Button(LangProvider.fromLang("buttons.browse"));
+		var browse = new Button(LangProvider.fromLang("buttons.browse"));
 		browse.setOnAction(e -> {
 			selectedDirectory = directoryChooser.showDialog(stage);
 			pathArea.setText(selectedDirectory.getPath());
 		});
 		browse.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
 
-		Button next = new Button(LangProvider.fromLang("buttons.next"));
+		var next = new Button(LangProvider.fromLang("buttons.next"));
 		next.setOnAction(e -> nextButtonClick(e));
 		next.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
 		
-		Button cancel = new Button(LangProvider.fromLang("buttons.cancel"));
+		var cancel = new Button(LangProvider.fromLang("buttons.cancel"));
 		cancel.setOnAction(e -> stage.close());
 		cancel.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
 

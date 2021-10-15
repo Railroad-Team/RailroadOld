@@ -21,14 +21,14 @@ public class Railroad extends Application {
     public DiscordRichPresence discordRichPresence;
     private Setup setup;
     
-    private static Project PROJECT;
+    private static Project project;
 
     @Override
     public void start(final Stage primaryStage) throws Exception {
         this.setup = new Setup(Themes.DARK_THEME, "ro_ro");
 
-        setupDiscord(this.setup.getProject());
-        PROJECT = this.setup.getProject();
+        project = this.setup.project;
+        setupDiscord(project);
 
         final var scene = new Scene(this.setup.mainPane);
         scene.getStylesheets().add(Railroad.class.getResource("/default.css").toExternalForm());
@@ -53,8 +53,6 @@ public class Railroad extends Application {
 
     /**
      * Sets up the Discord Rich Presense <br>
-     * <br>
-     * TODO: Update presense for project and current file name.
      */
     private void setupDiscord(Project project) {
         this.discordHandlers = new DiscordEventHandlers.Builder()
@@ -69,11 +67,13 @@ public class Railroad extends Application {
         DiscordRPC.discordUpdatePresence(this.discordRichPresence);
     }
     
-    public static void resetDcPresence() {
-    	if (PROJECT != null)
-    	DiscordRPC.discordUpdatePresence(new DiscordRichPresence.Builder("Working on " + PROJECT.getProjectName())
-                .setDetails("Making an amazing mod!").setBigImage("logo", "Railroad IDE")
-                .setSmallImage("logo", "An IDE built for modders, made by modders.").setParty("", 0, 0)
-                .setStartTimestamps(System.currentTimeMillis()).build());
+    public static void resetDiscordPresence() {
+    	if (project != null) {
+    		DiscordRichPresence newPresence = new DiscordRichPresence.Builder("Working on " + project.getProjectName())
+                    .setDetails("Making an amazing mod!").setBigImage("logo", "Railroad IDE")
+                    .setSmallImage("logo", "An IDE built for modders, made by modders.").setParty("", 0, 0)
+                    .setStartTimestamps(System.currentTimeMillis()).build();
+    		DiscordRPC.discordUpdatePresence(newPresence);
+    	}
     }
 }

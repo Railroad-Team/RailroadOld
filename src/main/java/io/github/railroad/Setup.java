@@ -66,7 +66,7 @@ public class Setup {
     // Add this back if I find it is needed anywhere
     // private final HBox fileLoadPlacement;
 
-    private final Project project;
+    public final Project project;
     
     protected String language;
 
@@ -102,10 +102,6 @@ public class Setup {
 
         onMenuAction();
         onProjectExplorerAction();
-    }
-    
-    public Project getProject() {
-    	return this.project;
     }
 
     private AnchorPane anchorMainSplit() {

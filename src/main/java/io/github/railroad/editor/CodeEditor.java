@@ -53,7 +53,7 @@ public class CodeEditor {
 
         new BracketHighlighter(codeArea);
         
-        Railroad.resetDcPresence();
+        Railroad.resetDiscordPresence();
 
         return codeArea;
     }

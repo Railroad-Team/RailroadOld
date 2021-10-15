@@ -29,16 +29,16 @@ public class ItemModelTemplate extends JsonTemplate {
 	}
 
 	// Universal Items
-	Stage stage = new Stage();
-	ChoiceBox<String> cb = new ChoiceBox<String>();
+	private Stage stage = new Stage();
+	private ChoiceBox<String> cb = new ChoiceBox<String>();
 
-	VBox vbox = new VBox(cb);
+	private VBox vbox = new VBox(cb);
 
 	// Specific Items
 
 	// Block Parent
-	TextField blockParentField = new TextField();
-	VBox blockItemVBox = new VBox();
+	private TextField blockParentField = new TextField();
+	private VBox blockItemVBox = new VBox();
 
 	@Override
 	public void openWindow(Project project) {
@@ -51,9 +51,9 @@ public class ItemModelTemplate extends JsonTemplate {
 		
 		vbox.getChildren().add(new HBox(new Label(LangProvider.fromLang("menuItem.json.typeTextField")), cb));
 		
-		HBox hbox = new HBox(cb);
+		var hbox = new HBox(cb);
 
-		Scene scene = new Scene(hbox, 100, 200);
+		var scene = new Scene(hbox, 100, 200);
 		stage.setScene(scene);
 
 		stage.setWidth(450);

@@ -11,8 +11,7 @@ import javafx.scene.paint.Color;
  */
 public class Themes {
 
-	public static final Theme DARK_THEME = new Theme("DarkMode")
-			.withButtonColor(ColorHelper.fxColourToAwt(javafx.scene.paint.Color.DARKGRAY))
+	public static final Theme DARK_THEME = new Theme("DarkMode").withButtonColor(ColorHelper.fxColourToAwt(javafx.scene.paint.Color.DARKGRAY))
 			.withBackgroundColor(ColorHelper.fxColourToAwt(Color.BISQUE));
 
 	public static final Theme WHITE_THEME = new Theme("WhiteMode");
