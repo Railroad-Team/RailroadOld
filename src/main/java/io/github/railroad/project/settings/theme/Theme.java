@@ -12,6 +12,7 @@ public class Theme {
 
 	private String name;
 	private Color buttonColour;
+	private Color backgroundColour;
 
 	public Theme(String name) {
 		this.name = name;
@@ -43,6 +44,15 @@ public class Theme {
 	 */
 	public boolean isDarkTheme() {
 		return this == Themes.DARK_THEME;
+	}
+
+	public Theme withBackgroundColor(Color backgroundColour) {
+		this.backgroundColour = backgroundColour;
+		return this;
+	}
+
+	public Color getBackgroundColor() {
+		return backgroundColour;
 	}
 
 }

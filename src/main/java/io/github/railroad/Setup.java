@@ -13,6 +13,7 @@ import com.panemu.tiwulfx.control.dock.DetachableTabPane;
 
 import io.github.railroad.editor.CodeEditor;
 import io.github.railroad.editor.SimpleFileEditorController;
+import io.github.railroad.menu.item.JsonFileMenu;
 import io.github.railroad.objects.RailroadCodeArea;
 import io.github.railroad.objects.RailroadMenuBar;
 import io.github.railroad.objects.RailroadMenuBar.FileMenu;
@@ -41,6 +42,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.Screen;
 import javafx.util.Duration;
+import net.arikia.dev.drpc.DiscordRPC;
+import net.arikia.dev.drpc.DiscordRichPresence;
 
 /**
  * @author TurtyWurty
@@ -100,6 +103,10 @@ public class Setup {
         onMenuAction();
         onProjectExplorerAction();
     }
+    
+    public Project getProject() {
+    	return this.project;
+    }
 
     private AnchorPane anchorMainSplit() {
         final var localAnchorPane = new AnchorPane(this.mainSplitPane);
@@ -114,6 +121,7 @@ public class Setup {
 
     private void createCodeArea(final DetachableTabPane tabPane, final RailroadCodeArea codeArea,
             final File file) {
+    	
         if (file != null) {
             if (tabPane.getProperties().get("RealParent") == null
                     && codeArea.getProperties().get("RealParent")instanceof final SplitPane parent
@@ -185,6 +193,12 @@ public class Setup {
             this.mainSplitPane.getItems().add(this.baseCodeArea);
             this.baseCodeArea.getProperties().put("RealParent", this.mainSplitPane);
         }
+        
+        DiscordRichPresence newPresence = new DiscordRichPresence.Builder("Working on " + project.getProjectName())
+                .setDetails("Editing " + file.getName()).setBigImage("logo", "Railroad IDE")
+                .setSmallImage("logo", "An IDE built for modders, made by modders.").setParty("", 0, 0)
+                .setStartTimestamps(System.currentTimeMillis()).build();
+    	DiscordRPC.discordUpdatePresence(newPresence);
 
         // TODO: Use this. But fix the tab pane and scroll bar issues that occur
         // dividerAdjust();
@@ -275,7 +289,8 @@ public class Setup {
     private RailroadMenuBar createTopMenu() {
         final var openItem = new MenuItem(LangProvider.fromLang("menuBar.fileMenu.open"));
         final var saveItem = new MenuItem(LangProvider.fromLang("menuBar.fileMenu.save"));
-        final var fileMenu = new FileMenu(openItem, saveItem);
+        final var jsonFileMenuItem = new JsonFileMenu(LangProvider.fromLang("menuBar.fileMenu.newJson"), this.project);
+        final var fileMenu = new FileMenu(openItem, saveItem, jsonFileMenuItem);
         final var localMenuBar = new RailroadMenuBar(fileMenu);
         this.mainPane.setTop(localMenuBar);
         return localMenuBar;

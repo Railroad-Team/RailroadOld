@@ -2,6 +2,7 @@
 	"menuBar.fileMenu.name": "File",
 	"menuBar.fileMenu.open": "Open",
 	"menuBar.fileMenu.save": "Save",
+	"menuBar.fileMenu.newJson": "New Json",
 	
 	"tabs.projectExplorer.name": "Project Explorer",
 	
@@ -13,6 +14,7 @@
 	"project.description": "Specify the root directory of the mod that you want to work on!",
 	"project.selectProjectFolder": "Select your project folder",
 	"project.selectWindowTitle": "Choose Project",
+	"project.rememberProject": "Remember Project Location",
 
 	"editor.loadFileInfo": "Load a file using the File menu!",
 	"editor.loadError": "Could not load file from:\n ",
@@ -20,9 +22,21 @@
 	"fileLoader.changesCheck": "Checking for Changes...",
 	
 	"buttons.loadChanges": "Load Changes",
+	"buttons.browse": "Browse",
+	"buttons.next": "Next",
+	"buttons.cancel": "Cancel",
+	"buttons.create": "Create",
+	
+	"textArea.selectPath": "Select Folder",
+	"textArea.fileName": "File Name",
 	
 	"quitWindow.label": "Are you sure you would like to quit Railroad IDE?",
 	"quitWindow.yesBtn": "Yes",
 	"quitWindow.cancelBtn": "Cancel",
-	"quitWindow.title": "Quit Railroad IDE"
+	"quitWindow.title": "Quit Railroad IDE",
+	
+	"menuItem.json.typeTextField": "Json Type: ",
+	
+	"jsonGenerator.parent": "Parent"
+	
 }

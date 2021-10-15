@@ -1,5 +1,7 @@
 package io.github.railroad.project;
 
+import static io.github.railroad.project.lang.LangProvider.fromLang;
+
 import java.io.File;
 
 import com.sun.javafx.tk.Toolkit;
@@ -21,14 +23,31 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import static io.github.railroad.project.lang.LangProvider.fromLang;
-
 /**
  * @author TurtyWurty
  */
 public class Project {
+	
+	/**
+	 * How to use the config
+	 * 
+	 * before showing the folder selector add this
+	 * 
+	 * if (JsonConfigs.GENERAL_CONFIG.getConfig() != null && JsonConfigs.GENERAL_CONFIG.getConfig().getProjectSettings().projectPath != null) {
+			this.projectFolder = new File(JsonConfigs.GENERAL_CONFIG.getConfig().getProjectSettings().projectPath);
+		} else {
+			implement the selector here.
+			
+			in order to save the path to the config.. execute this code:
+			
+			JsonConfigs.GENERAL_CONFIG.writeConfig(new RailroadConfigJson(new ProjectSettingsEntry(this.projectFolder.getPath().toString()));
+			
+		}
+		
+		i know that it is weird atm, but i will start working on making this system better after i pr this code (it will take some time)
+	 */
 
-    private final Theme theme;
+	private final Theme theme;
 
     private File projectFolder;
 
@@ -110,17 +129,21 @@ public class Project {
         window.showAndWait();
     }
 
-    /**
-     * @return The Folder used for this {@link Project}.
-     */
-    public File getProjectFolder() {
-        return this.projectFolder;
-    }
+	/**
+	 * @return The Folder used for this {@link Project}.
+	 */
+	public File getProjectFolder() {
+		return this.projectFolder;
+	}
 
-    /**
-     * @return The {@link Theme} used for this {@link Project}.
-     */
-    public Theme getTheme() {
-        return this.theme;
-    }
+	/**
+	 * @return The {@link Theme} used for this {@link Project}.
+	 */
+	public Theme getTheme() {
+		return this.theme;
+	}
+
+	public String getProjectName() {
+		return getProjectFolder().getName();
+	}
 }
