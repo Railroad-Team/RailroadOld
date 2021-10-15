@@ -11,5 +11,4 @@ Testing
 *.classpath
 *.project
 .idea
-
 *.log
