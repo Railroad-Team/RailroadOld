@@ -28,8 +28,9 @@ public class JsonFileMenu extends MenuItem {
 		this.project = project;
 	}
 
-	private Stage stage = new Stage();
-	private ChoiceBox<String> cb = new ChoiceBox<String>();
+	private final Stage stage = new Stage();
+	@SuppressWarnings("rawtypes")
+	private ChoiceBox cb = new ChoiceBox<>();
 	private DirectoryChooser directoryChooser = new DirectoryChooser();
 	private File selectedDirectory;
 	private TextField pathArea = new TextField();
@@ -38,8 +39,9 @@ public class JsonFileMenu extends MenuItem {
 	private Label jsonType = new Label(" " + LangProvider.fromLang("menuItem.json.typeTextField"));
 	private Label pathLabel = new Label(" " + LangProvider.fromLang("textArea.selectPath") + ": ");
 
-	VBox vbox = new VBox();
+	private VBox vbox = new VBox();
 
+	@SuppressWarnings("unchecked")
 	private void executeClick(ActionEvent event) {
 		clearCache();
 
@@ -82,14 +84,12 @@ public class JsonFileMenu extends MenuItem {
 		stage.close();
 		if (cb.getSelectionModel().getSelectedIndex() == 0) {
 			new ItemModelTemplate(selectedDirectory, fileName.getText()).openWindow(project);
-			cb.getSelectionModel().clearSelection();
-			clearCache();
 			return;
 		}
 	}
 
 	private void clearCache() {
-		cb = new ChoiceBox<String>();
+		cb = new ChoiceBox<>();
 		vbox = new VBox();
 		pathArea.setText("");
 		fileName.setText("");

@@ -52,7 +52,7 @@ public class Railroad extends Application {
     }
 
     /**
-     * Sets up the Discord Rich Presense <br>
+     * Sets up the Discord Rich Presence <br>
      */
     private void setupDiscord(Project project) {
         this.discordHandlers = new DiscordEventHandlers.Builder()
@@ -70,9 +70,9 @@ public class Railroad extends Application {
     public static void resetDiscordPresence() {
     	if (project != null) {
     		DiscordRichPresence newPresence = new DiscordRichPresence.Builder("Working on " + project.getProjectName())
-                    .setDetails("Making an amazing mod!").setBigImage("logo", "Railroad IDE")
-                    .setSmallImage("logo", "An IDE built for modders, made by modders.").setParty("", 0, 0)
-                    .setStartTimestamps(System.currentTimeMillis()).build();
+                .setDetails("Making an amazing mod!").setBigImage("logo", "Railroad IDE")
+                .setSmallImage("logo", "An IDE built for modders, made by modders.").setParty("", 0, 0)
+                .setStartTimestamps(System.currentTimeMillis()).build();
     		DiscordRPC.discordUpdatePresence(newPresence);
     	}
     }

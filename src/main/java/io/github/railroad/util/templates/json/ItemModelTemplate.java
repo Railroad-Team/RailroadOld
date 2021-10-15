@@ -29,8 +29,9 @@ public class ItemModelTemplate extends JsonTemplate {
 	}
 
 	// Universal Items
-	private Stage stage = new Stage();
-	private ChoiceBox<String> cb = new ChoiceBox<String>();
+	private final Stage stage = new Stage();
+	@SuppressWarnings("rawtypes")
+	private ChoiceBox cb = new ChoiceBox<>();
 
 	private VBox vbox = new VBox(cb);
 
@@ -40,6 +41,7 @@ public class ItemModelTemplate extends JsonTemplate {
 	private TextField blockParentField = new TextField();
 	private VBox blockItemVBox = new VBox();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void openWindow(Project project) {
 		clearCache();
@@ -78,7 +80,7 @@ public class ItemModelTemplate extends JsonTemplate {
 	}
 
 	private void clearCache() {
-		cb = new ChoiceBox<String>();
+		cb = new ChoiceBox<>();
 		vbox = new VBox();
 	}
 
