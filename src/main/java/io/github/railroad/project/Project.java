@@ -79,14 +79,14 @@ public class Project {
         horizontal.setSpacing(20f);
         final var content0 = new VBox(horizontal);
         content0.setAlignment(Pos.CENTER);
-        final var toggle0 = new MFXStepperToggle("Home", icon0, content0);
+        final var toggle0 = new MFXStepperToggle(fromLang("project.home"), icon0, content0);
         directoryField.setOnInputMethodTextChanged(
                 event -> toggle0.getValidator().add(BindingUtils.toProperty(new BooleanBinding() {
                     @Override
                     protected boolean computeValue() {
                         return new File(directoryField.getText()).exists();
                     }
-                }), "You must supply a valid directory!"));
+                }), fromLang("project.validDirectory")));
 
         final var icon1 = new FontIcon("mdi2f-folder-cog");
         icon1.setIconSize(32);
@@ -96,7 +96,7 @@ public class Project {
         final var button2 = new MFXButton();
         final var content1 = new VBox(button0, button1, button2);
         content1.setAlignment(Pos.CENTER);
-        final var toggle1 = new MFXStepperToggle("Configure", icon1, content1);
+        final var toggle1 = new MFXStepperToggle(fromLang("project.configure"), icon1, content1);
 
         final var stepper = new MFXStepper(List.of(toggle0, toggle1));
         final var scene = new Scene(stepper);

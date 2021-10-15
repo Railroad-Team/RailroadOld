@@ -5,14 +5,14 @@
 	
 	"tabs.projectExplorer.name": "Project Explorer",
 	
-	"project.chooseFolder": "Choose your project folder",
-	"project.selectFolder": "Select Folder",
-	"project.cancelSelection": "Cancel",
 	"project.browseFolders": "Browse",
+	"project.chooseFolder": "Choose your project folder",
+	"project.configure": "Configure",
+	"project.home": "Home",
 	"project.rootDirectory": "Root Directory:",
-	"project.description": "Specify the root directory of the mod that you want to work on!",
 	"project.selectProjectFolder": "Select your project folder",
 	"project.selectWindowTitle": "Choose Project",
+	"project.validDirectory": "You must supply a valid directory!",
 
 	"editor.loadFileInfo": "Load a file using the File menu!",
 	"editor.loadError": "Could not load file from:\n ",
