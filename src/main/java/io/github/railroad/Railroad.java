@@ -1,5 +1,6 @@
 package io.github.railroad;
 
+import io.github.railroad.project.settings.theme.Themes;
 import io.github.railroad.utility.WindowTools;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -19,7 +20,7 @@ public class Railroad extends Application {
 
     @Override
     public void start(final Stage primaryStage) throws Exception {
-        this.setup = new Setup(true);
+        this.setup = new Setup(Themes.DARK_THEME, "ro_ro");
 
         setupDiscord();
 

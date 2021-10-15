@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import org.fxmisc.richtext.CodeArea;
 
 import io.github.railroad.objects.RailroadCodeArea;
+import io.github.railroad.project.lang.LangProvider;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.stage.FileChooser;
@@ -155,7 +156,7 @@ public class SimpleFileEditorController {
                 this.textArea.setFile(fileToLoad);
             } catch (InterruptedException | ExecutionException | IOException e) {
                 Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getLocalizedMessage(), e);
-                this.textArea.replaceText(0, this.textArea.getText().length(), "Could not load file from:\n "
+                this.textArea.replaceText(0, this.textArea.getText().length(), LangProvider.fromLang("editor.loadError")
                         + (fileToLoad == null ? "N/A" : fileToLoad.getAbsolutePath()));
                 this.textArea.setEditable(false);
                 this.textArea.setFile(null);
@@ -167,7 +168,7 @@ public class SimpleFileEditorController {
         // If unsuccessful, set text area with error message and status message to
         // failed
         loadFileTask.setOnFailed(workerStateEvent -> {
-            this.textArea.replaceText(0, this.textArea.getText().length(), "Could not load file from: "
+            this.textArea.replaceText(0, this.textArea.getText().length(), LangProvider.fromLang("editor.loadError")
                     + (fileToLoad == null ? "N/A" : fileToLoad.getAbsolutePath()));
             this.textArea.setEditable(false);
             this.textArea.setFile(null);

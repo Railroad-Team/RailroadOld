@@ -16,6 +16,7 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import io.github.railroad.editor.regex.JavaRegex;
 import io.github.railroad.editor.regex.JsonRegex;
 import io.github.railroad.objects.RailroadCodeArea;
+import io.github.railroad.project.lang.LangProvider;
 import javafx.concurrent.Task;
 
 /**
@@ -33,7 +34,7 @@ public class CodeEditor {
      */
     public RailroadCodeArea createCodeArea() {
         final var codeArea = new RailroadCodeArea();
-        codeArea.replaceText(0, codeArea.getText().length(), "Load a file using the File menu!");
+        codeArea.replaceText(0, codeArea.getText().length(), LangProvider.fromLang("editor.loadFileInfo"));
         codeArea.setEditable(false);
         codeArea.prefWidth(400);
         codeArea.prefHeight(600);
