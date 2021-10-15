@@ -45,48 +45,7 @@ public final class ImageUtility {
 	private static Icon getLargeIcon(final File file) {
 		if (file.getName().indexOf('.') > 0) {
 			String extension = file.getName().substring(file.getName().indexOf('.') + 1);
-			//String fileNameNoExtension = file.getName().substring(0, file.getName().indexOf('.'));
-
-			/**if (extension.equalsIgnoreCase("java")) {
-				FileReader reader = null;
-				try {
-					reader = new FileReader(file);
-				} catch (FileNotFoundException e1) {
-					e1.printStackTrace();
-				}
-				BufferedReader br = new BufferedReader(reader);
-				try {
-					String line = null;
-
-					while ((line = br.readLine()) != null) {
-						if (line.indexOf(fileNameNoExtension) > -1) {
-							if (stringContains(line, "class"))
-								return createImageIcon("/assets/icons/gradle.png", "");
-							else if (stringContains(line, "enum"))
-								return createImageIcon("/assets/icons/java/enum.svg", "");
-							else if (stringContains(line, "interface") && !stringContains(line, "@interface"))
-								return createImageIcon("/assets/icons/java/interface.svg", "");
-							else if (stringContains(line, "record"))
-								return createImageIcon("/assets/icons/java/record.svg", "");
-							else if (stringContains(line, "@interface"))
-								return createImageIcon("/assets/icons/java/annotation.svg", "");
-							else return FileSystemView.getFileSystemView().getSystemIcon(file);
-
-						}
-					}
-
-					br.close();
-					reader.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} finally {
-					try {
-						br.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			} else**/ 
+			
 				if (Railroad.class.getResource("/icons/" + extension + ".png") != null)
 				return createImageIcon("/icons/" + extension + ".png", "");
 			else
