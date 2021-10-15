@@ -14,6 +14,7 @@
 	"project.description": "Specify the root directory of the mod that you want to work on!",
 	"project.selectProjectFolder": "Select your project folder",
 	"project.selectWindowTitle": "Choose Project",
+
 	"project.rememberProject": "Remember Project Location",
 
 	"editor.loadFileInfo": "Load a file using the File menu!",

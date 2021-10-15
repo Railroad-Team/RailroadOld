@@ -54,5 +54,4 @@ public class Theme {
 	public Color getBackgroundColor() {
 		return backgroundColour;
 	}
-
 }

@@ -23,6 +23,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import static io.github.railroad.project.lang.LangProvider.fromLang;
+
 /**
  * @author TurtyWurty
  */
