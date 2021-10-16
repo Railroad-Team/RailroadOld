@@ -3,7 +3,7 @@ package io.github.railroad.utility;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class Gsons {
+public final class Gsons {
 	
 	private Gsons() {
 	}
