@@ -4,8 +4,8 @@ import java.io.File;
 
 import io.github.railroad.project.Project;
 import io.github.railroad.project.lang.LangProvider;
-import io.github.railroad.util.helper.ColorHelper;
-import io.github.railroad.util.templates.json.ItemModelTemplate;
+import io.github.railroad.utility.helper.ColorHelper;
+import io.github.railroad.utility.templates.json.ItemModelTemplate;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

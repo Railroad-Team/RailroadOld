@@ -1,4 +1,4 @@
-package io.github.railroad.util.helper;
+package io.github.railroad.utility.helper;
 
 import javafx.scene.paint.Color;
 

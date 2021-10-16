@@ -1,11 +1,11 @@
 package io.github.railroad.utility;
 
-import static io.github.railroad.util.helper.ColorHelper.awtColourToFx;
+import static io.github.railroad.utility.helper.ColorHelper.awtColourToFx;
 
 import io.github.railroad.Railroad;
 import io.github.railroad.project.lang.LangProvider;
 import io.github.railroad.project.settings.theme.Theme;
-import io.github.railroad.util.helper.ColorHelper;
+import io.github.railroad.utility.helper.ColorHelper;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;

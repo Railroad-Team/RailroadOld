@@ -1,13 +1,13 @@
 package io.github.railroad.config;
 
+import static io.github.railroad.utility.Gsons.WRITING_GSON;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
 import io.github.railroad.Railroad;
@@ -56,7 +56,6 @@ import io.github.railroad.Railroad;
  */
 public abstract class Config {
 
-	private static Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
 	protected String root = Railroad.RAILROAD_CONFIG_FOLDER;
 	protected String extension = ".json";
 
@@ -97,7 +96,7 @@ public abstract class Config {
 	 */
 	public Config readConfig() {
 		try {
-			return GSON.fromJson(new FileReader(this.getConfigFile()), this.getClass());
+			return WRITING_GSON.fromJson(new FileReader(this.getConfigFile()), this.getClass());
 		} catch (FileNotFoundException e) {
 			this.generateConfig();
 		}
@@ -121,7 +120,7 @@ public abstract class Config {
 		if (!this.getConfigFile().exists() && !this.getConfigFile().createNewFile())
 			return;
 		FileWriter writer = new FileWriter(this.getConfigFile());
-		GSON.toJson(this, writer);
+		WRITING_GSON.toJson(this, writer);
 		writer.flush();
 		writer.close();
 	}
