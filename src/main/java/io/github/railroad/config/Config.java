@@ -114,12 +114,12 @@ public abstract class Config {
 	 * @throws IOException
 	 */
 	public void writeConfig() throws IOException {
-		File dir = new File(this.root);
+		var dir = new File(this.root);
 		if (!dir.exists() && !dir.mkdirs())
 			return;
 		if (!this.getConfigFile().exists() && !this.getConfigFile().createNewFile())
 			return;
-		FileWriter writer = new FileWriter(this.getConfigFile());
+		var writer = new FileWriter(this.getConfigFile());
 		WRITING_GSON.toJson(this, writer);
 		writer.flush();
 		writer.close();
