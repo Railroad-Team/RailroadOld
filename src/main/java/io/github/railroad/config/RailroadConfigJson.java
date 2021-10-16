@@ -13,6 +13,14 @@ import com.google.gson.annotations.Expose;
 import io.github.railroad.Railroad;
 import io.github.railroad.config.entry.ProjectSettingsEntry;
 
+/**
+ * @deprecated <br>
+ * Will be moved and redone soon, as it was a temporary solution until
+ * {@link Config} was done.
+ * @author matyrobbrt
+ *
+ */
+@Deprecated(forRemoval=true)
 public class RailroadConfigJson {
 
 	private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting()
@@ -34,7 +42,7 @@ public class RailroadConfigJson {
 		File dir = new File(CONFIG_PATH);
 		if (!dir.exists() && !dir.mkdirs())
 			return;
-		try (FileWriter writer = new FileWriter(new File(CONFIG_PATH));) {
+		try (FileWriter writer = new FileWriter(new File(CONFIG_PATH))) {
 			GSON.toJson(config, writer);
 			writer.flush();
 			writer.close();
@@ -47,9 +55,8 @@ public class RailroadConfigJson {
 		File dir = new File(CONFIG_PATH);
 		if (!dir.exists() && !dir.mkdirs())
 			return null;
-		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(CONFIG_PATH)));) {
-			RailroadConfigJson finalData = GSON.fromJson(bufferedReader, RailroadConfigJson.class);
-			return finalData;
+		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(CONFIG_PATH)))) {
+			return GSON.fromJson(bufferedReader, RailroadConfigJson.class);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

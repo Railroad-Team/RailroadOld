@@ -1,4 +1,4 @@
-package io.github.railroad.util.helper;
+package io.github.railroad.utility.helper;
 
 import javafx.scene.paint.Color;
 
@@ -8,6 +8,10 @@ import javafx.scene.paint.Color;
  *
  */
 public class ColorHelper {
+	
+	private ColorHelper() {
+		throw new IllegalAccessError("Attempted to construct utility class!");
+	}
 
 	/**
 	 * Converts a {@link javafx.scene.paint.Color} to a {@link java.awt.Color}
@@ -17,6 +21,15 @@ public class ColorHelper {
 	public static java.awt.Color fxColourToAwt(Color fx) {
 		return new java.awt.Color((float) fx.getRed(), (float) fx.getGreen(), (float) fx.getBlue(),
 				(float) fx.getOpacity());
+	}
+	
+	/**
+	 * Converts a {@link java.awt.Color} to a {@link Color}
+	 * @param awt the awt colour
+	 * @return the fx colour
+	 */
+	public static Color awtColourToFx(java.awt.Color awt) {
+		return Color.rgb(awt.getRed(), awt.getGreen(), awt.getBlue(), awt.getAlpha() / 255.0);
 	}
 	
 	/**

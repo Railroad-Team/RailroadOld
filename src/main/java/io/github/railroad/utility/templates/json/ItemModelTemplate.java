@@ -1,4 +1,4 @@
-package io.github.railroad.util.templates.json;
+package io.github.railroad.utility.templates.json;
 
 import java.io.File;
 

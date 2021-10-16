@@ -1,6 +1,7 @@
 package io.github.railroad.project.settings.theme;
 
-import io.github.railroad.util.helper.ColorHelper;
+import static io.github.railroad.utility.helper.ColorHelper.fxColourToAwt;
+
 import javafx.scene.paint.Color;
 
 /**
@@ -11,8 +12,11 @@ import javafx.scene.paint.Color;
  */
 public class Themes {
 
-	public static final Theme DARK_THEME = new Theme("DarkMode").withButtonColor(ColorHelper.fxColourToAwt(javafx.scene.paint.Color.DARKGRAY))
-			.withBackgroundColor(ColorHelper.fxColourToAwt(Color.BISQUE));
+	public static final Theme DARK_THEME = new Theme("DarkMode").withButtonColor(fxColourToAwt(Color.DARKGRAY))
+			.withBackgroundColor(fxColourToAwt(Color.DIMGRAY))
+			.withTextColor(fxColourToAwt(Color.ALICEBLUE));
 
-	public static final Theme WHITE_THEME = new Theme("WhiteMode");
+	public static final Theme WHITE_THEME = new Theme("WhiteMode").withButtonColor(fxColourToAwt(Color.ANTIQUEWHITE))
+			.withBackgroundColor(fxColourToAwt(Color.FLORALWHITE))
+			.withTextColor(fxColourToAwt(Color.BLACK));
 }

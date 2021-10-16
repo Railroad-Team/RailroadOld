@@ -5,6 +5,7 @@ import io.github.railroad.project.settings.theme.Themes;
 import io.github.railroad.utility.WindowTools;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import net.arikia.dev.drpc.DiscordEventHandlers;
 import net.arikia.dev.drpc.DiscordRPC;
@@ -34,14 +35,17 @@ public class Railroad extends Application {
         scene.getStylesheets().add(Railroad.class.getResource("/default.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("Railroad IDE");
+        primaryStage.getIcons().add(new Image(Railroad.class.getResourceAsStream("/logo.png")));
         primaryStage.setWidth(this.setup.primaryScreenBounds.getWidth());
         primaryStage.setHeight(this.setup.primaryScreenBounds.getHeight());
         primaryStage.centerOnScreen();
         primaryStage.setOnCloseRequest(event -> {
             event.consume();
-            WindowTools.displayQuitWindow(primaryStage);
+            WindowTools.displayQuitWindow(primaryStage, project.getTheme());
         });
         primaryStage.show();
+        
+        scene.setOnKeyPressed(this.setup::handleKeyPress);
     }
 
     @Override
