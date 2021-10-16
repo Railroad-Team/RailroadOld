@@ -12,4 +12,6 @@ public final class Gsons {
 
 	public static final Gson READING_GSON = new GsonBuilder().disableHtmlEscaping().create();
 	
+	public static final Gson JSON_CREATING_GSON = new GsonBuilder().setPrettyPrinting().create();
+	
 }

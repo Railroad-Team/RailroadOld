@@ -14,7 +14,7 @@ import com.panemu.tiwulfx.control.dock.DetachableTabPane;
 import io.github.railroad.config.JsonConfigs;
 import io.github.railroad.editor.CodeEditor;
 import io.github.railroad.editor.SimpleFileEditorController;
-import io.github.railroad.menu.item.JsonFileMenu;
+import io.github.railroad.menu.json.JsonFileMenu;
 import io.github.railroad.objects.RailroadCodeArea;
 import io.github.railroad.objects.RailroadMenuBar;
 import io.github.railroad.objects.RailroadMenuBar.FileMenu;
@@ -294,9 +294,11 @@ public class Setup {
     private RailroadMenuBar createTopMenu() {
         final var openItem = new MenuItem(LangProvider.fromLang("menuBar.fileMenu.open"));
         final var saveItem = new MenuItem(LangProvider.fromLang("menuBar.fileMenu.save"));
-        final var jsonFileMenuItem = new JsonFileMenu(LangProvider.fromLang("menuBar.fileMenu.newJson"), this.project);
-        final var fileMenu = new FileMenu(openItem, saveItem, jsonFileMenuItem);
-        final var localMenuBar = new RailroadMenuBar(fileMenu);
+        final var fileMenu = new FileMenu(openItem, saveItem);
+        
+        final var jsonFileMenu = new JsonFileMenu(this.project);
+        
+        final var localMenuBar = new RailroadMenuBar(fileMenu, jsonFileMenu);
         this.mainPane.setTop(localMenuBar);
         return localMenuBar;
     }

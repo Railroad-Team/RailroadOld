@@ -1,34 +1,36 @@
-package io.github.railroad.menu.item;
+package io.github.railroad.menu.json.item;
 
 import java.io.File;
 
 import io.github.railroad.project.Project;
 import io.github.railroad.project.lang.LangProvider;
 import io.github.railroad.utility.helper.ColorHelper;
-import io.github.railroad.utility.templates.json.ItemModelTemplate;
+import io.github.railroad.utility.templates.json.model.item.ItemGeneratedModel;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 
-public class JsonFileMenu extends MenuItem {
+/**
+ * 
+ * @author matyrobbrt
+ *
+ */
+public class ItemModelMenuItem extends JsonFileMenuItem {
 
-	private final Project project;
-
-	public JsonFileMenu(String text, Project project) {
-		super(text);
-		this.setOnAction(this::executeClick);
+	public final Project project;
+	
+	public ItemModelMenuItem(Project project) {
+		super(LangProvider.fromLang("menuBar.json.itemModel"));
 		this.project = project;
+		this.setOnAction(this::executeClick);
 	}
-
-	private final Stage stage = new Stage();
+	
 	@SuppressWarnings("rawtypes")
 	private ChoiceBox cb = new ChoiceBox<>();
 	private DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -36,7 +38,7 @@ public class JsonFileMenu extends MenuItem {
 	private TextField pathArea = new TextField();
 	private TextField fileName = new TextField();
 	private Label fileNameLabel = new Label(" " + LangProvider.fromLang("textArea.fileName") + ": ");
-	private Label jsonType = new Label(" " + LangProvider.fromLang("menuItem.json.typeTextField"));
+	private Label modelType = new Label(" " + fromLang("modelTypeField"));
 	private Label pathLabel = new Label(" " + LangProvider.fromLang("textArea.selectPath") + ": ");
 
 	private VBox vbox = new VBox();
@@ -45,7 +47,7 @@ public class JsonFileMenu extends MenuItem {
 	private void executeClick(ActionEvent event) {
 		clearCache();
 
-		cb.getItems().add("Item Model");
+		cb.getItems().add("Item Generated");
 
 		var browse = new Button(LangProvider.fromLang("buttons.browse"));
 		browse.setOnAction(e -> {
@@ -65,7 +67,7 @@ public class JsonFileMenu extends MenuItem {
 		pathArea.autosize();
 		pathArea.deselect();
 
-		vbox.getChildren().add(new HBox(jsonType, cb));
+		vbox.getChildren().add(new HBox(modelType, cb));
 		vbox.getChildren().add(new HBox(fileNameLabel, fileName));
 		vbox.getChildren().add(new HBox(pathLabel, pathArea, browse));
 		vbox.getChildren().add(new HBox(next, cancel));
@@ -83,7 +85,7 @@ public class JsonFileMenu extends MenuItem {
 	private void nextButtonClick(ActionEvent event) {
 		stage.close();
 		if (cb.getSelectionModel().getSelectedIndex() == 0) {
-			new ItemModelTemplate(selectedDirectory, fileName.getText()).openWindow(project);
+			new ItemGeneratedModel(project, fileName.getText()).openWindow();
 			clearCache();
 		}
 	}
@@ -96,4 +98,5 @@ public class JsonFileMenu extends MenuItem {
 		directoryChooser.setInitialDirectory(this.project.getProjectFolder());
 	}
 
+	
 }
