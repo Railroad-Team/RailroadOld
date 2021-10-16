@@ -2,86 +2,102 @@ package io.github.railroad.utility.templates.json;
 
 import java.io.File;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
+import io.github.railroad.menu.json.item.JsonFileMenuItem;
 import io.github.railroad.project.Project;
 import io.github.railroad.project.lang.LangProvider;
+import io.github.railroad.utility.helper.ColorHelper;
+import io.github.railroad.utility.templates.json.model.item.ItemGeneratedModel;
+import javafx.event.ActionEvent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.stage.DirectoryChooser;
 
-public class ItemModelTemplate extends JsonTemplate {
+/**
+ * 
+ * @author matyrobbrt
+ *
+ */
+public class ItemModelTemplate extends JsonFileMenuItem {
 
-	@SuppressWarnings("unused")
-	private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-
-	public File directory;
-	public String fileName;
-
-	public ItemModelTemplate(File directory, String fileName) {
-		this.directory = directory;
-		this.fileName = fileName;
+	public final Project project;
+	
+	public ItemModelTemplate(Project project) {
+		super(LangProvider.fromLang("menuBar.json.itemModel"));
+		this.project = project;
+		this.setOnAction(this::executeClick);
 	}
-
-	// Universal Items
-	private final Stage stage = new Stage();
+	
 	@SuppressWarnings("rawtypes")
 	private ChoiceBox cb = new ChoiceBox<>();
+	private DirectoryChooser directoryChooser = new DirectoryChooser();
+	private File selectedDirectory;
+	private TextField pathArea = new TextField();
+	private TextField fileName = new TextField();
+	private Label fileNameLabel = new Label(" " + LangProvider.fromLang("textArea.fileName") + ": ");
+	private Label modelType = new Label(" " + fromLang("modelTypeField"));
+	private Label pathLabel = new Label(" " + LangProvider.fromLang("textArea.selectPath") + ": ");
 
-	private VBox vbox = new VBox(cb);
-
-	// Specific Items
-
-	// Block Parent
-	private TextField blockParentField = new TextField();
-	private VBox blockItemVBox = new VBox();
+	private VBox vbox = new VBox();
 
 	@SuppressWarnings("unchecked")
-	@Override
-	public void openWindow(Project project) {
+	private void executeClick(ActionEvent event) {
 		clearCache();
-		clearSelectionSpecificCache();
 
-		cb.getItems().add("Block Parent Model");
-		
-		cb.onActionProperty().addListener(listener -> updateWindow());
-		
-		vbox.getChildren().add(new HBox(new Label(LangProvider.fromLang("menuItem.json.typeTextField")), cb));
-		
-		var hbox = new HBox(cb);
+		cb.getItems().add("Item Generated");
 
-		var scene = new Scene(hbox, 100, 200);
+		var browse = new Button(LangProvider.fromLang("buttons.browse"));
+		browse.setOnAction(e -> {
+			selectedDirectory = directoryChooser.showDialog(stage);
+			pathArea.setText(selectedDirectory.getPath());
+		});
+		browse.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
+
+		var next = new Button(LangProvider.fromLang("buttons.next"));
+		next.setOnAction(this::nextButtonClick);
+		next.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
+		
+		var cancel = new Button(LangProvider.fromLang("buttons.cancel"));
+		cancel.setOnAction(e -> stage.close());
+		cancel.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
+
+		pathArea.autosize();
+		pathArea.deselect();
+
+		vbox.getChildren().add(new HBox(modelType, cb));
+		vbox.getChildren().add(new HBox(fileNameLabel, fileName));
+		vbox.getChildren().add(new HBox(pathLabel, pathArea, browse));
+		vbox.getChildren().add(new HBox(next, cancel));
+
+		final var scene = new Scene(vbox);
 		stage.setScene(scene);
 
 		stage.setWidth(450);
+		// stage.sizeToScene();
 		stage.centerOnScreen();
 		stage.requestFocus();
 		stage.showAndWait();
 	}
 
-	private void updateWindow() {
-		//clearSelectionSpecificCache();
-
-		if (cb.getSelectionModel().getSelectedIndex() == 1) {
-			blockItemVBox.getChildren().add(new HBox(new Label(" " + getLang("parent") + ": "), blockParentField));
-			vbox.getChildren().add(blockItemVBox);
+	private void nextButtonClick(ActionEvent event) {
+		stage.close();
+		if (cb.getSelectionModel().getSelectedIndex() == 0) {
+			new ItemGeneratedModel(project, fileName.getText()).openWindow();
+			clearCache();
 		}
-	}
-
-	private void clearSelectionSpecificCache() {
-		blockParentField.setText("");
-		blockItemVBox = new VBox();
-		vbox.getChildren().remove(blockItemVBox);
 	}
 
 	private void clearCache() {
 		cb = new ChoiceBox<>();
 		vbox = new VBox();
+		pathArea.setText("");
+		fileName.setText("");
+		directoryChooser.setInitialDirectory(this.project.getProjectFolder());
 	}
 
+	
 }

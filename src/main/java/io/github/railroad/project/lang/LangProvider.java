@@ -24,6 +24,10 @@ public class LangProvider {
 
 	private static JsonObject enUs;
 
+	/**
+	 * <strong>Only run at startup</strong>
+	 * @param langauge
+	 */
 	public static void cacheLang(String langauge) {
 		BufferedReader bufferedReaderSelected = null;
 		BufferedReader bufferedReaderEnUs = null;

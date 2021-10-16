@@ -4,6 +4,9 @@
 	"menuBar.fileMenu.save": "Save",
 	"menuBar.fileMenu.newJson": "New Json",
 	
+	"menuBar.json.name": "Json File",
+	"menuBar.json.itemModel": "Item Model",
+	
 	"tabs.projectExplorer.name": "Project Explorer",
 	
 	"project.chooseFolder": "Choose your project folder",
@@ -36,8 +39,8 @@
 	"quitWindow.cancelBtn": "Cancel",
 	"quitWindow.title": "Quit Railroad IDE",
 	
-	"menuItem.json.typeTextField": "Json Type: ",
-	
-	"jsonGenerator.parent": "Parent"
+	"jsonGenerator.parent": "Parent",
+	"jsonGenerator.modelTypeField": "Model Type: ",
+	"jsonGenerator.layer0": "Layer0 Texture: "
 	
 }
