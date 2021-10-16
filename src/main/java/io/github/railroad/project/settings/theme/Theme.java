@@ -13,6 +13,7 @@ public class Theme {
 	private String name;
 	private Color buttonColour;
 	private Color backgroundColour;
+	private Color textColour;
 
 	public Theme(String name) {
 		this.name = name;
@@ -53,5 +54,14 @@ public class Theme {
 
 	public Color getBackgroundColor() {
 		return backgroundColour;
+	}
+
+	public Theme withTextColor(Color textColour) {
+		this.textColour = textColour;
+		return this;
+	}
+	
+	public Color getTextColor() {
+		return textColour;
 	}
 }

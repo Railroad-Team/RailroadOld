@@ -31,7 +31,7 @@
 	"textArea.selectPath": "Select Folder",
 	"textArea.fileName": "File Name",
 	
-	"quitWindow.label": "Are you sure you would like to quit Railroad IDE?",
+	"quitWindow.confirm": "Are you sure you would like to quit Railroad IDE?",
 	"quitWindow.yesBtn": "Yes",
 	"quitWindow.cancelBtn": "Cancel",
 	"quitWindow.title": "Quit Railroad IDE",

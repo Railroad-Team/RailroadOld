@@ -11,6 +11,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import com.panemu.tiwulfx.control.dock.DetachableTab;
 import com.panemu.tiwulfx.control.dock.DetachableTabPane;
 
+import io.github.railroad.config.JsonConfigs;
 import io.github.railroad.editor.CodeEditor;
 import io.github.railroad.editor.SimpleFileEditorController;
 import io.github.railroad.menu.item.JsonFileMenu;
@@ -36,6 +37,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -76,6 +78,8 @@ public class Setup {
     	this.language = language;
         LangProvider.cacheLang(language);
         
+        JsonConfigs.register();
+        
         // Core
         this.primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         	
@@ -103,7 +107,12 @@ public class Setup {
         onMenuAction();
         onProjectExplorerAction();
     }
+    
+    //TODO: key bindings in here
+    public void handleKeyPress(KeyEvent e) {
 
+    }
+    
     private AnchorPane anchorMainSplit() {
         final var localAnchorPane = new AnchorPane(this.mainSplitPane);
         this.mainSplitPane.getProperties().put("RealParent", localAnchorPane);
