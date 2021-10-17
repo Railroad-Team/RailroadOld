@@ -10,11 +10,12 @@ import javafx.stage.Stage;
 
 /**
  * Class used for creating JsonTemplates for the json generator
+ * 
  * @author matyrobbrt
  *
  */
 public abstract class JsonTemplate {
-	
+
 	public final Project project;
 	public final String fileName;
 	public final String folderName;
@@ -26,16 +27,18 @@ public abstract class JsonTemplate {
 	}
 
 	public abstract void openWindow(Stage stage);
-	
+
+	protected final Stage stage = new Stage();
+
 	public void writeDirectory(File dir) {
 		if (!dir.exists())
 			dir.mkdirs();
 	}
-	
+
 	public String fromLang(String key) {
 		return LangProvider.fromLang("jsonGenerator." + key);
 	}
-	
+
 	protected void clearCache() {
 
 	}

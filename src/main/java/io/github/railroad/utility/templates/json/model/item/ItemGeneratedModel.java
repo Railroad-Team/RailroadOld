@@ -35,9 +35,9 @@ public class ItemGeneratedModel extends JsonTemplate {
 	@Override
 	public void openWindow(Stage stage) {
 		clearCache();
-		
+
 		layer0Label.setPadding(new Insets(3));
-		
+
 		layer0Texture.setOnInputMethodTextChanged(e -> System.out.println(e.getCommitted()));
 
 		final var createBtn = new Button(LangProvider.fromLang("buttons.create"));

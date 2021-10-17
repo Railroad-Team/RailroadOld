@@ -30,19 +30,19 @@ import javafx.stage.DirectoryChooser;
  *
  */
 public class ItemModelMenuItem extends JsonFileMenuItem {
-	
+
 	public final Image icon = new Image(Railroad.class.getResourceAsStream("/icons/menu/json/item_model.png"));
 	public final ImageView iconView = new ImageView(icon);
 
 	public final Project project;
-	
+
 	public ItemModelMenuItem(Project project) {
 		super(LangProvider.fromLang("menuBar.json.itemModel"));
 		this.project = project;
 		this.setOnAction(this::executeClick);
 		this.setGraphic(iconView);
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	private ChoiceBox cb = new ChoiceBox<>();
 	private DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -71,7 +71,7 @@ public class ItemModelMenuItem extends JsonFileMenuItem {
 		var next = new Button(LangProvider.fromLang("buttons.next"));
 		next.setOnAction(this::nextButtonClick);
 		next.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
-		
+
 		var cancel = new Button(LangProvider.fromLang("buttons.cancel"));
 		cancel.setOnAction(e -> stage.close());
 		cancel.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
@@ -82,20 +82,20 @@ public class ItemModelMenuItem extends JsonFileMenuItem {
 		fileNameLabel.setPadding(new Insets(3));
 		modelType.setPadding(new Insets(3));
 		pathLabel.setPadding(new Insets(3));
-		
+
 		JavaFXHelper.setNodeStyle(project.getTheme(), fileNameLabel, modelType, pathLabel, 
 				vbox, pathArea, fileName, cb);
-		
+
 		vbox.setSpacing(5);
 		vbox.setPadding(new Insets(5));
 		vbox.getChildren().add(new HBox(modelType, cb));
 		vbox.getChildren().add(new HBox(fileNameLabel, fileName));
 		vbox.getChildren().add(new HBox(3, pathLabel, pathArea, browse));
-		
+
 		var btnBox = new HBox(3, cancel, next);
 		btnBox.setAlignment(Pos.BOTTOM_RIGHT);
 		vbox.getChildren().add(btnBox);
-		
+
 		final var scene = new Scene(vbox);
 		stage.setScene(scene);
 
@@ -137,5 +137,5 @@ public class ItemModelMenuItem extends JsonFileMenuItem {
 		directoryChooser.setInitialDirectory(this.project.getProjectFolder());
 	}
 
-	
+
 }
