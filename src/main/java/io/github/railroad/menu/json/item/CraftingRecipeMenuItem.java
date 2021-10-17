@@ -24,10 +24,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 
+/**
+ * 
+ * @author matyrobbrt
+ *
+ */
 public class CraftingRecipeMenuItem extends JsonFileMenuItem {
 
-	public final Image icon = new Image(Railroad.class.getResourceAsStream("/icons/menu/json/crafting_recipe.png"), 16,
-			16, false, false);
+	public final Image icon = new Image(Railroad.class.getResourceAsStream("/icons/menu/json/crafting_recipe.png"));
 	public final ImageView iconView = new ImageView(icon);
 
 	public final Project project;

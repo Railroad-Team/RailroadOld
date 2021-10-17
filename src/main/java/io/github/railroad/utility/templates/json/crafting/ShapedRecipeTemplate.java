@@ -24,6 +24,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -76,20 +77,34 @@ public class ShapedRecipeTemplate extends JsonTemplate {
 
 	private void nextButtonClick(Stage stage) {
 		pattern = new Pattern(pattern1Field.getText(), pattern2Field.getText(), pattern3Field.getText());
-		currentKey = -1;
-		nextKey(stage);
+		if (Boolean.FALSE.equals(pattern.isValid().getKey())) {
+			var alert = new Alert(AlertType.ERROR);
+			alert.setContentText(pattern.isValid().getValue());
+			alert.show();
+		} else {
+			currentKey = -1;
+			nextKey(stage);
+		}
 	}
 
 	private void nextKey(Stage stage) {
 		currentKey++;
 		if (currentKey < pattern.getKeys().size()) {
-			var label = new Label("Ingredient for key " + pattern.getKeys().get(currentKey) + ":");
+			var label = new Label(LangProvider.fromLang("jsonGenerator.ingredientForKey").replace('%',
+					pattern.getKeys().get(currentKey)));
 			var ingredientTextField = new TextField();
-			var contBtn = new Button("Continue");
+			var contBtn = new Button(LangProvider.fromLang("buttons.continue"));
 
 			contBtn.setOnAction(ac -> {
+				if (ingredientTextField.getText() == "")
+					return;
 				ingredients.add(new KeyIngredient(pattern.getKeys().get(currentKey), ingredientTextField.getText()));
 				nextKey(stage);
+			});
+			
+			ingredientTextField.setOnKeyPressed(keyEvent -> {
+				if (keyEvent.getCode() == KeyCode.ENTER)
+					contBtn.fire();
 			});
 
 			var hbox = new HBox(4, label, ingredientTextField, contBtn);
@@ -100,43 +115,45 @@ public class ShapedRecipeTemplate extends JsonTemplate {
 			stage.setScene(new Scene(hbox));
 			stage.sizeToScene();
 		} else {
-			var resultItemLabel = new Label("Result Item: ");
-			var countLabel = new Label("Count: ");
-			var nbtLabel = new Label("NBT: ");
-			
+			var resultItemLabel = new Label(fromLang("result"));
+			var countLabel = new Label(fromLang("count"));
+			var nbtLabel = new Label("NBT:    ");
+
 			var resultItemField = new TextField();
 			var countField = new TextField();
 			var nbtField = new TextField();
 
-			var createBtn = new Button("Create");
+			var createBtn = new Button(LangProvider.fromLang("buttons.create"));
 			createBtn.setOnAction(ac -> {
+				if (resultItemField.getText() == "")
+					return;
 				
 				var obj = new JsonObject();
 				obj.addProperty("type", "minecraft:crafting_shaped");
-				
+
 				obj.add("pattern", pattern.toJsonArray());
-				
+
 				var keyObj = new JsonObject();
 				ingredients.forEach(ingr -> {
 					ingr.toJson(keyObj);
 				});
-				
+
 				obj.add("key", keyObj);
-				
+
 				var resultObj = new JsonObject();
 				resultObj.addProperty("item", resultItemField.getText());
 				if (countField.getText() != "")
 					resultObj.addProperty("count", countField.getText());
 				if (nbtField.getText() != "")
 					resultObj.addProperty("nbt", nbtField.getText());
-				
+
 				obj.add("result", resultObj);
-				
+
 				var file = new File(folderName, fileName + ".json");
 
 				if (file.exists()) {
 					var alert = new Alert(AlertType.ERROR);
-					alert.setHeaderText("File already exists");
+					alert.setHeaderText(LangProvider.fromLang("alert.fileExists"));
 					alert.show();
 				}
 
@@ -148,15 +165,13 @@ public class ShapedRecipeTemplate extends JsonTemplate {
 				}
 			});
 
-			var vbox = new VBox(4, new HBox(2, resultItemLabel, resultItemField),
-					new HBox(2, countLabel, countField),
-					new HBox(2, nbtLabel, nbtField),
-					createBtn);
-			
+			var vbox = new VBox(4, new HBox(2, resultItemLabel, resultItemField), new HBox(2, countLabel, countField),
+					new HBox(2, nbtLabel, nbtField), createBtn);
+
 			vbox.setPadding(new Insets(5));
 
-			JavaFXHelper.setNodeStyle(project.getTheme(), createBtn, vbox, resultItemLabel, 
-					countLabel, resultItemField, countField, nbtField, nbtLabel);
+			JavaFXHelper.setNodeStyle(project.getTheme(), createBtn, vbox, resultItemLabel, countLabel, resultItemField,
+					countField, nbtField, nbtLabel);
 
 			stage.setScene(new Scene(vbox));
 			stage.sizeToScene();
