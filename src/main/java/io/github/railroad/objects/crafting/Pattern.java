@@ -6,6 +6,12 @@ import java.util.List;
 import com.google.gson.JsonArray;
 
 import io.github.railroad.project.lang.LangProvider;
+import io.github.railroad.project.settings.theme.Theme;
+import io.github.railroad.utility.helper.JavaFXHelper;
+import io.github.railroad.utility.helper.TextHelper;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 
 public class Pattern {
@@ -18,6 +24,24 @@ public class Pattern {
 		this.row1 = row1;
 		this.row2 = row2;
 		this.row3 = row3;
+	}
+	
+	public VBox renderPattern(Theme theme) {
+		var row1Label = new Label(TextHelper.insertSpaceAfterEachChar(row1));
+		var row2Label = new Label(TextHelper.insertSpaceAfterEachChar(row2));
+		var row3Label = new Label(TextHelper.insertSpaceAfterEachChar(row3));
+		var vbox = new VBox(3);
+		
+		if (row1 != "")
+			vbox.getChildren().add(row1Label);
+		if (row2 != "")
+			vbox.getChildren().add(row2Label);
+		if (row3 != "")
+			vbox.getChildren().add(row3Label);
+		
+		vbox.setPadding(new Insets(6));
+		JavaFXHelper.setNodeStyle(theme, row1Label, row2Label, row3Label, vbox);
+		return vbox;
 	}
 
 	public void deletePattern() {

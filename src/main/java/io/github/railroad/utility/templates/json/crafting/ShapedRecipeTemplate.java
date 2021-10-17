@@ -94,6 +94,8 @@ public class ShapedRecipeTemplate extends JsonTemplate {
 					pattern.getKeys().get(currentKey)));
 			var ingredientTextField = new TextField();
 			var contBtn = new Button(LangProvider.fromLang("buttons.continue"));
+			
+			label.setTranslateY(2);
 
 			contBtn.setOnAction(ac -> {
 				if (ingredientTextField.getText() == "")
@@ -108,11 +110,12 @@ public class ShapedRecipeTemplate extends JsonTemplate {
 			});
 
 			var hbox = new HBox(4, label, ingredientTextField, contBtn);
-			hbox.setPadding(new Insets(5));
+			var vbox = new VBox(3, pattern.renderPattern(project.getTheme()), hbox);
+			hbox.setPadding(new Insets(10));
 
-			JavaFXHelper.setNodeStyle(project.getTheme(), label, contBtn, ingredientTextField, hbox);
+			JavaFXHelper.setNodeStyle(project.getTheme(), label, contBtn, ingredientTextField, vbox);
 
-			stage.setScene(new Scene(hbox));
+			stage.setScene(new Scene(vbox));
 			stage.sizeToScene();
 		} else {
 			var resultItemLabel = new Label(fromLang("result"));
