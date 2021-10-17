@@ -17,15 +17,15 @@ public abstract class JsonTemplate {
 	
 	public final Project project;
 	public final String fileName;
+	public final String folderName;
 
-	protected JsonTemplate(@NotNull Project project, String fileName) {
+	protected JsonTemplate(@NotNull Project project, String folderName, String fileName) {
 		this.project = project;
 		this.fileName = fileName;
+		this.folderName = folderName;
 	}
 
-	protected final Stage stage = new Stage();
-
-	public abstract void openWindow();
+	public abstract void openWindow(Stage stage);
 	
 	public void writeDirectory(File dir) {
 		if (!dir.exists())

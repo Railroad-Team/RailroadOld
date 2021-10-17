@@ -11,7 +11,7 @@ import javafx.stage.Stage;
  */
 public abstract class JsonFileMenuItem extends MenuItem {
 	
-	protected final Stage stage = new Stage();
+	protected Stage stage = new Stage();
 
 	protected JsonFileMenuItem(String title) {
 		super(title);

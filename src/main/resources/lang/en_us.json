@@ -6,6 +6,7 @@
 	
 	"menuBar.json.name": "Json File",
 	"menuBar.json.itemModel": "Item Model",
+	"menuBar.json.craftingRecipe": "Crafting Recipe",
 	
 	"tabs.projectExplorer.name": "Project Explorer",
 	
@@ -41,6 +42,12 @@
 	
 	"jsonGenerator.parent": "Parent",
 	"jsonGenerator.modelTypeField": "Model Type: ",
-	"jsonGenerator.layer0": "Layer0 Texture: "
+	"jsonGenerator.layer0": "Layer0 Texture: ",
+	
+	
+	"jsonGenerator.recipeTypeField": "Recipe Type: ",
+	
+	"alert.typeNotSelected": "Type Not Selected",
+	"alert.noFileName": "File Name Not Provided"
 	
 }
