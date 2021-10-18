@@ -3,10 +3,25 @@ package io.github.railroad.project;
 import static io.github.railroad.project.lang.LangProvider.fromLang;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.materialdesign2.MaterialDesignF;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.sun.javafx.tk.Toolkit;
 
@@ -18,22 +33,37 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.enums.StepperToggleState;
 import io.github.palexdev.materialfx.utils.BindingUtils;
 import io.github.railroad.Railroad;
+import io.github.railroad.project.lang.LangProvider;
 import io.github.railroad.project.settings.theme.Theme;
 import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  * @author TurtyWurty
  */
 public class Project {
 
+    public static final DocumentBuilderFactory XML_PARSER = DocumentBuilderFactory.newInstance();
+    static {
+        try {
+            XML_PARSER.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            XML_PARSER.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            XML_PARSER.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        } catch (final ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
     private final Theme theme;
 
     private File projectFolder;
@@ -49,50 +79,76 @@ public class Project {
         createWindow();
     }
 
+    private static boolean canCreate(Path folder) {
+        return true;
+    }
+
+    private static boolean canImport(Path folder) {
+        return true;
+    }
+
+    private static Pair<Boolean, ProjectInfo> canOpen(Path folder) {
+        final var defaultRet = Pair.of(false, (ProjectInfo) null);
+        final Collection<File> railroadFiles = FileUtils.listFiles(folder.toFile(),
+                new String[] { ".railroad" }, true);
+        if (railroadFiles.isEmpty())
+            return defaultRet;
+
+        final List<File> results = railroadFiles
+                .stream().filter(file -> file.getName()
+                        .equalsIgnoreCase("project.railroad"))
+                .sorted((file0, file1) -> file0.getAbsolutePath().replace('\\', '/').split("/").length < file1
+                        .getAbsolutePath().replace('\\', '/').split("/").length ? 1 : 0)
+                .toList();
+
+        if (results.isEmpty())
+            return defaultRet;
+
+        final File projectFile = results.get(0);
+        final var content = new StringBuilder();
+        try {
+            FileUtils.readLines(projectFile, StandardCharsets.UTF_8).forEach(content::append);
+        } catch (final IOException e) {
+            return defaultRet;
+        }
+
+        if (content.toString().isBlank())
+            return defaultRet;
+
+        final ProjectInfo.Builder projectInfoBuilder = null;
+        boolean valid = true;
+        try {
+            while (valid) {
+                final var documentBuilder = XML_PARSER.newDocumentBuilder();
+                final Document document = documentBuilder.parse(projectFile);
+                document.getDocumentElement().normalize();
+                if (!document.getDocumentElement().getNodeName().equalsIgnoreCase("modinfo")) {
+                    valid = false;
+                    break;
+                }
+
+                // projectInfoBuilder = ProjectInfo.Builder.create(modType, projectName);
+                final NodeList nodes = document.getDocumentElement().getChildNodes();
+                for (int nodeIndex = 0; nodeIndex < nodes.getLength(); nodeIndex++) {
+                    final Node node = nodes.item(nodeIndex);
+                    if (node.getNodeType() == Node.ELEMENT_NODE) {
+
+                    }
+                }
+            }
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            valid = false;
+        }
+
+        return Pair.of(valid, projectInfoBuilder.build());
+    }
+
     public Stage createWindow() {
         final var window = new Stage();
 
-        /*
-         * final var icon0 = new FontIcon("mdi2f-folder-home"); icon0.setIconSize(32);
-         * icon0.setIconColor(Color.web("#1fb0b5"));
-         *
-         * final var dirChooser = new DirectoryChooser();
-         * dirChooser.setTitle(LangProvider.fromLang("project.chooseFolder"));
-         * dirChooser.setInitialDirectory( new
-         * File(System.getProperty("user.home").replace('\\', '/') + "/Documents"));
-         *
-         * final var directoryField = new MFXTextField(
-         * System.getProperty("user.home").replace('\\', '/') + "/Documents");
-         * directoryField.autosize(); directoryField.deselect(); new Timeline(new
-         * KeyFrame(Duration.millis(10), event -> directoryField.deselect())).play();
-         *
-         * final var browseButton = new MFXButton(fromLang("project.browseFolders"));
-         * browseButton.setTextFill(Color.BLACK); browseButton.setOnAction(event -> {
-         * final File chosenDir = dirChooser.showDialog(null); if (chosenDir != null) {
-         * directoryField.setText(chosenDir.getPath().replace('\\', '/')); } });
-         *
-         * final var horizontal = new HBox(directoryField, browseButton);
-         * horizontal.setAlignment(Pos.CENTER); horizontal.setSpacing(20f); final var
-         * content0 = new VBox(horizontal); content0.setAlignment(Pos.CENTER); final var
-         * toggle0 = new MFXStepperToggle(fromLang("project.home"), icon0, content0);
-         * directoryField.setOnInputMethodTextChanged( event ->
-         * toggle0.getValidator().add(BindingUtils.toProperty(new BooleanBinding() {
-         *
-         * @Override protected boolean computeValue() { return new
-         * File(directoryField.getText()).exists(); } }),
-         * fromLang("project.validDirectory")));
-         *
-         * final var icon1 = new FontIcon("mdi2f-folder-cog"); icon1.setIconSize(32);
-         * icon1.setIconColor(Color.web("#1fb0b5")); final var button0 = new
-         * MFXButton(); final var button1 = new MFXButton(); final var button2 = new
-         * MFXButton(); final var content1 = new VBox(button0, button1, button2);
-         * content1.setAlignment(Pos.CENTER); final var toggle1 = new
-         * MFXStepperToggle(fromLang("project.configure"), icon1, content1);
-         *
-         * final var stepper = new MFXStepper(List.of(toggle0, toggle1));
-         */
-
-        final var scene = new Scene(createStepper());
+        final var stepper = createStepper(window);
+        final var pane = new BorderPane(stepper);
+        final var scene = new Scene(pane);
         scene.getStylesheets().add(Railroad.class.getResource("/default.css").toExternalForm());
         window.setScene(scene);
         window.setOnCloseRequest(event -> {
@@ -100,11 +156,16 @@ public class Project {
             System.exit(0);
             window.close();
         });
-        window.setResizable(false);
+
+        window.getIcons().add(new Image(Railroad.class.getResource("/thumbnail.png").toString(), 256, 256,
+                true, true, true));
+        window.setMinWidth(800);
+        window.setMinHeight(600);
+        window.setWidth(800);
+        window.setHeight(600);
         window.setScene(scene);
         window.setTitle(fromLang("project.selectWindowTitle"));
         window.requestFocus();
-        window.setAlwaysOnTop(true);
         window.showAndWait();
         return window;
     }
@@ -123,7 +184,7 @@ public class Project {
         return this.theme;
     }
 
-    private MFXStepper createStepper() {
+    private MFXStepper createStepper(Window window) {
         final var openCreateIcon = new FontIcon(MaterialDesignF.FOLDER_OPEN);
         openCreateIcon.setIconSize(32);
         openCreateIcon.setIconColor(Color.web("#64b5f6"));
@@ -132,44 +193,80 @@ public class Project {
         final var openCreateToggleGroup = new ToggleGroup();
         final var openRadioBtn = new MFXRadioButton(fromLang("project.openButton"));
         openRadioBtn.setToggleGroup(openCreateToggleGroup);
+        final var importRadioBtn = new MFXRadioButton(fromLang("project.importButton"));
+        importRadioBtn.setToggleGroup(openCreateToggleGroup);
         final var createRadioBtn = new MFXRadioButton(fromLang("project.createButton"));
         createRadioBtn.setToggleGroup(openCreateToggleGroup);
-        final var buttonHBox = new HBox(openRadioBtn, createRadioBtn);
+        final var buttonHBox = new HBox(10f, openRadioBtn, importRadioBtn, createRadioBtn);
         buttonHBox.setAlignment(Pos.CENTER);
-        buttonHBox.setSpacing(10f);
 
-        final var openCreateVBox = new VBox(openCreateLabel, buttonHBox);
+        final var openCreateVBox = new VBox(20f, openCreateLabel, buttonHBox);
         openCreateVBox.setAlignment(Pos.CENTER);
-        openCreateVBox.setSpacing(20f);
         final var openCreateToggle = new MFXStepperToggle(fromLang("project.openCreateSection"),
                 openCreateIcon, openCreateVBox);
         openCreateToggle.getValidator()
-                .add(BindingUtils
-                        .toProperty(openRadioBtn.selectedProperty().or(createRadioBtn.selectedProperty())),
+                .add(BindingUtils.toProperty(openRadioBtn.selectedProperty()
+                        .or(createRadioBtn.selectedProperty()).or(importRadioBtn.selectedProperty())),
                         fromLang("project.openCreateError"));
 
         final var configurationIcon = new FontIcon(MaterialDesignF.FOLDER_COG);
-        openCreateIcon.setIconSize(32);
-        openCreateIcon.setIconColor(Color.web("#64b5f6"));
+        configurationIcon.setIconSize(32);
+        configurationIcon.setIconColor(Color.web("#ffca28"));
 
-        final var configurationVBox = new VBox();
+        final var configurationVBox = new VBox(10f);
         configurationVBox.setAlignment(Pos.CENTER);
-        configurationVBox.setSpacing(10f);
 
         // Open
         final var openLabel = new Label(fromLang("project.openLabel"));
         final var openFolderText = new MFXTextField(
                 System.getProperty("user.home").replace('\\', '/') + "/Documents");
+        openFolderText.getProperties().put("CurrentText", openFolderText.textProperty().getValueSafe());
+        openFolderText.setPrefWidth(200f);
+        openFolderText.textProperty().addListener(listener -> {
+            final String text = openFolderText.textProperty().getValueSafe();
+            if (!text.equalsIgnoreCase((String) openFolderText.getProperties().get("CurrentText"))) {
+                openFolderText.getProperties().put("CurrentText",
+                        openFolderText.textProperty().getValueSafe());
+                openFolderText.setText(text.replace('\\', '/'));
+            }
+        });
+
+        openFolderText.getValidator().add(BindingUtils.toProperty(new BooleanBinding() {
+            @Override
+            protected boolean computeValue() {
+                final String text = openFolderText.textProperty().getValueSafe();
+                return Files.exists(Path.of(text));
+            }
+        }), fromLang("project.validDirectory"));
+
+        final var dirChooser = new DirectoryChooser();
+        dirChooser.setTitle(LangProvider.fromLang("project.chooseFolder"));
+        dirChooser.setInitialDirectory(
+                new File(System.getProperty("user.home").replace('\\', '/') + "/Documents"));
+
         final var openFolderButton = new MFXButton(fromLang("project.openFolderButton"));
-        final var openHBox = new HBox(openFolderText, openFolderButton);
+        openFolderButton.setTextFill(Color.BLACK);
+        openFolderButton.setOnAction(event -> {
+            event.consume();
+            final File file = dirChooser.showDialog(window);
+            openFolderText.setText(file.getPath().replace('\\', '/'));
+        });
+
+        final var openHBox = new HBox(20f, openFolderText, openFolderButton);
         openHBox.setAlignment(Pos.CENTER);
-        openHBox.setSpacing(20f);
+
+        final var canOpen = BindingUtils.toProperty(new BooleanBinding() {
+            @Override
+            protected boolean computeValue() {
+                return canOpen(Path.of(openFolderText.textProperty().getValueSafe())).getLeft();
+            }
+        });
 
         // Create
 
         final var configurationToggle = new MFXStepperToggle(fromLang("project.configurationSection"),
                 configurationIcon, configurationVBox);
-        configurationToggle.stateProperty().addListener(state -> {
+        configurationToggle.stateProperty().addListener(listener -> {
             if (configurationToggle.getState() == StepperToggleState.SELECTED) {
                 if (openRadioBtn.isSelected()) {
                     configurationVBox.getChildren().clear();
@@ -181,13 +278,16 @@ public class Project {
             }
         });
 
-        openFolderText.setOnInputMethodTextChanged(
-                event -> configurationToggle.getValidator().add(BindingUtils.toProperty(new BooleanBinding() {
-                    @Override
-                    protected boolean computeValue() {
-                        return new File(openFolderText.getText()).exists();
-                    }
-                }), fromLang("project.validDirectory")));
+        configurationToggle.getValidator().addDependencies(openFolderText.getValidator());
+        configurationToggle.getValidator().add(canOpen, fromLang("project.cannotOpenFolder"));
+        configurationToggle.stateProperty().addListener(listener -> {
+            if (!configurationToggle.isValid() && configurationToggle.isShowErrorIcon()
+                    && configurationToggle.getState() == StepperToggleState.ERROR
+                    && openRadioBtn.isSelected()) {
+                final var cannotOpenDialog = new ProjectCannotOpenDialog(this, window);
+                cannotOpenDialog.show();
+            }
+        });
 
         final var toggles = List.of(openCreateToggle, configurationToggle);
         return new MFXStepper(toggles);

@@ -20,7 +20,7 @@ public class Railroad extends Application {
 
     @Override
     public void start(final Stage primaryStage) throws Exception {
-        this.setup = new Setup(Themes.DARK_THEME, "ro_ro");
+        this.setup = new Setup(Themes.DARK_THEME, "en_us");
 
         setupDiscord();
 
