@@ -1,11 +1,7 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.9'
-    id 'groovy'
 }
-
-apply plugin: 'java'
-test.includes = ['org/gradle/api/**', 'org/gradle/internal/**']
 
 repositories {
     mavenCentral()
@@ -22,73 +18,9 @@ dependencies {
     implementation(group: 'com.panemu', name: 'tiwulfx-dock', version: 'latest.release')
     implementation(group: 'org.apache.commons', name: 'commons-lang3', version: 'latest.release')
     implementation(group: 'io.github.palexdev', name: 'materialfx', version: 'latest.release')
-    implementation(group: 'org.kordamp.ikonli', name: 'ikonli-javafx', version: 'latest.release')
-    implementation addIcons()
 
     testImplementation(platform('org.junit:junit-bom:5.7.1'))
     testImplementation(group: 'org.junit.jupiter',name: 'junit-jupiter')
-}
-
-def addIcons() {
-	def iconLibraries = [ 
-		'antdesignicons', 
-		'bootstrapicons', 
-		'boxicons', 
-		'bpmn', 
-		'captainicon', 
-		'carbonicons', 
-		'codicons', 
-		'coreui', 
-		'dashicons', 
-		'devicons', 
-		'elusive', 
-		'entypo', 
-		'evaicons', 
-		'feather', 
-		'fileicons', 
-		'fluentui', 
-		'fontawesome5', 
-		'fontelico', 
-		'foundation', 
-		'hawcons', 
-		'icomoon', 
-		'ionicons4', 
-		'jamicons', 
-		'ligaturesymbols', 
-		'lineawesome', 
-		'linecons', 
-		'maki2', 
-		'material2', 
-		'materialdesign2', 
-		'medicons', 
-		'metrizeicons', 
-		'microns', 
-		'ociicons', 
-		'octicons', 
-		'openiconic', 
-		'paymentfont', 
-		'prestashopicons', 
-		'remixicon', 
-		'runestroicons', 
-		'simpleicons', 
-		'simplelineicons', 
-		'subway', 
-		'themify', 
-		'typicons', 
-		'unicons', 
-		'weathericons', 
-		'websymbols', 
-		'whhg', 
-		'win10', 
-		'zondicons'
-	]
-	
-	def retList = new ArrayList<String>()
-	for(library : iconLibraries) {
-		retList.add("org.kordamp.ikonli:ikonli-${library}-pack:latest.release")
-	}
-	
-	return retList
 }
 
 javafx {
@@ -112,4 +44,3 @@ jar {
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
