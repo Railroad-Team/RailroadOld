@@ -9,14 +9,30 @@
 	
 	"tabs.projectExplorer.name": "Project Explorer",
 	
-	"project.chooseFolder": "Choose your project folder",
-	"project.selectFolder": "Select Folder",
-	"project.cancelSelection": "Cancel",
 	"project.browseFolders": "Browse",
+	"project.cannotOpenDialog.button.return": "Return to Action Selection",
+	"project.cannotOpenDialog.button.import": "Import Project",
+	"project.cannotOpenDialog.button.create": "Create Project",
+	
+	"project.cannotOpenDialog.description.text0": "It appears that there was an error opening this project. This could be because it is corrupt, missing required files or does not exist. Instead, you can",
+	"project.cannotOpenDialog.description.hyperlink0": "Create a new project.",
+	"project.cannotOpenDialog.description.hyperlink1": "Import an existing project.",
+	"project.cannotOpenDialog.description.hyperlink2": "Select a different folder.",
+	
+	"project.cannotOpenDialog.title": "Cannot open project!",
+	"project.cannotOpenFolder": "This directory does not exist.",
+	"project.chooseFolder": "Choose your project folder",
+	"project.configurationSection": "Configuration",
+	"project.createButton": "Create",
+	"project.openButton": "Open",
+	"project.openCreateLabel": "Would you like to open a project or create a new project?",
+	"project.openCreateSection": "Action",
+	"project.openFolderButton": "Browse...",
+	"project.openLabel": "Please select your project folder.",
 	"project.rootDirectory": "Root Directory:",
-	"project.description": "Specify the root directory of the mod that you want to work on!",
 	"project.selectProjectFolder": "Select your project folder",
 	"project.selectWindowTitle": "Choose Project",
+	"project.validDirectory": "You must supply a valid directory!",
 
 	"project.rememberProject": "Remember Project Location",
 
