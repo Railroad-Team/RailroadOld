@@ -368,7 +368,7 @@ public class Setup {
                 final List<TreeItem<String>> items = this.projectExplorer.getSelectionModel()
                         .getSelectedItems();
                 for (final var item : items) {
-                    if(item instanceof FileItem) {
+                    if (item instanceof FileItem) {
                         createCodeArea(this.editorTabPane, this.baseCodeArea,
                                 ((PathItem) item).getPath().toFile());
                     }
