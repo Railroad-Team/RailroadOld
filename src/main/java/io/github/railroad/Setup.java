@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import io.github.railroad.projectexplorer.ui.FileItem;
 import org.apache.commons.lang3.tuple.Triple;
 
 import com.panemu.tiwulfx.control.dock.DetachableTab;
@@ -367,8 +368,10 @@ public class Setup {
                 final List<TreeItem<String>> items = this.projectExplorer.getSelectionModel()
                         .getSelectedItems();
                 for (final var item : items) {
-                    createCodeArea(this.editorTabPane, this.baseCodeArea,
-                            ((PathItem) item).getPath().toFile());
+                    if (item instanceof FileItem) {
+                        createCodeArea(this.editorTabPane, this.baseCodeArea,
+                                ((PathItem) item).getPath().toFile());
+                    }
                 }
             }
         });
