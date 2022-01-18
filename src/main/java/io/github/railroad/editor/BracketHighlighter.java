@@ -12,12 +12,10 @@ import javafx.application.Platform;
  * @author TurtyWurty
  */
 public class BracketHighlighter {
-
     private static final List<String> CLEAR_STYLE = Collections.emptyList();
-
     private static final List<String> MATCH_STYLE = Collections.singletonList("match");
-
     private static final String BRACKET_PAIRS = "(){}[]<>";
+
     private final RailroadCodeArea codeArea;
     private final List<BracketPair> bracketPairs;
 

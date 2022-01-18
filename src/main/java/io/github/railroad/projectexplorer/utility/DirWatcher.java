@@ -97,13 +97,11 @@ public class DirWatcher {
         executeIOOperation(() -> Files.readAllBytes(file), onSuccess, onError);
     }
 
-    public void loadTextFile(Path file, Charset charset, Consumer<String> onSuccess,
-            Consumer<Throwable> onError) {
+    public void loadTextFile(Path file, Charset charset, Consumer<String> onSuccess, Consumer<Throwable> onError) {
         executeIOOperation(() -> readTextFile(file, charset), onSuccess, onError);
     }
 
-    public void saveBinaryFile(Path file, byte[] content, Consumer<FileTime> onSuccess,
-            Consumer<Throwable> onError) {
+    public void saveBinaryFile(Path file, byte[] content, Consumer<FileTime> onSuccess, Consumer<Throwable> onError) {
         executeIOOperation(() -> writeBinaryFile(file, content), onSuccess, onError);
     }
 
@@ -157,8 +155,7 @@ public class DirWatcher {
         executeOnEventThread(() -> this.signalledKeys.push(key));
     }
 
-    private <T> void executeIOOperation(Callable<T> action, Consumer<T> onSuccess,
-            Consumer<Throwable> onError) {
+    private <T> void executeIOOperation(Callable<T> action, Consumer<T> onSuccess, Consumer<Throwable> onError) {
         executeOnIOThread(() -> {
             try {
                 final T res = action.call();

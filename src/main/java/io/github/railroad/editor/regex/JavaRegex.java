@@ -6,12 +6,12 @@ import java.util.regex.Pattern;
  * @author TurtyWurty
  */
 public final class JavaRegex {
-    private static final String[] KEYWORDS = { "abstract", "assert", "boolean", "break", "byte", "case",
-            "catch", "char", "class", "const", "continue", "default", "do", "double", "else", "enum",
-            "extends", "final", "finally", "float", "for", "goto", "if", "implements", "import", "instanceof",
-            "int", "interface", "long", "native", "new", "package", "private", "protected", "public",
-            "return", "short", "static", "strictfp", "super", "switch", "synchronized", "this", "throw",
-            "throws", "transient", "try", "void", "volatile", "while", "record", "sealed" };
+    private static final String[] KEYWORDS = { "abstract", "assert", "boolean", "break", "byte", "case", "catch",
+            "char", "class", "const", "continue", "default", "do", "double", "else", "enum", "extends", "final",
+            "finally", "float", "for", "goto", "if", "implements", "import", "instanceof", "int", "interface", "long",
+            "native", "new", "package", "private", "protected", "public", "return", "short", "static", "strictfp",
+            "super", "switch", "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile",
+            "while", "record", "sealed" };
 
     private static final String[] LITERALS = { "null", "true", "false" };
 
@@ -33,13 +33,12 @@ public final class JavaRegex {
     private static final String NUMBER_PATTERN = "\\b\\d*[fdlFDL]?\\.?\\d+[fdlFDL]?\\b";
 
     public static final Pattern PATTERN = Pattern.compile("(?<KEYWORD>" + KEYWORD_PATTERN + ")" + "|(?<VAR>"
-            + VAR_PATTERN + ")" + "|(?<LITERAL>" + LITERAL_PATTERN + ")" + "|(?<CONSTVAR>"
-            + CONST_VARIABLE_PATTERN + ")" + "|(?<VARIABLE>" + VARIABLE_PATTERN + ")" + "|(?<PAREN>"
-            + PAREN_PATTERN + ")" + "|(?<BRACE>" + BRACE_PATTERN + ")" + "|(?<BRACKET>" + BRACKET_PATTERN
-            + ")" + "|(?<DIAMOND>" + DIAMOND_PATTERN + ")" + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")"
-            + "|(?<STRING>" + STRING_PATTERN + ")" + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
-            + "|(?<ANNOTATION>" + ANNOTATION_PATTERN + ")" + "|(?<METHOD>" + METHOD_PATTERN + ")"
-            + "|(?<GENERICCONSTR>" + GENERIC_CONSTR_PATTERN + ")" + "|(?<NUMBER>" + NUMBER_PATTERN + ")");
+            + VAR_PATTERN + ")" + "|(?<LITERAL>" + LITERAL_PATTERN + ")" + "|(?<CONSTVAR>" + CONST_VARIABLE_PATTERN
+            + ")" + "|(?<VARIABLE>" + VARIABLE_PATTERN + ")" + "|(?<PAREN>" + PAREN_PATTERN + ")" + "|(?<BRACE>"
+            + BRACE_PATTERN + ")" + "|(?<BRACKET>" + BRACKET_PATTERN + ")" + "|(?<DIAMOND>" + DIAMOND_PATTERN + ")"
+            + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")" + "|(?<STRING>" + STRING_PATTERN + ")" + "|(?<COMMENT>"
+            + COMMENT_PATTERN + ")" + "|(?<ANNOTATION>" + ANNOTATION_PATTERN + ")" + "|(?<METHOD>" + METHOD_PATTERN
+            + ")" + "|(?<GENERICCONSTR>" + GENERIC_CONSTR_PATTERN + ")" + "|(?<NUMBER>" + NUMBER_PATTERN + ")");
 
     private JavaRegex() {
     }

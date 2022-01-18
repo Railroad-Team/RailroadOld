@@ -1,11 +1,13 @@
 package io.github.railroad.config;
 
-public class JsonConfigs {	
-	
-	@SuppressWarnings("removal")
-	public static RailroadConfigJson generalConfig = new RailroadConfigJson(null);
-	
-	public static void register() {
-		
-	}
+public final class JsonConfigs {
+    @SuppressWarnings("removal")
+    public static final RailroadConfigJson generalConfig = new RailroadConfigJson(null);
+    
+    private JsonConfigs() {
+    }
+    
+    public static void register() {
+        
+    }
 }

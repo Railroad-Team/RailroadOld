@@ -19,18 +19,6 @@ public class Update {
         this.type = type;
     }
 
-    public static Update creation(Path baseDir, Path relPath, Path initiator) {
-        return new Update(baseDir, relPath, initiator, UpdateType.CREATION);
-    }
-
-    public static Update deletion(Path baseDir, Path relPath, Path initiator) {
-        return new Update(baseDir, relPath, initiator, UpdateType.DELETION);
-    }
-
-    public static Update modification(Path baseDir, Path relPath, Path initiator) {
-        return new Update(baseDir, relPath, initiator, UpdateType.MODIFICATION);
-    }
-
     public Path getBaseDir() {
         return this.baseDir;
     }
@@ -49,5 +37,17 @@ public class Update {
 
     public UpdateType getType() {
         return this.type;
+    }
+
+    public static Update creation(Path baseDir, Path relPath, Path initiator) {
+        return new Update(baseDir, relPath, initiator, UpdateType.CREATION);
+    }
+
+    public static Update deletion(Path baseDir, Path relPath, Path initiator) {
+        return new Update(baseDir, relPath, initiator, UpdateType.DELETION);
+    }
+
+    public static Update modification(Path baseDir, Path relPath, Path initiator) {
+        return new Update(baseDir, relPath, initiator, UpdateType.MODIFICATION);
     }
 }

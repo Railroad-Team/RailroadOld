@@ -18,86 +18,82 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 
 /**
- * 
  * @author matyrobbrt
- *
  */
 public class ItemModelTemplate extends JsonFileMenuItem {
 
-	public final Project project;
-	
-	public ItemModelTemplate(Project project) {
-		super(LangProvider.fromLang("menuBar.json.itemModel"));
-		this.project = project;
-		this.setOnAction(this::executeClick);
-	}
-	
-	@SuppressWarnings("rawtypes")
-	private ChoiceBox cb = new ChoiceBox<>();
-	private DirectoryChooser directoryChooser = new DirectoryChooser();
-	private File selectedDirectory;
-	private TextField pathArea = new TextField();
-	private TextField fileName = new TextField();
-	private Label fileNameLabel = new Label(" " + LangProvider.fromLang("textArea.fileName") + ": ");
-	private Label modelType = new Label(" " + fromLang("modelTypeField"));
-	private Label pathLabel = new Label(" " + LangProvider.fromLang("textArea.selectPath") + ": ");
+    public final Project project;
 
-	private VBox vbox = new VBox();
+    private ChoiceBox cb = new ChoiceBox<>();
 
-	@SuppressWarnings("unchecked")
-	private void executeClick(ActionEvent event) {
-		clearCache();
+    private DirectoryChooser directoryChooser = new DirectoryChooser();
+    private File selectedDirectory;
+    private TextField pathArea = new TextField();
+    private TextField fileName = new TextField();
+    private Label fileNameLabel = new Label(" " + LangProvider.fromLang("textArea.fileName") + ": ");
+    private Label modelType = new Label(" " + fromLang("modelTypeField"));
+    private Label pathLabel = new Label(" " + LangProvider.fromLang("textArea.selectPath") + ": ");
+    private VBox vbox = new VBox();
 
-		cb.getItems().add("Item Generated");
+    public ItemModelTemplate(Project project) {
+        super(LangProvider.fromLang("menuBar.json.itemModel"));
+        this.project = project;
+        setOnAction(this::executeClick);
+    }
 
-		var browse = new Button(LangProvider.fromLang("buttons.browse"));
-		browse.setOnAction(e -> {
-			selectedDirectory = directoryChooser.showDialog(stage);
-			pathArea.setText(selectedDirectory.getPath());
-		});
-		browse.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
+    private void clearCache() {
+        this.cb = new ChoiceBox<>();
+        this.vbox = new VBox();
+        this.pathArea.setText("");
+        this.fileName.setText("");
+        this.directoryChooser.setInitialDirectory(this.project.getProjectFolder());
+    }
 
-		var next = new Button(LangProvider.fromLang("buttons.next"));
-		next.setOnAction(this::nextButtonClick);
-		next.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
-		
-		var cancel = new Button(LangProvider.fromLang("buttons.cancel"));
-		cancel.setOnAction(e -> stage.close());
-		cancel.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
+    @SuppressWarnings("unchecked")
+    private void executeClick(ActionEvent event) {
+        clearCache();
 
-		pathArea.autosize();
-		pathArea.deselect();
+        this.cb.getItems().add("Item Generated");
 
-		vbox.getChildren().add(new HBox(modelType, cb));
-		vbox.getChildren().add(new HBox(fileNameLabel, fileName));
-		vbox.getChildren().add(new HBox(pathLabel, pathArea, browse));
-		vbox.getChildren().add(new HBox(next, cancel));
+        final var browse = new Button(LangProvider.fromLang("buttons.browse"));
+        browse.setOnAction(e -> {
+            this.selectedDirectory = this.directoryChooser.showDialog(this.stage);
+            this.pathArea.setText(this.selectedDirectory.getPath());
+        });
+        browse.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
 
-		final var scene = new Scene(vbox);
-		stage.setScene(scene);
+        final var next = new Button(LangProvider.fromLang("buttons.next"));
+        next.setOnAction(this::nextButtonClick);
+        next.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
 
-		stage.setWidth(450);
-		// stage.sizeToScene();
-		stage.centerOnScreen();
-		stage.requestFocus();
-		stage.showAndWait();
-	}
+        final var cancel = new Button(LangProvider.fromLang("buttons.cancel"));
+        cancel.setOnAction(e -> this.stage.close());
+        cancel.setStyle("-fx-background-color: " + ColorHelper.toHex(this.project.getTheme().getButtonColor()));
 
-	private void nextButtonClick(ActionEvent event) {
-		stage.close();
-		if (cb.getSelectionModel().getSelectedIndex() == 0) {
-			new ItemGeneratedModel(project, fileName.getText()).openWindow();
-			clearCache();
-		}
-	}
+        this.pathArea.autosize();
+        this.pathArea.deselect();
 
-	private void clearCache() {
-		cb = new ChoiceBox<>();
-		vbox = new VBox();
-		pathArea.setText("");
-		fileName.setText("");
-		directoryChooser.setInitialDirectory(this.project.getProjectFolder());
-	}
+        this.vbox.getChildren().add(new HBox(this.modelType, this.cb));
+        this.vbox.getChildren().add(new HBox(this.fileNameLabel, this.fileName));
+        this.vbox.getChildren().add(new HBox(this.pathLabel, this.pathArea, browse));
+        this.vbox.getChildren().add(new HBox(next, cancel));
 
-	
+        final var scene = new Scene(this.vbox);
+        this.stage.setScene(scene);
+
+        this.stage.setWidth(450);
+        // stage.sizeToScene();
+        this.stage.centerOnScreen();
+        this.stage.requestFocus();
+        this.stage.showAndWait();
+    }
+
+    private void nextButtonClick(ActionEvent event) {
+        this.stage.close();
+        if (this.cb.getSelectionModel().getSelectedIndex() == 0) {
+            new ItemGeneratedModel(this.project, this.fileName.getText()).openWindow();
+            clearCache();
+        }
+    }
+
 }

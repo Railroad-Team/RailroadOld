@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-import io.github.railroad.projectexplorer.ui.FileItem;
 import org.apache.commons.lang3.tuple.Triple;
 
 import com.panemu.tiwulfx.control.dock.DetachableTab;
@@ -23,6 +22,7 @@ import io.github.railroad.project.Project;
 import io.github.railroad.project.lang.LangProvider;
 import io.github.railroad.project.settings.theme.Theme;
 import io.github.railroad.projectexplorer.core.LiveDirs;
+import io.github.railroad.projectexplorer.ui.FileItem;
 import io.github.railroad.projectexplorer.ui.PathItem;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -70,20 +70,21 @@ public class Setup {
     // private final HBox fileLoadPlacement;
 
     public final Project project;
-    
+
     protected String language;
 
     public Setup(final Theme theme, String language) {
-    	
-    	//Always cache the lang first (else there will be no text for the project selection)
-    	this.language = language;
+
+        // Always cache the lang first (else there will be no text for the project
+            // selection)
+        this.language = language;
         LangProvider.cacheLang(language);
-        
+
         JsonConfigs.register();
-        
+
         // Core
         this.primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        	
+
         this.project = new Project(theme);
 
         // Code Editor
@@ -108,12 +109,12 @@ public class Setup {
         onMenuAction();
         onProjectExplorerAction();
     }
-    
-    //TODO: key bindings in here
+
+    // TODO: key bindings in here
     public void handleKeyPress(KeyEvent e) {
 
     }
-    
+
     private AnchorPane anchorMainSplit() {
         final var localAnchorPane = new AnchorPane(this.mainSplitPane);
         this.mainSplitPane.getProperties().put("RealParent", localAnchorPane);
@@ -125,12 +126,11 @@ public class Setup {
         return localAnchorPane;
     }
 
-    private void createCodeArea(final DetachableTabPane tabPane, final RailroadCodeArea codeArea,
-            final File file) {
-    	
+    private void createCodeArea(final DetachableTabPane tabPane, final RailroadCodeArea codeArea, final File file) {
+
         if (file != null) {
             if (tabPane.getProperties().get("RealParent") == null
-                    && codeArea.getProperties().get("RealParent")instanceof final SplitPane parent
+                    && codeArea.getProperties().get("RealParent") instanceof final SplitPane parent
                     && parent.getProperties().get("RealParent") instanceof AnchorPane) {
                 final var codeAreaIndex = parent.getItems().indexOf(codeArea);
                 parent.getItems().remove(codeAreaIndex);
@@ -199,12 +199,12 @@ public class Setup {
             this.mainSplitPane.getItems().add(this.baseCodeArea);
             this.baseCodeArea.getProperties().put("RealParent", this.mainSplitPane);
         }
-        
+
         DiscordRichPresence newPresence = new DiscordRichPresence.Builder("Working on " + project.getProjectName())
                 .setDetails("Editing " + file.getName()).setBigImage("logo", "Railroad IDE")
                 .setSmallImage("logo", "An IDE built for modders, made by modders.").setParty("", 0, 0)
                 .setStartTimestamps(System.currentTimeMillis()).build();
-    	DiscordRPC.discordUpdatePresence(newPresence);
+        DiscordRPC.discordUpdatePresence(newPresence);
 
         // TODO: Use this. But fix the tab pane and scroll bar issues that occur
         // dividerAdjust();
@@ -230,10 +230,9 @@ public class Setup {
             }
 
             SimpleFileEditorController selectedFileController = null;
-            if (((Node) this.editorTabPane.getProperties().get("RealParent")).getProperties()
-                    .get("RealParent").equals(this.anchorPane)) {
-                final Node possibleArea = this.editorTabPane.getSelectionModel().getSelectedItem()
-                        .getContent();
+            if (((Node) this.editorTabPane.getProperties().get("RealParent")).getProperties().get("RealParent")
+                    .equals(this.anchorPane)) {
+                final Node possibleArea = this.editorTabPane.getSelectionModel().getSelectedItem().getContent();
                 final List<SimpleFileEditorController> controllers = this.fileControllers.stream()
                         .filter(controller -> controller.textArea.equals(possibleArea)).toList();
                 if (controllers.isEmpty()) {
@@ -264,7 +263,8 @@ public class Setup {
 
     private DetachableTabPane createLeftTabPane() {
         final var tabPane = new DetachableTabPane();
-        final var projExplTab = new DetachableTab(LangProvider.fromLang("tabs.projectExplorer.name"), this.projectExplorer);
+        final var projExplTab = new DetachableTab(LangProvider.fromLang("tabs.projectExplorer.name"),
+                this.projectExplorer);
         projExplTab.setOnCloseRequest(Event::consume);
         tabPane.getTabs().add(projExplTab);
         return tabPane;
@@ -296,16 +296,16 @@ public class Setup {
         final var openItem = new MenuItem(LangProvider.fromLang("menuBar.fileMenu.open"));
         final var saveItem = new MenuItem(LangProvider.fromLang("menuBar.fileMenu.save"));
         final var fileMenu = new FileMenu(openItem, saveItem);
-        
+
         final var jsonFileMenu = new JsonFileMenu(this.project);
-        
+
         final var localMenuBar = new RailroadMenuBar(fileMenu, jsonFileMenu);
         this.mainPane.setTop(localMenuBar);
         return localMenuBar;
     }
 
     @SuppressWarnings("unused")
-	private void dividerAdjust() {
+    private void dividerAdjust() {
         dividerAdjust(this.mainSplitPane);
     }
 
@@ -333,10 +333,10 @@ public class Setup {
 
             SimpleFileEditorController selectedFileController = null;
             if (this.editorTabPane.getProperties().get("RealParent") != null
-                    && ((Node) this.editorTabPane.getProperties().get("RealParent")).getProperties()
-                            .get("RealParent").equals(this.anchorPane)) {
-                final var possibleArea = (RailroadCodeArea) this.editorTabPane.getSelectionModel()
-                        .getSelectedItem().getContent();
+                    && ((Node) this.editorTabPane.getProperties().get("RealParent")).getProperties().get("RealParent")
+                            .equals(this.anchorPane)) {
+                final var possibleArea = (RailroadCodeArea) this.editorTabPane.getSelectionModel().getSelectedItem()
+                        .getContent();
                 final List<SimpleFileEditorController> controllers = this.fileControllers.stream()
                         .filter(controller -> controller.textArea.equals(possibleArea)).toList();
                 if (controllers.isEmpty()) {
@@ -365,12 +365,10 @@ public class Setup {
     private void onProjectExplorerAction() {
         this.projectExplorer.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                final List<TreeItem<String>> items = this.projectExplorer.getSelectionModel()
-                        .getSelectedItems();
+                final List<TreeItem<String>> items = this.projectExplorer.getSelectionModel().getSelectedItems();
                 for (final var item : items) {
                     if (item instanceof FileItem) {
-                        createCodeArea(this.editorTabPane, this.baseCodeArea,
-                                ((PathItem) item).getPath().toFile());
+                        createCodeArea(this.editorTabPane, this.baseCodeArea, ((PathItem) item).getPath().toFile());
                     }
                 }
             }
@@ -397,7 +395,7 @@ public class Setup {
     }
 
     @SuppressWarnings("unused")
-	private void timedDividerAdjust() {
+    private void timedDividerAdjust() {
         timedDividerAdjust(this.mainSplitPane);
     }
 

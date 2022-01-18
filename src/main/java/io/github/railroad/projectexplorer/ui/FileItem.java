@@ -15,12 +15,6 @@ public class FileItem extends PathItem {
         this.lastModified = lastModified;
     }
 
-    public static FileItem create(Path path, FileTime lastModified, GraphicFactory graphicFactory,
-            UnaryOperator<Path> projector) {
-        return new FileItem(path, lastModified, graphicFactory.createGraphic(projector.apply(path), false),
-                projector);
-    }
-
     @Override
     public final boolean isDirectory() {
         return false;
@@ -32,5 +26,10 @@ public class FileItem extends PathItem {
             return true;
         }
         return false;
+    }
+
+    public static FileItem create(Path path, FileTime lastModified, GraphicFactory graphicFactory,
+            UnaryOperator<Path> projector) {
+        return new FileItem(path, lastModified, graphicFactory.createGraphic(projector.apply(path), false), projector);
     }
 }

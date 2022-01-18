@@ -27,27 +27,22 @@ import javafx.util.Duration;
  * @author TurtyWurty
  */
 public class Project {
-	
-	/**
-	 * How to use the config
-	 * 
-	 * before showing the folder selector add this
-	 
-	if (JsonConfigs.GENERAL_CONFIG.getConfig() != null && JsonConfigs.GENERAL_CONFIG.getConfig().getProjectSettings().projectPath != null) {
-		this.projectFolder = new File(JsonConfigs.GENERAL_CONFIG.getConfig().getProjectSettings().projectPath);
-	} else {
-		implement the selector here.
-			
-		in order to save the path to the config.. execute this code:
-			
-		JsonConfigs.GENERAL_CONFIG.writeConfig(new RailroadConfigJson(new ProjectSettingsEntry(this.projectFolder.getPath().toString()));
-			
-	}
-		
-		i dont see a reason to format this. i just threw it here so you know how to use the <b>temporary</b> solution
-	 */
 
-	private final Theme theme;
+    /**
+     * How to use the config before showing the folder selector add this if
+     * (JsonConfigs.GENERAL_CONFIG.getConfig() != null &&
+     * JsonConfigs.GENERAL_CONFIG.getConfig().getProjectSettings().projectPath !=
+     * null) { this.projectFolder = new
+     * File(JsonConfigs.GENERAL_CONFIG.getConfig().getProjectSettings().projectPath);
+     * } else { implement the selector here. in order to save the path to the
+     * config.. execute this code: JsonConfigs.GENERAL_CONFIG.writeConfig(new
+     * RailroadConfigJson(new
+     * ProjectSettingsEntry(this.projectFolder.getPath().toString())); } i dont see
+     * a reason to format this. i just threw it here so you know how to use the
+     * <b>temporary</b> solution
+     */
+
+    private final Theme theme;
 
     private File projectFolder;
 
@@ -111,14 +106,14 @@ public class Project {
         HBox.setMargin(cancelButton, new Insets(0, 5D, 0, 0));
         buttonLayout.setAlignment(Pos.CENTER_RIGHT);
 
-        final var layout = new VBox(titleLabel, descriptionLabel,
-                new HBox(rootDirLabel, textField, browseButton), buttonLayout);
+        final var layout = new VBox(titleLabel, descriptionLabel, new HBox(rootDirLabel, textField, browseButton),
+                buttonLayout);
         final var scene = new Scene(layout);
         scene.getStylesheets().add(Railroad.class.getResource("/default.css").toExternalForm());
 
         window.setOnCloseRequest(event -> {
-            Toolkit.getToolkit().exitAllNestedEventLoops();
             window.close();
+            Toolkit.getToolkit().exitAllNestedEventLoops();
             System.exit(0);
         });
         window.setResizable(false);
@@ -129,21 +124,21 @@ public class Project {
         window.showAndWait();
     }
 
-	/**
-	 * @return The Folder used for this {@link Project}.
-	 */
-	public File getProjectFolder() {
-		return this.projectFolder;
-	}
+    /**
+     * @return The Folder used for this {@link Project}.
+     */
+    public File getProjectFolder() {
+        return this.projectFolder;
+    }
 
-	/**
-	 * @return The {@link Theme} used for this {@link Project}.
-	 */
-	public Theme getTheme() {
-		return this.theme;
-	}
+    public String getProjectName() {
+        return getProjectFolder().getName();
+    }
 
-	public String getProjectName() {
-		return getProjectFolder().getName();
-	}
+    /**
+     * @return The {@link Theme} used for this {@link Project}.
+     */
+    public Theme getTheme() {
+        return this.theme;
+    }
 }

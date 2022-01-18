@@ -105,8 +105,7 @@ public class TopLevelDirItem extends DirItem {
         for (final TreeItem<String> child : node.getChildren()) {
             signalDeletionRecursively((PathItem) child, initiator);
         }
-        this.reporter.reportDeletion(getPath(), getPath().relativize(getProjector().apply(node.getPath())),
-                initiator);
+        this.reporter.reportDeletion(getPath(), getPath().relativize(getProjector().apply(node.getPath())), initiator);
     }
 
     private void syncChild(DirItem parent, Path childName, PathNode tree, Path initiator) {
@@ -120,8 +119,7 @@ public class TopLevelDirItem extends DirItem {
                 this.reporter.reportCreation(getPath(), getPath().relativize(dirChild.getPath()), initiator);
                 syncContent(dirChild, tree, initiator);
             } else {
-                final FileItem fileChild = parent.addChildFile(childName, tree.getLastModified(),
-                        this.graphicFactory);
+                final FileItem fileChild = parent.addChildFile(childName, tree.getLastModified(), this.graphicFactory);
                 this.reporter.reportCreation(getPath(), getPath().relativize(fileChild.getPath()), initiator);
             }
         } else if (child.isDirectory()) {
@@ -137,7 +135,7 @@ public class TopLevelDirItem extends DirItem {
             desiredChildren.add(child.getPath());
         }
 
-        final var actualChildren = new ArrayList<TreeItem<String>>(dir.getChildren());
+        final var actualChildren = new ArrayList<>(dir.getChildren());
 
         // remove undesired children
         for (final TreeItem<String> child : actualChildren) {

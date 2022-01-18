@@ -43,8 +43,8 @@ public class CodeEditor {
 
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
         codeArea.multiPlainChanges().successionEnds(Duration.ofMillis(500))
-                .supplyTask(() -> computeHighlightingAsync(codeArea))
-                .awaitLatest(codeArea.multiPlainChanges()).filterMap(t -> {
+                .supplyTask(() -> computeHighlightingAsync(codeArea)).awaitLatest(codeArea.multiPlainChanges())
+                .filterMap(t -> {
                     if (t.isSuccess())
                         return Optional.of(t.get());
                     t.getFailure().printStackTrace();
@@ -52,7 +52,7 @@ public class CodeEditor {
                 }).subscribe(style -> applyHighlighting(codeArea, style));
 
         new BracketHighlighter(codeArea);
-        
+
         Railroad.resetDiscordPresence();
 
         return codeArea;

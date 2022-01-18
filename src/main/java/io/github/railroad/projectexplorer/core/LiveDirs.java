@@ -39,7 +39,6 @@ import javafx.scene.control.TreeView;
  * <li>the application can distinguish file-system changes made via the I/O
  * facility from external changes.</li>
  * </ol>
- *
  * <p>
  * The directory model can be used directly as a model for {@link TreeView}.
  *
@@ -82,33 +81,6 @@ public class LiveDirs {
 
         this.dirWatcher.signalledKeys().subscribe(this::processKey);
         this.errors = EventStreams.merge(this.dirWatcher.errors(), this.model.errors(), this.localErrors);
-    }
-
-    /**
-     * Creates a LiveDirs instance to be used from the JavaFX application thread.
-     *
-     * @param externalInitiator object to represent an initiator of an external
-     *                          file-system change.
-     * @throws IOException
-     */
-    public static LiveDirs getInstance(Path externalInitiator) throws IOException {
-        return getInstance(externalInitiator, Platform::runLater);
-    }
-
-    /**
-     * Creates a LiveDirs instance to be used from a designated thread.
-     *
-     * @param externalInitiator    object to represent an initiator of an external
-     *                             file-system change.
-     * @param clientThreadExecutor executor to execute actions on the caller thread.
-     *                             Used to publish updates and errors on the caller
-     *                             thread.
-     * @throws IOException
-     */
-    public static LiveDirs getInstance(Path externalInitiator, Executor clientThreadExecutor)
-            throws IOException {
-        return new LiveDirs(externalInitiator, UnaryOperator.identity(), UnaryOperator.identity(),
-                clientThreadExecutor);
     }
 
     /**
@@ -163,7 +135,6 @@ public class LiveDirs {
     /**
      * Used to refresh the given subtree of the directory model in case automatic
      * synchronization failed for any reason.
-     *
      * <p>
      * Guarantees given by {@link WatchService} are weak and the behavior may vary
      * on different operating systems. It is possible that the automatic
@@ -269,5 +240,31 @@ public class LiveDirs {
 
     private <U> CompletionStage<U> wrap(CompletionStage<U> stage) {
         return new CompletionStageWithDefaultExecutor<>(stage, this.clientThreadExecutor);
+    }
+
+    /**
+     * Creates a LiveDirs instance to be used from the JavaFX application thread.
+     *
+     * @param externalInitiator object to represent an initiator of an external
+     *                          file-system change.
+     * @throws IOException
+     */
+    public static LiveDirs getInstance(Path externalInitiator) throws IOException {
+        return getInstance(externalInitiator, Platform::runLater);
+    }
+
+    /**
+     * Creates a LiveDirs instance to be used from a designated thread.
+     *
+     * @param externalInitiator    object to represent an initiator of an external
+     *                             file-system change.
+     * @param clientThreadExecutor executor to execute actions on the caller thread.
+     *                             Used to publish updates and errors on the caller
+     *                             thread.
+     * @throws IOException
+     */
+    public static LiveDirs getInstance(Path externalInitiator, Executor clientThreadExecutor) throws IOException {
+        return new LiveDirs(externalInitiator, UnaryOperator.identity(), UnaryOperator.identity(),
+                clientThreadExecutor);
     }
 }

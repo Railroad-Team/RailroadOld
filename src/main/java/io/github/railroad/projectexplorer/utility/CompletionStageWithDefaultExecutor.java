@@ -10,12 +10,9 @@ import java.util.function.Function;
 
 /**
  * Completion stage that uses the provided executor as both the default
- * execution facility and the default asynchronous execution facility.
- *
- * A {@code CompletionStage} returned from any of this completion stage's
- * methods inherits this stage's execution facilities.
- *
- * This means, for example, that
+ * execution facility and the default asynchronous execution facility. A
+ * {@code CompletionStage} returned from any of this completion stage's methods
+ * inherits this stage's execution facilities. This means, for example, that
  *
  * <pre>
  * this.thenApply(f).thenAcceptAsync(g).thenRun(h)
@@ -39,38 +36,34 @@ public class CompletionStageWithDefaultExecutor<T> implements CompletionStage<T>
     }
 
     @Override
-    public CompletionStage<Void> acceptEither(CompletionStage<? extends T> other,
-            Consumer<? super T> action) {
+    public CompletionStage<Void> acceptEither(CompletionStage<? extends T> other, Consumer<? super T> action) {
         return wrap(this.original.acceptEitherAsync(other, action, this.defaultExecutor));
     }
 
     @Override
-    public CompletionStage<Void> acceptEitherAsync(CompletionStage<? extends T> other,
-            Consumer<? super T> action) {
+    public CompletionStage<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super T> action) {
         return wrap(this.original.acceptEitherAsync(other, action, this.defaultExecutor));
     }
 
     @Override
-    public CompletionStage<Void> acceptEitherAsync(CompletionStage<? extends T> other,
-            Consumer<? super T> action, Executor executor) {
+    public CompletionStage<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super T> action,
+            Executor executor) {
         return wrap(this.original.acceptEitherAsync(other, action, executor));
     }
 
     @Override
-    public <U> CompletionStage<U> applyToEither(CompletionStage<? extends T> other,
-            Function<? super T, U> fn) {
+    public <U> CompletionStage<U> applyToEither(CompletionStage<? extends T> other, Function<? super T, U> fn) {
         return wrap(this.original.applyToEitherAsync(other, fn, this.defaultExecutor));
     }
 
     @Override
-    public <U> CompletionStage<U> applyToEitherAsync(CompletionStage<? extends T> other,
-            Function<? super T, U> fn) {
+    public <U> CompletionStage<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super T, U> fn) {
         return wrap(this.original.applyToEitherAsync(other, fn, this.defaultExecutor));
     }
 
     @Override
-    public <U> CompletionStage<U> applyToEitherAsync(CompletionStage<? extends T> other,
-            Function<? super T, U> fn, Executor executor) {
+    public <U> CompletionStage<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super T, U> fn,
+            Executor executor) {
         return wrap(this.original.applyToEitherAsync(other, fn, executor));
     }
 
@@ -90,8 +83,7 @@ public class CompletionStageWithDefaultExecutor<T> implements CompletionStage<T>
     }
 
     @Override
-    public <U> CompletionStage<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn,
-            Executor executor) {
+    public <U> CompletionStage<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
         return wrap(this.original.handleAsync(fn, executor));
     }
 
@@ -106,8 +98,7 @@ public class CompletionStageWithDefaultExecutor<T> implements CompletionStage<T>
     }
 
     @Override
-    public CompletionStage<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action,
-            Executor executor) {
+    public CompletionStage<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action, Executor executor) {
         return wrap(this.original.runAfterBothAsync(other, action, executor));
     }
 
@@ -122,8 +113,7 @@ public class CompletionStageWithDefaultExecutor<T> implements CompletionStage<T>
     }
 
     @Override
-    public CompletionStage<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action,
-            Executor executor) {
+    public CompletionStage<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action, Executor executor) {
         return wrap(this.original.runAfterEitherAsync(other, action, executor));
     }
 
@@ -240,8 +230,7 @@ public class CompletionStageWithDefaultExecutor<T> implements CompletionStage<T>
     }
 
     @Override
-    public CompletionStage<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action,
-            Executor executor) {
+    public CompletionStage<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action, Executor executor) {
         return wrap(this.original.whenCompleteAsync(action, executor));
     }
 

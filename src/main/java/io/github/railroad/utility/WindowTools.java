@@ -47,39 +47,39 @@ public final class WindowTools {
         });
         final var cancelBtn = new Button(fromQuitWindowLang("cancelBtn"));
         cancelBtn.setOnAction(event -> stage.close());
-        
+
         final var logo = new Image(Railroad.class.getResourceAsStream("/logo.png"), 128, 128, false, false);
         final var logoView = new ImageView(logo);
         logoView.setTranslateY(-9);
-        
+
         cancelBtn.setStyle("-fx-background-color: " + ColorHelper.toHex(theme.getButtonColor()));
         yesBtn.setStyle("-fx-background-color: " + ColorHelper.toHex(theme.getButtonColor()));
-        
+
         cancelBtn.setPrefWidth(70);
         yesBtn.setPrefWidth(70);
-        
+
         label.setTextFill(awtColourToFx(theme.getTextColor()));
         label.setFont(new Font("Arial", 15));
         label.setPadding(new Insets(10));
-        
+
         final var btnsVbox = new VBox(20, yesBtn, new Separator(Orientation.HORIZONTAL), cancelBtn);
         btnsVbox.setTranslateY(5);
-        
+
         final var hbox = new HBox(50, logoView, btnsVbox);
 
         btnsVbox.setLayoutY(100);
-        
+
         hbox.setAlignment(Pos.CENTER);
-        
+
         final var vbox = new VBox(10, label, new Separator(Orientation.HORIZONTAL), hbox);
-        
-        vbox.setBackground(new Background(new BackgroundFill(ColorHelper.awtColourToFx(theme.getBackgroundColor()), 
-        		CornerRadii.EMPTY, Insets.EMPTY)));
-        
+
+        vbox.setBackground(new Background(new BackgroundFill(ColorHelper.awtColourToFx(theme.getBackgroundColor()),
+                CornerRadii.EMPTY, Insets.EMPTY)));
+
         vbox.setAlignment(Pos.CENTER);
-        
+
         final var scene = new Scene(vbox);
-        
+
         stage.setScene(scene);
 
         stage.setResizable(false);
@@ -89,10 +89,10 @@ public final class WindowTools {
         stage.setAlwaysOnTop(true);
         stage.requestFocus();
         stage.showAndWait();
-        
+
     }
-    
+
     private static String fromQuitWindowLang(String key) {
-    	return LangProvider.fromLang("quitWindow." + key);
+        return LangProvider.fromLang("quitWindow." + key);
     }
 }

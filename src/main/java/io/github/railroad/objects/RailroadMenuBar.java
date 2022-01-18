@@ -10,16 +10,15 @@ import javafx.scene.control.MenuItem;
  * @author TurtyWurty
  */
 public class RailroadMenuBar extends MenuBar {
-
     public final FileMenu fileMenu;
     public final JsonFileMenu jsonFileMenu;
-
+    
     public RailroadMenuBar(final FileMenu fileMenu, final JsonFileMenu jsonFileMenu) {
         super(fileMenu, jsonFileMenu);
         this.fileMenu = fileMenu;
         this.jsonFileMenu = jsonFileMenu;
     }
-
+    
     public static class FileMenu extends Menu {
         public final MenuItem openItem;
         public final MenuItem saveItem;

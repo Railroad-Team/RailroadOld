@@ -23,56 +23,57 @@ import javafx.scene.layout.VBox;
 
 public class ItemGeneratedModel extends JsonTemplate {
 
-	public ItemGeneratedModel(@NotNull Project project, String fileName) {
-		super(project, fileName);
-	}
+    private TextField layer0Texture = new TextField();
 
-	private TextField layer0Texture = new TextField();
-	private Label layer0Label = new Label(fromLang("layer0"));
+    private Label layer0Label = new Label(fromLang("layer0"));
 
-	@Override
-	public void openWindow() {
-		clearCache();
-		layer0Label.setPadding(new Insets(3));
+    public ItemGeneratedModel(@NotNull Project project, String fileName) {
+        super(project, fileName);
+    }
 
-		final var createBtn = new Button(LangProvider.fromLang("buttons.create"));
+    @Override
+    public void openWindow() {
+        clearCache();
+        this.layer0Label.setPadding(new Insets(3));
 
-		createBtn.setOnAction(click -> {
-			var jsonObject = new JsonObject();
-			jsonObject.addProperty("parent", "item/generated");
+        final var createBtn = new Button(LangProvider.fromLang("buttons.create"));
 
-			var texturesObj = new JsonObject();
-			texturesObj.addProperty("layer0", layer0Texture.getText());
+        createBtn.setOnAction(click -> {
+            final var jsonObject = new JsonObject();
+            jsonObject.addProperty("parent", "item/generated");
 
-			jsonObject.add("textures", texturesObj);
+            final var texturesObj = new JsonObject();
+            texturesObj.addProperty("layer0", this.layer0Texture.getText());
 
-			var file = new File(project.getProjectFolder(), fileName + ".json");
+            jsonObject.add("textures", texturesObj);
 
-			if (file.exists()) {
-				var alert = new Alert(AlertType.ERROR);
-				alert.setHeaderText("File already exists");
-				alert.show();
-			}
+            final var file = new File(this.project.getProjectFolder(), this.fileName + ".json");
 
-			try (var writer = new FileWriter(file)) {
-				Gsons.JSON_CREATING_GSON.toJson(jsonObject, writer);
-				stage.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		});
+            if (file.exists()) {
+                final var alert = new Alert(AlertType.ERROR);
+                alert.setHeaderText("File already exists");
+                alert.show();
+            }
 
-		final var vbox = new VBox(5, layer0Label, layer0Texture, createBtn);
-		final var scene = new Scene(vbox);
+            try (var writer = new FileWriter(file)) {
+                Gsons.JSON_CREATING_GSON.toJson(jsonObject, writer);
+                this.stage.close();
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+        });
 
-		stage.setScene(scene);
-		stage.showAndWait();
-	}
+        final var vbox = new VBox(5, this.layer0Label, this.layer0Texture, createBtn);
+        final var scene = new Scene(vbox);
 
-	@Override
-	protected void clearCache() {
-		super.clearCache();
-		layer0Texture = new TextField();
-	}
+        this.stage.setScene(scene);
+        this.stage.showAndWait();
+    }
+
+    @Override
+    protected void clearCache() {
+        super.clearCache();
+        this.layer0Texture = new TextField();
+    }
 
 }

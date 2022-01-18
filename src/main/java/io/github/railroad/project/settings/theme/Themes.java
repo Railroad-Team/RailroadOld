@@ -6,17 +6,16 @@ import javafx.scene.paint.Color;
 
 /**
  * A list of default themes
- * 
- * @author matyrobbrt
  *
+ * @author matyrobbrt
  */
 public class Themes {
-
-	public static final Theme DARK_THEME = new Theme("DarkMode").withButtonColor(fxColourToAwt(Color.DARKGRAY))
-			.withBackgroundColor(fxColourToAwt(Color.DIMGRAY))
-			.withTextColor(fxColourToAwt(Color.ALICEBLUE));
-
-	public static final Theme WHITE_THEME = new Theme("WhiteMode").withButtonColor(fxColourToAwt(Color.ANTIQUEWHITE))
-			.withBackgroundColor(fxColourToAwt(Color.FLORALWHITE))
-			.withTextColor(fxColourToAwt(Color.BLACK));
+    public static final Theme DARK_THEME = new Theme("DarkMode").withButtonColor(fxColourToAwt(Color.DARKGRAY))
+            .withBackgroundColor(fxColourToAwt(Color.DIMGRAY)).withTextColor(fxColourToAwt(Color.ALICEBLUE));
+    
+    public static final Theme WHITE_THEME = new Theme("WhiteMode").withButtonColor(fxColourToAwt(Color.ANTIQUEWHITE))
+            .withBackgroundColor(fxColourToAwt(Color.FLORALWHITE)).withTextColor(fxColourToAwt(Color.BLACK));
+    
+    private Themes() {
+    }
 }

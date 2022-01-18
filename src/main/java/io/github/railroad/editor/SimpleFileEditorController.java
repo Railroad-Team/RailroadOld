@@ -26,15 +26,13 @@ import javafx.util.Duration;
  * @author TurtyWurty
  */
 public class SimpleFileEditorController {
-
     private File loadedFileReference;
-
     private FileTime lastModifiedTime;
     // public Label statusMessage;
     // public ProgressBar progressBar;
     // public Button loadChangesButton;
     public RailroadCodeArea textArea;
-
+    
     /**
      * Loads the changes from the {@link File} reference.
      */
@@ -42,7 +40,7 @@ public class SimpleFileEditorController {
         loadFileToTextArea(this.loadedFileReference);
         // this.loadChangesButton.setVisible(false);
     }
-
+    
     /**
      * Creates the {@link FileChooser} used to select the {@link File} for this
      * {@link CodeArea}.
@@ -62,22 +60,20 @@ public class SimpleFileEditorController {
         }
         return null;
     }
-
+    
     /**
      * Saves the current {@link File} to disk.
      */
     public void saveFile() {
-        try {
-            final var myWriter = new FileWriter(this.loadedFileReference);
+        try (var myWriter = new FileWriter(this.loadedFileReference)) {
             myWriter.write(this.textArea.getText());
-            myWriter.close();
             this.lastModifiedTime = FileTime.fromMillis(System.currentTimeMillis() + 3000);
             System.out.println("Successfully wrote to the file.");
         } catch (final IOException e) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, e);
         }
     }
-
+    
     /**
      * Sets the {@link File} and loads the changes for this {@link CodeArea}.
      *
@@ -88,7 +84,7 @@ public class SimpleFileEditorController {
         this.loadedFileReference = file;
         loadChanges();
     }
-
+    
     /**
      * Checks to see whether this {@link File} has been modifed.
      *
@@ -104,8 +100,7 @@ public class SimpleFileEditorController {
                     protected Boolean call() throws Exception {
                         final FileTime lastModifiedAsOfNow = Files
                                 .readAttributes(file.toPath(), BasicFileAttributes.class).lastModifiedTime();
-                        return lastModifiedAsOfNow
-                                .compareTo(SimpleFileEditorController.this.lastModifiedTime) > 0;
+                        return lastModifiedAsOfNow.compareTo(SimpleFileEditorController.this.lastModifiedTime) > 0;
                     }
                 };
             }
@@ -113,7 +108,7 @@ public class SimpleFileEditorController {
         scheduledService.setPeriod(Duration.seconds(1));
         return scheduledService;
     }
-
+    
     /**
      * @param fileToLoad - The {@link File} to load into the {@link CodeArea}.
      * @return The {@link Task} that will load the file into the {@link CodeArea}.
@@ -123,26 +118,27 @@ public class SimpleFileEditorController {
         final Task<String> loadFileTask = new Task<>() {
             @Override
             protected String call() throws Exception {
-                final var reader = new BufferedReader(new FileReader(fileToLoad));
-                // Use Files.lines() to calculate total lines - used for progress
-                long lineCount;
-                try (Stream<String> stream = Files.lines(fileToLoad.toPath())) {
-                    lineCount = stream.count();
+                try (var reader = new BufferedReader(new FileReader(fileToLoad))) {
+                    // Use Files.lines() to calculate total lines - used for progress
+                    long lineCount;
+                    try (Stream<String> stream = Files.lines(fileToLoad.toPath())) {
+                        lineCount = stream.count();
+                    }
+                    // Load in all lines one by one into a StringBuilder separated by "\n" -
+                    // compatible with TextArea
+                    String line;
+                    final var totalFile = new StringBuilder();
+                    long linesLoaded = 0;
+                    while ((line = reader.readLine()) != null) {
+                        totalFile.append(line);
+                        totalFile.append("\n");
+                        updateProgress(++linesLoaded, lineCount);
+                    }
+                    return totalFile.toString();
                 }
-                // Load in all lines one by one into a StringBuilder separated by "\n" -
-                // compatible with TextArea
-                String line;
-                final var totalFile = new StringBuilder();
-                long linesLoaded = 0;
-                while ((line = reader.readLine()) != null) {
-                    totalFile.append(line);
-                    totalFile.append("\n");
-                    updateProgress(++linesLoaded, lineCount);
-                }
-                reader.close();
-                return totalFile.toString();
             }
         };
+
         // If successful, update the text area, display a success message and store the
         // loaded file reference
         loadFileTask.setOnSucceeded(workerStateEvent -> {
@@ -180,7 +176,7 @@ public class SimpleFileEditorController {
         });
         return loadFileTask;
     }
-
+    
     /**
      * @param fileToLoad - The {@link File} to load to the {@link CodeArea}.
      */
@@ -189,7 +185,7 @@ public class SimpleFileEditorController {
         // this.progressBar.progressProperty().bind(loadTask.progressProperty());
         loadTask.run();
     }
-
+    
     /**
      * <strong>Unused.</strong> Will notify the user that there has been outside
      * changes to the file that is being modified.
@@ -197,7 +193,7 @@ public class SimpleFileEditorController {
     private void notifyUserOfChanges() {
         // this.loadChangesButton.setVisible(true);
     }
-
+    
     /**
      * Schedules the file checking service.
      *
