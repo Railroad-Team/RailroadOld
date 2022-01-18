@@ -44,20 +44,20 @@ body:
       description: What branch(es) did this bug occur on?
       multiple: true
       options:
-        - main (Default)
-        - docking (Docking & Layout)
+        - main (default)
+        - docking
     validations:
       required: true
   - type: dropdown
     id: operating-system
     attributes:
-      label: What operating system(s) is this issue occuring on?
+      label: What operating system(s) do these issues occur on?
       multiple: true
       options:
         - Windows
-        - MacOS
+        - macOS
         - Linux
-        - Other
+        - other
     validations:
       required: true
   - type: textarea
