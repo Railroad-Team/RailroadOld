@@ -3,41 +3,15 @@ package io.github.railroad.project;
 import static io.github.railroad.project.lang.LangProvider.fromLang;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Stream;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.materialdesign2.MaterialDesignF;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.sun.javafx.tk.Toolkit;
 
 import io.github.railroad.Railroad;
-import io.github.railroad.project.ProjectInfo.MinecraftVersion;
-import io.github.railroad.project.ProjectInfo.ModType;
 import io.github.railroad.project.lang.LangProvider;
 import io.github.railroad.project.settings.theme.Theme;
-import io.github.railroad.utility.ClosestDirectoryComparator;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
-import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -81,103 +55,6 @@ public class Project {
     public Project(final Theme themeSettings) {
         this.theme = themeSettings;
 
-    private static boolean canCreate(Path folder) {
-        return true;
-    }
-
-    private static boolean canImport(Path folder) {
-        return true;
-    }
-
-    private static Pair<Boolean, ProjectInfo> canOpen(Path folder) {
-        final var defaultRet = Pair.of(false, (ProjectInfo) null);
-        final Collection<File> railroadFiles = FileUtils.listFiles(folder.toFile(),
-                new String[] { ".railroad" }, true);
-        if (railroadFiles.isEmpty())
-            return defaultRet;
-
-        final List<File> results = railroadFiles.stream()
-                .filter(file -> file.getName().equalsIgnoreCase("project.railroad"))
-                .sorted(new ClosestDirectoryComparator<>()).toList();
-
-        if (results.isEmpty())
-            return defaultRet;
-
-        final File projectFile = results.get(0);
-        final var content = new StringBuilder();
-        try {
-            FileUtils.readLines(projectFile, StandardCharsets.UTF_8).forEach(content::append);
-        } catch (final IOException e) {
-            return defaultRet;
-        }
-
-        if (content.toString().isBlank())
-            return defaultRet;
-
-        ProjectInfo.Builder projectInfoBuilder = null;
-        boolean valid = true;
-        try {
-            while (valid) {
-                final var documentBuilder = XML_PARSER.newDocumentBuilder();
-                final Document document = documentBuilder.parse(projectFile);
-                document.getDocumentElement().normalize();
-                if (!document.getDocumentElement().getNodeName().equalsIgnoreCase("modinfo")) {
-                    valid = false;
-                    break;
-                }
-
-                // projectInfoBuilder = ProjectInfo.Builder.create(modType, projectName);
-                ModType modType = null;
-                String projectName = null;
-                final NodeList nodes = document.getDocumentElement().getChildNodes();
-                for (int nodeIndex = 0; nodeIndex < nodes.getLength(); nodeIndex++) {
-                    final Node node = nodes.item(nodeIndex);
-                    if (node.getNodeType() == Node.ELEMENT_NODE) {
-                        final String name = node.getNodeName().trim();
-                        switch (name) {
-                            case "ModType":
-                                modType = ModType.valueOf(name);
-                                break;
-                            case "ProjectName":
-                                final List<File> files = FileUtils
-                                        .listFiles(projectFile, FileFilterUtils.nameFileFilter(name),
-                                                FileFilterUtils.nameFileFilter(name))
-                                        .stream().sorted(new ClosestDirectoryComparator<>()).toList();
-                                if (files.isEmpty())
-                                    return defaultRet;
-                                final File result = files.get(0);
-                                if (result.exists()) {
-                                    projectName = name;
-                                }
-                                break;
-                        }
-                    }
-                }
-
-                projectInfoBuilder = ProjectInfo.Builder.create(modType, projectName);
-
-                for (int nodeIndex = 0; nodeIndex < nodes.getLength(); nodeIndex++) {
-                    final Node node = nodes.item(nodeIndex);
-                    if (node.getNodeType() == Node.ELEMENT_NODE) {
-                        final String name = node.getNodeName().trim();
-                        switch (name) {
-                            case "MinecraftVersion":
-                                final List<MinecraftVersion> versions = Stream.of(MinecraftVersion.values())
-                                        .filter(version -> version.versionName().equalsIgnoreCase(name))
-                                        .toList();
-
-                        }
-                    }
-                }
-            }
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            valid = false;
-        }
-
-        return Pair.of(valid, projectInfoBuilder.build());
-    }
-
-    public Stage createWindow() {
         final var window = new Stage();
 
         final var dirChooser = new DirectoryChooser();
