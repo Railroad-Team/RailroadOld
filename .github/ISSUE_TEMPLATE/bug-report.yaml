@@ -49,7 +49,8 @@ body:
   - type: dropdown
     id: operating-system
     attributes:
-      label: What operating system(s) do these issues occur on?
+      label: Operating System(s)
+      description: What operating system(s) do these issues occur on?
       multiple: true
       options:
         - Windows
@@ -58,10 +59,11 @@ body:
         - other
     validations:
       required: true
-  - type: textarea
+  - type: input
     id: other-operating-system
     attributes:
-      label: 'If you selected ''Other'' for the operating system(s), please specify.'
+      label: Other Operating System(s)
+      description: If you selected 'other' for the operating system(s), please specify.
   - type: textarea
     id: logs
     attributes:
