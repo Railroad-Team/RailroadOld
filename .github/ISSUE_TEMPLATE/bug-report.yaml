@@ -8,9 +8,7 @@ assignees:
 body:
   - type: markdown
     attributes:
-      value: >
-        Thanks for taking the time to create this bug report and help us improve
-        Railroad IDE!
+      value: Thanks for taking the time to create this bug report! This helps us improve Railroad IDE.
   - type: textarea
     id: screenshot
     attributes:
