@@ -16,7 +16,7 @@ dependencies {
     implementation(group: 'commons-io', name: 'commons-io', version: '2.11.0')
     implementation(group: 'com.github.Vatuu', name: 'discord-rpc', version: 'latest.release')
     implementation(group: 'com.panemu', name: 'tiwulfx-dock', version: '0.1')
-    implementation(group: 'org.apache.commons', name: 'commons-lang3', version: 'latest.release')
+    implementation(group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0')
     implementation(group: 'io.github.palexdev', name: 'materialfx', version: '11.12.0')
 
     testImplementation(platform('org.junit:junit-bom:5.8.2'))
