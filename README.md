@@ -1,24 +1,27 @@
+<img src="/src/main/resources/logo.png" width="128" height="128" alt="The Railroad IDE logo"/>
+
 # Railroad IDE
 
-Railroad IDE is an IDE that is made specifically for Minecraft Development including Forge Mods, and Fabric Mods! This IDE is made to help make the experience easier for a Mod Developer! This project is started by [TurtyWurty](https://www.youtube.com/channel/UCicAXLV4w2X6bn2EuM4To4w) but since it is open sourced here on github, anyone can help out! 
-As of right now, Railroad IDE is not released and is still in development.
+Railroad IDE is an IDE that is made specifically for Minecraft mod development using Forge and Fabric. It aims to make the mod development experience better.
 
-# FAQ
+## FAQ
 
-## What is Railroad IDE?
-Railroad IDE is an IDE made to make the Minecraft Mod Development experience easier for the average developer.
+### Who started this project?
 
-## Who Started Railroad IDE?
-Railroad IDE was started by [TurtyWurty](https://www.youtube.com/channel/UCicAXLV4w2X6bn2EuM4To4w)
+This project was started by [TurtyWurty](https://www.youtube.com/channel/UCicAXLV4w2X6bn2EuM4To4w).
 
-## Is there a discord server I can join?
-As of right now the discord server for Railroad IDE is inside of Turty's own server! Click [Here](https://discord.gg/d5cGhKQ) to join it! 
+### Is there a Discord server I can join?
 
-## Is Railroad IDE Released?
-Railroad IDE is not relased but still in development as of right now.
+There is not a dedicated Discord server for Railroad IDE, but there is a section in TurtyWurty's server dedicated to it. The server is available [here](https://discord.gg/d5cGhKQ).
 
-## Is there a website?
-There is not a website for Railroad IDE.
+### Is Railroad IDE complete?
 
-## Where can I report bugs?
-To report a bug go into the issues tab or press [here](https://github.com/Railroad-Team/Railroad/issues). Once there create a new issue and use the bug report format.
+Railroad IDE is not complete and is still in development.
+
+### Is there a website available?
+
+There is no website available.
+
+### Where do I report bugs?
+
+To report a bug go [here](https://github.com/Railroad-Team/Railroad/issues). Use the bug report form and fill it out.
