@@ -1,6 +1,6 @@
 plugins {
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'org.openjfx.javafxplugin' version '0.0.11'
 }
 
 repositories {
@@ -19,18 +19,18 @@ dependencies {
     implementation(group: 'org.apache.commons', name: 'commons-lang3', version: 'latest.release')
     implementation(group: 'io.github.palexdev', name: 'materialfx', version: 'latest.release')
 
-    testImplementation(platform('org.junit:junit-bom:5.7.1'))
+    testImplementation(platform('org.junit:junit-bom:5.8.2'))
     testImplementation(group: 'org.junit.jupiter',name: 'junit-jupiter')
 }
 
 javafx {
-    version = "17"
+    version = "17.0.1"
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.swing', 'javafx.graphics', 'javafx.web']
 }
 
 run {
     if (javafx.platform.classifier == 'win') {
-        // Temporal fix for Eclipse with JDK 1.8 and Windows
+        // Temporary fix for Eclipse with JDK 1.8 and Windows
         systemProperty "java.library.path", "C:\\tmp"
     }
 }
