@@ -13,7 +13,7 @@ dependencies {
     implementation(group: 'org.fxmisc.richtext', name: 'richtextfx', version: 'latest.release')
     implementation(group: 'org.json', name: 'json', version: 'latest.release')
     implementation(group: 'com.google.code.gson', name: "gson", version: 'latest.release')
-    implementation(group: 'commons-io', name: 'commons-io', version: 'latest.release')
+    implementation(group: 'commons-io', name: 'commons-io', version: '2.11.0')
     implementation(group: 'com.github.Vatuu', name: 'discord-rpc', version: 'latest.release')
     implementation(group: 'com.panemu', name: 'tiwulfx-dock', version: 'latest.release')
     implementation(group: 'org.apache.commons', name: 'commons-lang3', version: 'latest.release')
