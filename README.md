@@ -28,7 +28,7 @@ To report a bug go [here](https://github.com/Railroad-Team/Railroad/issues). Use
 
 ### How do I help? 
 
-The first thing I would recomened is to join the discord server, you can talk with other contributers to railroad about contributing yourself. I would then (of course) make your own fork and look at what needs to be done, Then just make a pull request, someone will review it. And thats all to contributing to Railroad.
+The first thing that is recomeneded is to join the discord server, you can talk with others who contribute to railroad about contributing yourself. Then (of course) make your own fork and look at what needs to be done, Then just make a pull request, someone will review it. And thats all to contributing to Railroad.
 
 ## License
 
