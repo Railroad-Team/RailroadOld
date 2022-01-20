@@ -28,7 +28,7 @@ To report a bug go [here](https://github.com/Railroad-Team/Railroad/issues). Use
 
 ### How do I contribute?
 
-1. **(RECOMENDED)** Join the Discord server, which allows you to talk and discuss with other contributors.
+1. **(RECOMMENDED)** Join the Discord server, which allows you to talk and discuss with other contributors.
 2. Fork the repository and make your changes.
 3. Make a pull request to this repository.
 
