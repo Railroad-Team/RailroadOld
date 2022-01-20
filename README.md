@@ -26,9 +26,11 @@ There is no website available.
 
 To report a bug go [here](https://github.com/Railroad-Team/Railroad/issues). Use the bug report form and fill it out.
 
-### How do I help? 
+### How do I contribute?
 
-The first thing that is recomeneded is to join the discord server, you can talk with others who contribute to railroad about contributing yourself. Then (of course) make your own fork and look at what needs to be done, Then just make a pull request, someone will review it. And thats all to contributing to Railroad.
+1. **(RECOMENDED)** Join the Discord server, which allows you to talk and discuss with other contributors.
+2. Fork the repository and make your changes.
+3. Make a pull request to this repository.
 
 ## License
 
