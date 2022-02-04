@@ -27,7 +27,6 @@ import javafx.stage.Stage;
  * @author TurtyWurty
  */
 public final class WindowTools {
-
     private WindowTools() {
         throw new IllegalAccessError("Attempted to construct utility class!");
     }
@@ -74,7 +73,7 @@ public final class WindowTools {
         final var vbox = new VBox(10, label, new Separator(Orientation.HORIZONTAL), hbox);
 
         vbox.setBackground(new Background(new BackgroundFill(ColorHelper.awtColourToFx(theme.getBackgroundColor()),
-                CornerRadii.EMPTY, Insets.EMPTY)));
+            CornerRadii.EMPTY, Insets.EMPTY)));
 
         vbox.setAlignment(Pos.CENTER);
 

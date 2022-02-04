@@ -15,6 +15,6 @@ public interface GraphicFactory extends BiFunction<Path, Boolean, Node> {
     default Node apply(Path path, Boolean isDirectory) {
         return createGraphic(path, isDirectory);
     }
-
+    
     Node createGraphic(Path path, boolean isDirectory);
 }

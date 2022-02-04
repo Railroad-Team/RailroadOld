@@ -14,7 +14,6 @@ import java.util.concurrent.CompletionStage;
  * @param <I> type of the initiator of I/O actions
  */
 public interface InitiatorTrackingIOFacility {
-
     CompletionStage<Void> createDirectory(Path dir, Path initiator);
 
     CompletionStage<Void> createFile(Path file, Path initiator);
@@ -47,7 +46,6 @@ public interface InitiatorTrackingIOFacility {
         final InitiatorTrackingIOFacility self = this;
 
         return new IOFacility() {
-
             @Override
             public CompletionStage<Void> createDirectory(Path dir) {
                 return self.createDirectory(dir, initiator);

@@ -9,17 +9,17 @@ import javafx.scene.Node;
 
 public class FileItem extends PathItem {
     private FileTime lastModified;
-
+    
     private FileItem(Path path, FileTime lastModified, Node graphic, UnaryOperator<Path> projector) {
         super(path, graphic, projector);
         this.lastModified = lastModified;
     }
-
+    
     @Override
     public final boolean isDirectory() {
         return false;
     }
-
+    
     public boolean updateModificationTime(FileTime lastModified) {
         if (lastModified.compareTo(this.lastModified) > 0) {
             this.lastModified = lastModified;
@@ -27,9 +27,9 @@ public class FileItem extends PathItem {
         }
         return false;
     }
-
+    
     public static FileItem create(Path path, FileTime lastModified, GraphicFactory graphicFactory,
-            UnaryOperator<Path> projector) {
+        UnaryOperator<Path> projector) {
         return new FileItem(path, lastModified, graphicFactory.createGraphic(projector.apply(path), false), projector);
     }
 }

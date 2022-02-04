@@ -21,9 +21,7 @@ import javafx.stage.DirectoryChooser;
  * @author matyrobbrt
  */
 public class ItemModelTemplate extends JsonFileMenuItem {
-
     public final Project project;
-
     private ChoiceBox cb = new ChoiceBox<>();
 
     private DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -95,5 +93,4 @@ public class ItemModelTemplate extends JsonFileMenuItem {
             clearCache();
         }
     }
-
 }

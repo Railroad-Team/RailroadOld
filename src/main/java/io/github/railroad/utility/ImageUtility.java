@@ -14,7 +14,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 
 public final class ImageUtility {
-
     private ImageUtility() {
     }
 
@@ -31,15 +30,15 @@ public final class ImageUtility {
      * Gets the icon image that is to be displayed for the file that is converted
      * from the swing {@link Icon}.
      *
-     * @param file - The file to get the icon for.
-     * @return The corresponding icon image.
+     * @param  file - The file to get the icon for.
+     * @return      The corresponding icon image.
      */
     public static Image getIconImage(final File file) {
         final var swingImage = getLargeIcon(file);
         if (swingImage == null)
             return null;
         final var bImg = new BufferedImage(swingImage.getIconWidth(), swingImage.getIconHeight(),
-                BufferedImage.TYPE_INT_ARGB);
+            BufferedImage.TYPE_INT_ARGB);
         final Graphics2D graphics = bImg.createGraphics();
         swingImage.paintIcon(new Canvas(), graphics, 0, 0);
         // graphics.drawImage(bImg, 0, 0, null);
@@ -55,8 +54,8 @@ public final class ImageUtility {
     /**
      * Gets the icon image that is to be displayed for the file.
      *
-     * @param file - The file to get the icon for.
-     * @return The corresponding icon image.
+     * @param  file - The file to get the icon for.
+     * @return      The corresponding icon image.
      */
     private static Icon getLargeIcon(final File file) {
         if (file.getName().contains(".")) {

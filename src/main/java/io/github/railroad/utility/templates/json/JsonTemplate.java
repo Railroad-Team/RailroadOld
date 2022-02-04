@@ -14,7 +14,6 @@ import javafx.stage.Stage;
  * @author matyrobbrt
  */
 public abstract class JsonTemplate {
-
     public final Project project;
     public final String fileName;
 
@@ -32,8 +31,9 @@ public abstract class JsonTemplate {
     public abstract void openWindow();
 
     public void writeDirectory(File dir) {
-        if (!dir.exists())
+        if (!dir.exists()) {
             dir.mkdirs();
+        }
     }
 
     protected void clearCache() {

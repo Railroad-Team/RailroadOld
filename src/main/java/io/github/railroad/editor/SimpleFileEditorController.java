@@ -32,7 +32,7 @@ public class SimpleFileEditorController {
     // public ProgressBar progressBar;
     // public Button loadChangesButton;
     public RailroadCodeArea textArea;
-    
+
     /**
      * Loads the changes from the {@link File} reference.
      */
@@ -40,7 +40,7 @@ public class SimpleFileEditorController {
         loadFileToTextArea(this.loadedFileReference);
         // this.loadChangesButton.setVisible(false);
     }
-    
+
     /**
      * Creates the {@link FileChooser} used to select the {@link File} for this
      * {@link CodeArea}.
@@ -60,7 +60,7 @@ public class SimpleFileEditorController {
         }
         return null;
     }
-    
+
     /**
      * Saves the current {@link File} to disk.
      */
@@ -73,7 +73,7 @@ public class SimpleFileEditorController {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, e);
         }
     }
-    
+
     /**
      * Sets the {@link File} and loads the changes for this {@link CodeArea}.
      *
@@ -84,12 +84,12 @@ public class SimpleFileEditorController {
         this.loadedFileReference = file;
         loadChanges();
     }
-    
+
     /**
      * Checks to see whether this {@link File} has been modifed.
      *
-     * @param file - The {@link File} to create the checking service for.
-     * @return The {@link ScheduledService} that will check for modification.
+     * @param  file - The {@link File} to create the checking service for.
+     * @return      The {@link ScheduledService} that will check for modification.
      */
     private ScheduledService<Boolean> createFileChangesCheckingService(final File file) {
         final ScheduledService<Boolean> scheduledService = new ScheduledService<>() {
@@ -99,7 +99,7 @@ public class SimpleFileEditorController {
                     @Override
                     protected Boolean call() throws Exception {
                         final FileTime lastModifiedAsOfNow = Files
-                                .readAttributes(file.toPath(), BasicFileAttributes.class).lastModifiedTime();
+                            .readAttributes(file.toPath(), BasicFileAttributes.class).lastModifiedTime();
                         return lastModifiedAsOfNow.compareTo(SimpleFileEditorController.this.lastModifiedTime) > 0;
                     }
                 };
@@ -108,10 +108,11 @@ public class SimpleFileEditorController {
         scheduledService.setPeriod(Duration.seconds(1));
         return scheduledService;
     }
-    
+
     /**
-     * @param fileToLoad - The {@link File} to load into the {@link CodeArea}.
-     * @return The {@link Task} that will load the file into the {@link CodeArea}.
+     * @param  fileToLoad - The {@link File} to load into the {@link CodeArea}.
+     * @return            The {@link Task} that will load the file into the
+     *                    {@link CodeArea}.
      */
     private Task<String> fileLoaderTask(final File fileToLoad) {
         // Create a task to load the file asynchronously
@@ -138,7 +139,7 @@ public class SimpleFileEditorController {
                 }
             }
         };
-
+        
         // If successful, update the text area, display a success message and store the
         // loaded file reference
         loadFileTask.setOnSucceeded(workerStateEvent -> {
@@ -147,13 +148,13 @@ public class SimpleFileEditorController {
                 // this.statusMessage.setText("File loaded: " + fileToLoad.getName());
                 this.loadedFileReference = fileToLoad;
                 this.lastModifiedTime = Files.readAttributes(fileToLoad.toPath(), BasicFileAttributes.class)
-                        .lastModifiedTime();
+                    .lastModifiedTime();
                 this.textArea.setEditable(true);
                 this.textArea.setFile(fileToLoad);
             } catch (InterruptedException | ExecutionException | IOException e) {
                 Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getLocalizedMessage(), e);
                 this.textArea.replaceText(0, this.textArea.getText().length(), LangProvider.fromLang("editor.loadError")
-                        + (fileToLoad == null ? "N/A" : fileToLoad.getAbsolutePath()));
+                    + (fileToLoad == null ? "N/A" : fileToLoad.getAbsolutePath()));
                 this.textArea.setEditable(false);
                 this.textArea.setFile(null);
             }
@@ -165,7 +166,7 @@ public class SimpleFileEditorController {
         // failed
         loadFileTask.setOnFailed(workerStateEvent -> {
             this.textArea.replaceText(0, this.textArea.getText().length(), LangProvider.fromLang("editor.loadError")
-                    + (fileToLoad == null ? "N/A" : fileToLoad.getAbsolutePath()));
+                + (fileToLoad == null ? "N/A" : fileToLoad.getAbsolutePath()));
             this.textArea.setEditable(false);
             this.textArea.setFile(null);
             // this.statusMessage.setText("Failed to load file.");
@@ -176,7 +177,7 @@ public class SimpleFileEditorController {
         });
         return loadFileTask;
     }
-    
+
     /**
      * @param fileToLoad - The {@link File} to load to the {@link CodeArea}.
      */
@@ -185,7 +186,7 @@ public class SimpleFileEditorController {
         // this.progressBar.progressProperty().bind(loadTask.progressProperty());
         loadTask.run();
     }
-    
+
     /**
      * <strong>Unused.</strong> Will notify the user that there has been outside
      * changes to the file that is being modified.
@@ -193,7 +194,7 @@ public class SimpleFileEditorController {
     private void notifyUserOfChanges() {
         // this.loadChangesButton.setVisible(true);
     }
-    
+
     /**
      * Schedules the file checking service.
      *
@@ -204,12 +205,13 @@ public class SimpleFileEditorController {
         fileChangeCheckingService.setOnSucceeded(workerStateEvent -> {
             if (fileChangeCheckingService.getLastValue() == null)
                 return;
-            if (fileChangeCheckingService.getLastValue()) {
+            if (Boolean.TRUE.equals(fileChangeCheckingService.getLastValue())) {
                 // no need to keep checking
                 fileChangeCheckingService.cancel();
                 notifyUserOfChanges();
             }
         });
+
         System.out.println("Starting Checking Service...");
         fileChangeCheckingService.start();
     }

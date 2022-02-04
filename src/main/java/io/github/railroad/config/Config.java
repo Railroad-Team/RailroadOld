@@ -120,5 +120,4 @@ public abstract class Config {
     private File getConfigFile() {
         return new File(this.root + getName() + this.extension);
     }
-    
 }

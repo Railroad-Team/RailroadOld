@@ -37,36 +37,36 @@ public class DirWatcher {
     private final WatchService watcher;
     private final Thread ioThread;
     private final Executor eventThreadExecutor;
-
+    
     private volatile boolean shutdown = false;
     private boolean mayInterrupt = false;
     private boolean interrupted = false;
-
+    
     public DirWatcher(Executor eventThreadExecutor) throws IOException {
         this.watcher = FileSystems.getDefault().newWatchService();
         this.ioThread = new Thread(this::loop, "DirWatchIO");
         this.eventThreadExecutor = eventThreadExecutor;
         this.ioThread.start();
     }
-
+    
     public void createDirectory(Path dir, Runnable onSuccess, Consumer<Throwable> onError) {
         executeIOOperation(() -> {
             Files.createDirectory(dir);
             return null;
         }, none -> onSuccess.run(), onError);
     }
-
+    
     public void createFile(Path file, Consumer<FileTime> onSuccess, Consumer<Throwable> onError) {
         executeIOOperation(() -> createFile(file), onSuccess, onError);
     }
-
+    
     public void deleteFileOrEmptyDirectory(Path fileOrDir, Runnable onSuccess, Consumer<Throwable> onError) {
         executeIOOperation(() -> {
             Files.deleteIfExists(fileOrDir);
             return null;
         }, NULL -> onSuccess.run(), onError);
     }
-
+    
     public void deleteTree(Path root, Runnable onSuccess, Consumer<Throwable> onError) {
         executeIOOperation(() -> {
             if (Files.exists(root)) {
@@ -75,11 +75,11 @@ public class DirWatcher {
             return null;
         }, NULL -> onSuccess.run(), onError);
     }
-
+    
     public EventStream<Throwable> errors() {
         return this.errors;
     }
-
+    
     public CompletionStage<PathNode> getTree(Path root) {
         final CompletableFuture<PathNode> res = new CompletableFuture<>();
         executeOnIOThread(() -> {
@@ -92,37 +92,37 @@ public class DirWatcher {
         });
         return res;
     }
-
+    
     public void loadBinaryFile(Path file, Consumer<byte[]> onSuccess, Consumer<Throwable> onError) {
         executeIOOperation(() -> Files.readAllBytes(file), onSuccess, onError);
     }
-
+    
     public void loadTextFile(Path file, Charset charset, Consumer<String> onSuccess, Consumer<Throwable> onError) {
         executeIOOperation(() -> readTextFile(file, charset), onSuccess, onError);
     }
-
+    
     public void saveBinaryFile(Path file, byte[] content, Consumer<FileTime> onSuccess, Consumer<Throwable> onError) {
         executeIOOperation(() -> writeBinaryFile(file, content), onSuccess, onError);
     }
-
+    
     public void saveTextFile(Path file, String content, Charset charset, Consumer<FileTime> onSuccess,
-            Consumer<Throwable> onError) {
+        Consumer<Throwable> onError) {
         executeIOOperation(() -> writeTextFile(file, content, charset), onSuccess, onError);
     }
-
+    
     public void shutdown() {
         this.shutdown = true;
         interrupt();
     }
-
+    
     public EventStream<WatchKey> signalledKeys() {
         return this.signalledKeys;
     }
-
+    
     public void watch(Path dir) throws IOException {
         dir.register(this.watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
     }
-
+    
     public void watchOrLogError(Path dir) {
         try {
             watch(dir);
@@ -130,12 +130,12 @@ public class DirWatcher {
             this.errors.push(e);
         }
     }
-
+    
     private FileTime createFile(Path file) throws IOException {
         Files.createFile(file);
         return Files.getLastModifiedTime(file);
     }
-
+    
     private void deleteRecursively(Path root) throws IOException {
         if (Files.isDirectory(root)) {
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(root)) {
@@ -146,15 +146,15 @@ public class DirWatcher {
         }
         Files.delete(root);
     }
-
+    
     private void emitError(Throwable e) {
         executeOnEventThread(() -> this.errors.push(e));
     }
-
+    
     private void emitKey(WatchKey key) {
         executeOnEventThread(() -> this.signalledKeys.push(key));
     }
-
+    
     private <T> void executeIOOperation(Callable<T> action, Consumer<T> onSuccess, Consumer<Throwable> onError) {
         executeOnIOThread(() -> {
             try {
@@ -165,16 +165,16 @@ public class DirWatcher {
             }
         });
     }
-
+    
     private void executeOnEventThread(Runnable action) {
         this.eventThreadExecutor.execute(action);
     }
-
+    
     private void executeOnIOThread(Runnable action) {
         this.executorQueue.add(action);
         interrupt();
     }
-
+    
     private synchronized void interrupt() {
         if (this.mayInterrupt) {
             this.ioThread.interrupt();
@@ -182,7 +182,7 @@ public class DirWatcher {
             this.interrupted = true;
         }
     }
-
+    
     private void loop() {
         for (;;) {
             final WatchKey key = takeOrNullIfInterrupted();
@@ -200,7 +200,7 @@ public class DirWatcher {
             }
         }
     }
-
+    
     private void processIOQueues() {
         Runnable action;
         while ((action = this.executorQueue.poll()) != null) {
@@ -211,13 +211,13 @@ public class DirWatcher {
             }
         }
     }
-
+    
     private String readTextFile(Path file, Charset charset) throws IOException {
         final byte[] bytes = Files.readAllBytes(file);
         final CharBuffer chars = charset.decode(ByteBuffer.wrap(bytes));
         return chars.toString();
     }
-
+    
     private WatchKey take() throws InterruptedException {
         synchronized (this) {
             if (this.interrupted) {
@@ -226,7 +226,7 @@ public class DirWatcher {
             }
             this.mayInterrupt = true;
         }
-
+        
         try {
             return this.watcher.take();
         } finally {
@@ -235,7 +235,7 @@ public class DirWatcher {
             }
         }
     }
-
+    
     private WatchKey takeOrNullIfInterrupted() {
         try {
             return take();
@@ -243,12 +243,12 @@ public class DirWatcher {
             return null;
         }
     }
-
+    
     private FileTime writeBinaryFile(Path file, byte[] content) throws IOException {
         Files.write(file, content, CREATE, WRITE, TRUNCATE_EXISTING);
         return Files.getLastModifiedTime(file);
     }
-
+    
     private FileTime writeTextFile(Path file, String content, Charset charset) throws IOException {
         final byte[] bytes = content.getBytes(charset);
         return writeBinaryFile(file, bytes);

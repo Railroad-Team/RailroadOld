@@ -15,10 +15,10 @@ public class BracketHighlighter {
     private static final List<String> CLEAR_STYLE = Collections.emptyList();
     private static final List<String> MATCH_STYLE = Collections.singletonList("match");
     private static final String BRACKET_PAIRS = "(){}[]<>";
-
+    
     private final RailroadCodeArea codeArea;
     private final List<BracketPair> bracketPairs;
-
+    
     /**
      * Parameterized constructor
      *
@@ -26,68 +26,68 @@ public class BracketHighlighter {
      */
     public BracketHighlighter(final RailroadCodeArea codeArea) {
         this.codeArea = codeArea;
-
+        
         this.bracketPairs = new ArrayList<>();
-
+        
         // listen for changes in text or caret position
         this.codeArea.addTextInsertionListener((start, end, text) -> clearBracket());
         this.codeArea.caretPositionProperty()
-                .addListener((obs, oldVal, newVal) -> Platform.runLater(() -> highlightBracket(newVal)));
+            .addListener((obs, oldVal, newVal) -> Platform.runLater(() -> highlightBracket(newVal)));
     }
-
+    
     /**
      * Clear the existing highlighted bracket styles
      */
     public void clearBracket() {
         // get iterator of bracket pairs
         final Iterator<BracketPair> iterator = this.bracketPairs.iterator();
-
+        
         // loop through bracket pairs and clear all
         while (iterator.hasNext()) {
             // get next bracket pair
             final BracketPair pair = iterator.next();
-
+            
             // clear pair
             styleBrackets(pair, CLEAR_STYLE);
-
+            
             // remove bracket pair from list
             iterator.remove();
         }
     }
-
+    
     /**
      * Highlight the matching bracket at current caret position
      */
     public void highlightBracket() {
         this.highlightBracket(this.codeArea.getCaretPosition());
     }
-
+    
     /**
      * Find the matching bracket location
      *
-     * @param index to start searching from
-     * @return null or position of matching bracket
+     * @param  index to start searching from
+     * @return       null or position of matching bracket
      */
     private Integer getMatchingBracket(int index) {
         if (index < 0 || index >= this.codeArea.getLength())
             return null;
-
+        
         final var initialBracket = this.codeArea.getText(index, index + 1).charAt(0);
         final int bracketTypePosition = BRACKET_PAIRS.indexOf(initialBracket); // "(){}[]<>"
         if (bracketTypePosition < 0)
             return null;
-
+            
         // even numbered bracketTypePositions are opening brackets, and odd positions
         // are closing
         // if even (opening bracket) then step forwards, otherwise step backwards
         final int stepDirection = bracketTypePosition % 2 == 0 ? +1 : -1;
-
+        
         // the matching bracket to look for, the opposite of initialBracket
         final var match = BRACKET_PAIRS.charAt(bracketTypePosition + stepDirection);
-
+        
         index += stepDirection;
         var bracketCount = 1;
-
+        
         while (index > -1 && index < this.codeArea.getLength()) {
             final var code = this.codeArea.getText(index, index + 1).charAt(0);
             if (code == initialBracket) {
@@ -99,10 +99,10 @@ public class BracketHighlighter {
                 return index;
             index += stepDirection;
         }
-
+        
         return null;
     }
-
+    
     /**
      * Highlight the matching bracket at new caret position
      *
@@ -111,30 +111,30 @@ public class BracketHighlighter {
     private void highlightBracket(int newVal) {
         // first clear existing bracket highlights
         clearBracket();
-
+        
         // detect caret position both before and after bracket
         final String prevChar = newVal > 0 && newVal <= this.codeArea.getLength()
-                ? this.codeArea.getText(newVal - 1, newVal)
-                : "";
+            ? this.codeArea.getText(newVal - 1, newVal)
+            : "";
         if (BRACKET_PAIRS.contains(prevChar)) {
             newVal--;
         }
-
+        
         // get other half of matching bracket
         final Integer other = getMatchingBracket(newVal);
-
+        
         if (other != null) {
             // other half exists
             final var pair = new BracketPair(newVal, other);
-
+            
             // highlight pair
             styleBrackets(pair, MATCH_STYLE);
-
+            
             // add bracket pair to list
             this.bracketPairs.add(pair);
         }
     }
-
+    
     /**
      * Set a list of styles for a position
      *
@@ -149,7 +149,7 @@ public class BracketHighlighter {
             }
         }
     }
-
+    
     /**
      * Set a list of styles to a pair of brackets
      *
@@ -160,32 +160,14 @@ public class BracketHighlighter {
         styleBracket(pair.start, styles);
         styleBracket(pair.end, styles);
     }
-
+    
     /**
      * Class representing a pair of matching bracket indices
      */
-    static class BracketPair {
-
-        private final int start;
-        private final int end;
-
-        public BracketPair(final int start, final int end) {
-            this.start = start;
-            this.end = end;
-        }
-
-        public int getEnd() {
-            return this.end;
-        }
-
-        public int getStart() {
-            return this.start;
-        }
-
+    static record BracketPair(int start, int end) {
         @Override
         public String toString() {
             return "BracketPair{" + "start=" + this.start + ", end=" + this.end + '}';
         }
-
     }
 }

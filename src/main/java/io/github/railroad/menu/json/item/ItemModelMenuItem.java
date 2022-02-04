@@ -20,7 +20,6 @@ import javafx.stage.DirectoryChooser;
  * @author matyrobbrt
  */
 public class ItemModelMenuItem extends JsonFileMenuItem {
-    
     public final Project project;
 
     private ChoiceBox cb = new ChoiceBox<>();
@@ -92,5 +91,4 @@ public class ItemModelMenuItem extends JsonFileMenuItem {
             clearCache();
         }
     }
-    
 }

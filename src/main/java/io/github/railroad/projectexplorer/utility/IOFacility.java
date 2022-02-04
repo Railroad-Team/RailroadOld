@@ -9,7 +9,6 @@ import java.util.concurrent.CompletionStage;
  * Simple API for asynchronous file-system operations.
  */
 public interface IOFacility {
-
     /**
      * Creates a directory. If the directory already exists, or its parent directory
      * does not exist, or another I/O error occurs, the returned completion stage is

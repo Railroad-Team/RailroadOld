@@ -12,7 +12,7 @@ import javafx.scene.control.Menu;
  */
 public class JsonFileMenu extends Menu {
     public final Project project;
-    
+
     public JsonFileMenu(@NotNull Project project) {
         super(LangProvider.fromLang("menuBar.json.name"), null, new ItemModelMenuItem(project));
         this.project = project;

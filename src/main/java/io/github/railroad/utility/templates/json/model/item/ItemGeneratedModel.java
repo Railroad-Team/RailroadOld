@@ -22,9 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 public class ItemGeneratedModel extends JsonTemplate {
-
     private TextField layer0Texture = new TextField();
-
     private Label layer0Label = new Label(fromLang("layer0"));
 
     public ItemGeneratedModel(@NotNull Project project, String fileName) {
@@ -75,5 +73,4 @@ public class ItemGeneratedModel extends JsonTemplate {
         super.clearCache();
         this.layer0Texture = new TextField();
     }
-
 }

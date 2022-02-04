@@ -52,7 +52,6 @@ import net.arikia.dev.drpc.DiscordRichPresence;
  * @author TurtyWurty
  */
 public class Setup {
-
     protected final CodeEditor codeEditor;
     private final SimpleFileEditorController baseController;
     private final List<SimpleFileEditorController> fileControllers = new ArrayList<>();
@@ -76,7 +75,7 @@ public class Setup {
     public Setup(final Theme theme, String language) {
 
         // Always cache the lang first (else there will be no text for the project
-            // selection)
+        // selection)
         this.language = language;
         LangProvider.cacheLang(language);
 
@@ -130,8 +129,8 @@ public class Setup {
 
         if (file != null) {
             if (tabPane.getProperties().get("RealParent") == null
-                    && codeArea.getProperties().get("RealParent") instanceof final SplitPane parent
-                    && parent.getProperties().get("RealParent") instanceof AnchorPane) {
+                && codeArea.getProperties().get("RealParent") instanceof final SplitPane parent
+                && parent.getProperties().get("RealParent") instanceof AnchorPane) {
                 final var codeAreaIndex = parent.getItems().indexOf(codeArea);
                 parent.getItems().remove(codeAreaIndex);
 
@@ -200,10 +199,10 @@ public class Setup {
             this.baseCodeArea.getProperties().put("RealParent", this.mainSplitPane);
         }
 
-        DiscordRichPresence newPresence = new DiscordRichPresence.Builder("Working on " + project.getProjectName())
-                .setDetails("Editing " + file.getName()).setBigImage("logo", "Railroad IDE")
-                .setSmallImage("logo", "An IDE built for modders, made by modders.").setParty("", 0, 0)
-                .setStartTimestamps(System.currentTimeMillis()).build();
+        final DiscordRichPresence newPresence = new DiscordRichPresence.Builder(
+            "Working on " + this.project.getProjectName()).setDetails("Editing " + file.getName())
+                .setBigImage("logo", "Railroad IDE").setSmallImage("logo", "An IDE built for modders, made by modders.")
+                .setParty("", 0, 0).setStartTimestamps(System.currentTimeMillis()).build();
         DiscordRPC.discordUpdatePresence(newPresence);
 
         // TODO: Use this. But fix the tab pane and scroll bar issues that occur
@@ -231,10 +230,10 @@ public class Setup {
 
             SimpleFileEditorController selectedFileController = null;
             if (((Node) this.editorTabPane.getProperties().get("RealParent")).getProperties().get("RealParent")
-                    .equals(this.anchorPane)) {
+                .equals(this.anchorPane)) {
                 final Node possibleArea = this.editorTabPane.getSelectionModel().getSelectedItem().getContent();
                 final List<SimpleFileEditorController> controllers = this.fileControllers.stream()
-                        .filter(controller -> controller.textArea.equals(possibleArea)).toList();
+                    .filter(controller -> controller.textArea.equals(possibleArea)).toList();
                 if (controllers.isEmpty()) {
                     loadChangesBtn.setDisable(true);
                     return;
@@ -244,7 +243,7 @@ public class Setup {
 
             if (this.baseCodeArea != null && this.baseCodeArea.getParent() != null) {
                 final List<SimpleFileEditorController> controllers = this.fileControllers.stream()
-                        .filter(controller -> controller.textArea.equals(this.baseCodeArea)).toList();
+                    .filter(controller -> controller.textArea.equals(this.baseCodeArea)).toList();
                 if (controllers.isEmpty()) {
                     loadChangesBtn.setDisable(true);
                     return;
@@ -264,7 +263,7 @@ public class Setup {
     private DetachableTabPane createLeftTabPane() {
         final var tabPane = new DetachableTabPane();
         final var projExplTab = new DetachableTab(LangProvider.fromLang("tabs.projectExplorer.name"),
-                this.projectExplorer);
+            this.projectExplorer);
         projExplTab.setOnCloseRequest(Event::consume);
         tabPane.getTabs().add(projExplTab);
         return tabPane;
@@ -333,12 +332,12 @@ public class Setup {
 
             SimpleFileEditorController selectedFileController = null;
             if (this.editorTabPane.getProperties().get("RealParent") != null
-                    && ((Node) this.editorTabPane.getProperties().get("RealParent")).getProperties().get("RealParent")
-                            .equals(this.anchorPane)) {
+                && ((Node) this.editorTabPane.getProperties().get("RealParent")).getProperties().get("RealParent")
+                    .equals(this.anchorPane)) {
                 final var possibleArea = (RailroadCodeArea) this.editorTabPane.getSelectionModel().getSelectedItem()
-                        .getContent();
+                    .getContent();
                 final List<SimpleFileEditorController> controllers = this.fileControllers.stream()
-                        .filter(controller -> controller.textArea.equals(possibleArea)).toList();
+                    .filter(controller -> controller.textArea.equals(possibleArea)).toList();
                 if (controllers.isEmpty()) {
                     this.menuBar.fileMenu.saveItem.setDisable(true);
                     return;
@@ -348,7 +347,7 @@ public class Setup {
 
             if (this.baseCodeArea != null && this.baseCodeArea.getParent() != null) {
                 final List<SimpleFileEditorController> controllers = this.fileControllers.stream()
-                        .filter(controller -> controller.textArea.equals(this.baseCodeArea)).toList();
+                    .filter(controller -> controller.textArea.equals(this.baseCodeArea)).toList();
                 if (controllers.isEmpty()) {
                     this.menuBar.fileMenu.saveItem.setDisable(true);
                     return;

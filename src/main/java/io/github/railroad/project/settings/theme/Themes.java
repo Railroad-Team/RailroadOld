@@ -11,11 +11,11 @@ import javafx.scene.paint.Color;
  */
 public class Themes {
     public static final Theme DARK_THEME = new Theme("DarkMode").withButtonColor(fxColourToAwt(Color.DARKGRAY))
-            .withBackgroundColor(fxColourToAwt(Color.DIMGRAY)).withTextColor(fxColourToAwt(Color.ALICEBLUE));
-    
+        .withBackgroundColor(fxColourToAwt(Color.DIMGRAY)).withTextColor(fxColourToAwt(Color.ALICEBLUE));
+
     public static final Theme WHITE_THEME = new Theme("WhiteMode").withButtonColor(fxColourToAwt(Color.ANTIQUEWHITE))
-            .withBackgroundColor(fxColourToAwt(Color.FLORALWHITE)).withTextColor(fxColourToAwt(Color.BLACK));
-    
+        .withBackgroundColor(fxColourToAwt(Color.FLORALWHITE)).withTextColor(fxColourToAwt(Color.BLACK));
+
     private Themes() {
     }
 }

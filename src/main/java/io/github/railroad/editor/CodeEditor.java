@@ -25,11 +25,11 @@ import javafx.concurrent.Task;
  */
 public class CodeEditor {
     public final ExecutorService executor;
-
+    
     public CodeEditor(final ExecutorService service) {
         this.executor = service;
     }
-
+    
     /**
      * @return The default {@link CodeArea}.
      */
@@ -40,24 +40,24 @@ public class CodeEditor {
         codeArea.prefWidth(400);
         codeArea.prefHeight(600);
         codeArea.setId("codeArea");
-
+        
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
         codeArea.multiPlainChanges().successionEnds(Duration.ofMillis(500))
-                .supplyTask(() -> computeHighlightingAsync(codeArea)).awaitLatest(codeArea.multiPlainChanges())
-                .filterMap(t -> {
-                    if (t.isSuccess())
-                        return Optional.of(t.get());
-                    t.getFailure().printStackTrace();
-                    return Optional.empty();
-                }).subscribe(style -> applyHighlighting(codeArea, style));
-
+            .supplyTask(() -> computeHighlightingAsync(codeArea)).awaitLatest(codeArea.multiPlainChanges())
+            .filterMap(t -> {
+                if (t.isSuccess())
+                    return Optional.of(t.get());
+                t.getFailure().printStackTrace();
+                return Optional.empty();
+            }).subscribe(style -> applyHighlighting(codeArea, style));
+        
         new BracketHighlighter(codeArea);
-
+        
         Railroad.resetDiscordPresence();
-
+        
         return codeArea;
     }
-
+    
     /**
      * Sets the styles.
      *
@@ -67,26 +67,26 @@ public class CodeEditor {
     private void applyHighlighting(final CodeArea area, final StyleSpans<Collection<String>> highlighting) {
         area.setStyleSpans(0, highlighting);
     }
-
+    
     /**
      * Computes what should be highlighted with what style using regular
      * expressions.
      *
-     * @param codeArea - The {@link CodeArea} to compute.
-     * @return The created styles.
+     * @param  codeArea - The {@link CodeArea} to compute.
+     * @return          The created styles.
      */
     private StyleSpans<Collection<String>> computeHighlighting(final RailroadCodeArea codeArea) {
         final String text = codeArea.getText();
         var lastKwEnd = 0;
         final StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-
+        
         var styleClass = "";
-
+        
         if (codeArea.getFile() == null)
             return spansBuilder.create();
-
+        
         Matcher matcher;
-
+        
         switch (FilenameUtils.getExtension(codeArea.getFile().getName())) {
             case "java":
                 matcher = JavaRegex.PATTERN.matcher(text);
@@ -154,12 +154,12 @@ public class CodeEditor {
         spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
         return spansBuilder.create();
     }
-
+    
     /**
      * Asynchronously computes the highlighting.
      *
-     * @param area - The {@link CodeArea} tp compute.
-     * @return The {@link Task} that is used to do the calculation.
+     * @param  area - The {@link CodeArea} tp compute.
+     * @return      The {@link Task} that is used to do the calculation.
      */
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync(final RailroadCodeArea area) {
         final Task<StyleSpans<Collection<String>>> task = new Task<>() {

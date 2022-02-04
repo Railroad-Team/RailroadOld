@@ -15,7 +15,6 @@ import net.arikia.dev.drpc.DiscordRichPresence;
  * @author TurtyWurty
  */
 public class Railroad extends Application {
-
     public static final String RAILROAD_CONFIG_FOLDER = System.getProperty("user.home") + "/.railroad/";
 
     private static Project project;
@@ -60,20 +59,21 @@ public class Railroad extends Application {
      */
     private void setupDiscord(Project project) {
         this.discordHandlers = new DiscordEventHandlers.Builder()
-                .setReadyEventHandler(user -> System.out.println(user.username + "#" + user.discriminator)).build();
+            .setReadyEventHandler(user -> System.out.println(user.username + "#" + user.discriminator)).build();
         DiscordRPC.discordInitialize("853387211897700394", this.discordHandlers, true);
         DiscordRPC.discordRunCallbacks();
         this.discordRichPresence = new DiscordRichPresence.Builder("Working on " + project.getProjectName())
-                .setDetails("Making an amazing mod!").setBigImage("logo", "Railroad IDE")
-                .setSmallImage("logo", "An IDE built for modders, made by modders.").setParty("", 0, 0)
-                .setStartTimestamps(System.currentTimeMillis()).build();
+            .setDetails("Making an amazing mod!").setBigImage("logo", "Railroad IDE")
+            .setSmallImage("logo", "An IDE built for modders, made by modders.").setParty("", 0, 0)
+            .setStartTimestamps(System.currentTimeMillis()).build();
         DiscordRPC.discordUpdatePresence(this.discordRichPresence);
     }
 
     public static void resetDiscordPresence() {
         if (project != null) {
-            DiscordRichPresence newPresence = new DiscordRichPresence.Builder("Working on " + project.getProjectName())
-                    .setDetails("Making an amazing mod!").setBigImage("logo", "Railroad IDE")
+            final DiscordRichPresence newPresence = new DiscordRichPresence.Builder(
+                "Working on " + project.getProjectName()).setDetails("Making an amazing mod!")
+                    .setBigImage("logo", "Railroad IDE")
                     .setSmallImage("logo", "An IDE built for modders, made by modders.").setParty("", 0, 0)
                     .setStartTimestamps(System.currentTimeMillis()).build();
             DiscordRPC.discordUpdatePresence(newPresence);

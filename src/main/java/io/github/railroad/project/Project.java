@@ -27,7 +27,6 @@ import javafx.util.Duration;
  * @author TurtyWurty
  */
 public class Project {
-
     /**
      * How to use the config before showing the folder selector add this if
      * (JsonConfigs.GENERAL_CONFIG.getConfig() != null &&
@@ -107,7 +106,7 @@ public class Project {
         buttonLayout.setAlignment(Pos.CENTER_RIGHT);
 
         final var layout = new VBox(titleLabel, descriptionLabel, new HBox(rootDirLabel, textField, browseButton),
-                buttonLayout);
+            buttonLayout);
         final var scene = new Scene(layout);
         scene.getStylesheets().add(Railroad.class.getResource("/default.css").toExternalForm());
 

@@ -32,13 +32,13 @@ public class LangProvider {
         BufferedReader bufferedReaderEnUs = null;
         try {
             bufferedReaderSelected = new BufferedReader(
-                    new InputStreamReader(Railroad.class.getResource("/lang/" + langauge + ".json").openStream()));
+                new InputStreamReader(Railroad.class.getResource("/lang/" + langauge + ".json").openStream()));
             final JsonObject finalDataSelected = READING_GSON.fromJson(bufferedReaderSelected, JsonObject.class);
             selectedLang = finalDataSelected;
             
             if (!"en_us".equalsIgnoreCase(langauge)) {
                 bufferedReaderEnUs = new BufferedReader(
-                        new InputStreamReader(Railroad.class.getResource("/lang/en_us.json").openStream()));
+                    new InputStreamReader(Railroad.class.getResource("/lang/en_us.json").openStream()));
                 enUs = READING_GSON.fromJson(bufferedReaderEnUs, JsonObject.class);
             } else {
                 enUs = finalDataSelected;
@@ -52,7 +52,7 @@ public class LangProvider {
      * Retrieve a lang entry from the cached lang (or if it doesn't exist from the
      * <b>en_us</b>
      *
-     * @param translationKey
+     * @param  translationKey
      * @return
      */
     public static String fromLang(String translationKey) {
@@ -62,5 +62,4 @@ public class LangProvider {
             return enUs.get(translationKey).getAsString();
         return translationKey;
     }
-    
 }

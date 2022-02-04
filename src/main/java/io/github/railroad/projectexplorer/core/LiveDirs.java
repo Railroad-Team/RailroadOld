@@ -45,11 +45,8 @@ import javafx.scene.control.TreeView;
  * @param <I> type of the initiator of I/O actions.
  */
 public class LiveDirs {
-
     private final EventSource<Throwable> localErrors = new EventSource<>();
-
     private final EventStream<Throwable> errors;
-
     private final Executor clientThreadExecutor;
     private final DirWatcher dirWatcher;
     private final LiveDirsModel model;
@@ -59,20 +56,20 @@ public class LiveDirs {
     /**
      * Creates a LiveDirs instance to be used from a designated thread.
      *
-     * @param projector            converts the ({@link T})
-     *                             {@link TreeItem#getValue()} into a {@link Path}
-     *                             object
-     * @param injector             converts a given {@link Path} object into
-     *                             {@link T}. The reverse of {@code projector}
-     * @param externalInitiator    object to represent an initiator of an external
-     *                             file-system change.
-     * @param clientThreadExecutor executor to execute actions on the caller thread.
-     *                             Used to publish updates and errors on the caller
-     *                             thread.
+     * @param  projector            converts the ({@link T})
+     *                              {@link TreeItem#getValue()} into a {@link Path}
+     *                              object
+     * @param  injector             converts a given {@link Path} object into
+     *                              {@link T}. The reverse of {@code projector}
+     * @param  externalInitiator    object to represent an initiator of an external
+     *                              file-system change.
+     * @param  clientThreadExecutor executor to execute actions on the caller
+     *                              thread. Used to publish updates and errors on
+     *                              the caller thread.
      * @throws IOException
      */
     public LiveDirs(Path externalInitiator, UnaryOperator<Path> projector, UnaryOperator<Path> injector,
-            Executor clientThreadExecutor) throws IOException {
+        Executor clientThreadExecutor) throws IOException {
         this.externalInitiator = externalInitiator;
         this.clientThreadExecutor = clientThreadExecutor;
         this.dirWatcher = new DirWatcher(clientThreadExecutor);
@@ -90,7 +87,7 @@ public class LiveDirs {
     public void addTopLevelDirectory(Path dir) {
         if (!dir.isAbsolute())
             throw new IllegalArgumentException(
-                    dir + " is not absolute. Only absolute paths may be added as top-level directories.");
+                dir + " is not absolute. Only absolute paths may be added as top-level directories.");
 
         try {
             this.dirWatcher.watch(dir);
@@ -245,8 +242,8 @@ public class LiveDirs {
     /**
      * Creates a LiveDirs instance to be used from the JavaFX application thread.
      *
-     * @param externalInitiator object to represent an initiator of an external
-     *                          file-system change.
+     * @param  externalInitiator object to represent an initiator of an external
+     *                           file-system change.
      * @throws IOException
      */
     public static LiveDirs getInstance(Path externalInitiator) throws IOException {
@@ -256,15 +253,15 @@ public class LiveDirs {
     /**
      * Creates a LiveDirs instance to be used from a designated thread.
      *
-     * @param externalInitiator    object to represent an initiator of an external
-     *                             file-system change.
-     * @param clientThreadExecutor executor to execute actions on the caller thread.
-     *                             Used to publish updates and errors on the caller
-     *                             thread.
+     * @param  externalInitiator    object to represent an initiator of an external
+     *                              file-system change.
+     * @param  clientThreadExecutor executor to execute actions on the caller
+     *                              thread. Used to publish updates and errors on
+     *                              the caller thread.
      * @throws IOException
      */
     public static LiveDirs getInstance(Path externalInitiator, Executor clientThreadExecutor) throws IOException {
         return new LiveDirs(externalInitiator, UnaryOperator.identity(), UnaryOperator.identity(),
-                clientThreadExecutor);
+            clientThreadExecutor);
     }
 }

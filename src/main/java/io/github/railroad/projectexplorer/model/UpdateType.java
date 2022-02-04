@@ -6,10 +6,10 @@ package io.github.railroad.projectexplorer.model;
 public enum UpdateType {
     /** Indicates a new directory entry. */
     CREATION,
-
+    
     /** Indicates removal of a directory entry. */
     DELETION,
-
+    
     /** Indicates file modification. */
     MODIFICATION,
 }

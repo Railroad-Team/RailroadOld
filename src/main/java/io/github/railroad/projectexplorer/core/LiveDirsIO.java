@@ -14,13 +14,13 @@ public class LiveDirsIO implements InitiatorTrackingIOFacility {
     private final DirWatcher dirWatcher;
     private final LiveDirsModel model;
     private final Executor clientThreadExecutor;
-
+    
     public LiveDirsIO(DirWatcher dirWatcher, LiveDirsModel model, Executor clientThreadExecutor) {
         this.dirWatcher = dirWatcher;
         this.model = model;
         this.clientThreadExecutor = clientThreadExecutor;
     }
-
+    
     @Override
     public CompletionStage<Void> createDirectory(Path dir, Path initiator) {
         final CompletableFuture<Void> created = new CompletableFuture<>();
@@ -33,7 +33,7 @@ public class LiveDirsIO implements InitiatorTrackingIOFacility {
         }, created::completeExceptionally);
         return wrap(created);
     }
-
+    
     @Override
     public CompletionStage<Void> createFile(Path file, Path initiator) {
         final CompletableFuture<Void> created = new CompletableFuture<>();
@@ -43,7 +43,7 @@ public class LiveDirsIO implements InitiatorTrackingIOFacility {
         }, created::completeExceptionally);
         return wrap(created);
     }
-
+    
     @Override
     public CompletionStage<Void> delete(Path file, Path initiator) {
         final CompletableFuture<Void> deleted = new CompletableFuture<>();
@@ -53,7 +53,7 @@ public class LiveDirsIO implements InitiatorTrackingIOFacility {
         }, deleted::completeExceptionally);
         return wrap(deleted);
     }
-
+    
     @Override
     public CompletionStage<Void> deleteTree(Path root, Path initiator) {
         final CompletableFuture<Void> deleted = new CompletableFuture<>();
@@ -63,21 +63,21 @@ public class LiveDirsIO implements InitiatorTrackingIOFacility {
         }, deleted::completeExceptionally);
         return wrap(deleted);
     }
-
+    
     @Override
     public CompletionStage<byte[]> loadBinaryFile(Path file) {
         final CompletableFuture<byte[]> loaded = new CompletableFuture<>();
         this.dirWatcher.loadBinaryFile(file, loaded::complete, loaded::completeExceptionally);
         return wrap(loaded);
     }
-
+    
     @Override
     public CompletionStage<String> loadTextFile(Path file, Charset charset) {
         final CompletableFuture<String> loaded = new CompletableFuture<>();
         this.dirWatcher.loadTextFile(file, charset, loaded::complete, loaded::completeExceptionally);
         return wrap(loaded);
     }
-
+    
     @Override
     public CompletionStage<Void> saveBinaryFile(Path file, byte[] content, Path initiator) {
         final CompletableFuture<Void> saved = new CompletableFuture<>();
@@ -87,7 +87,7 @@ public class LiveDirsIO implements InitiatorTrackingIOFacility {
         }, saved::completeExceptionally);
         return wrap(saved);
     }
-
+    
     @Override
     public CompletionStage<Void> saveTextFile(Path file, String content, Charset charset, Path initiator) {
         final CompletableFuture<Void> saved = new CompletableFuture<>();
@@ -97,7 +97,7 @@ public class LiveDirsIO implements InitiatorTrackingIOFacility {
         }, saved::completeExceptionally);
         return wrap(saved);
     }
-
+    
     private <T> CompletionStage<T> wrap(CompletionStage<T> stage) {
         return new CompletionStageWithDefaultExecutor<>(stage, this.clientThreadExecutor);
     }
