@@ -1,0 +1,45 @@
+{
+	"menuBar.fileMenu.name": "Tiedosto",
+	"menuBar.fileMenu.open": "Avaa",
+	"menuBar.fileMenu.save": "Tallenna",
+	"menuBar.fileMenu.newJson": "Uusi Json",
+	
+	"menuBar.json.name": "Json-tiedosto",
+	"menuBar.json.itemModel": "Tavaramalli",
+	
+	"tabs.projectExplorer.name": "Projektien Hallinta",
+	
+	"project.chooseFolder": "Valitse projektisi kansio",
+	"project.selectFolder": "Valitse kansio",
+	"project.cancelSelection": "Peruuta",
+	"project.browseFolders": "Selaa",
+	"project.rootDirectory": "Juurihakemisto:",
+	"project.description": "Määritä juurihakemisto modillesi!",
+	"project.selectProjectFolder": "Valitse projektisi kansio",
+	"project.selectWindowTitle": "Valitse Projekti",
+
+	"project.rememberProject": "Muista Projektin Sijainti",
+
+	"editor.loadFileInfo": "Lataa tiedosto käyttämällä Tiedostovalikkoa!",
+	"editor.loadError": "Ei pystytty lataamaan tiedostoa:\n ",
+	
+	"fileLoader.changesCheck": "Tarkistetaan muutoksia...",
+	
+	"buttons.loadChanges": "Lataa muutokset",
+	"buttons.browse": "Selaa",
+	"buttons.next": "Seuraava",
+	"buttons.cancel": "Luo",
+	
+	"textArea.selectPath": "Valitse Kansio",
+	"textArea.fileName": "Tiedoston Nimi",
+	
+	"quitWindow.confirm": "Oletko varma, että haluat poistua Railroad IDE:stä?",
+	"quitWindow.yesBtn": "Kyllä",
+	"quitWindow.cancelBtn": "Peruuta",
+	"quitWindow.title": "Poistu Railroad IDE:stä",
+	
+	"jsonGenerator.parent": "Emo",
+	"jsonGenerator.modelTypeField": "Mallin Tyyppi: ",
+	"jsonGenerator.layer0": "Kerros0 Tekstuuri: "
+	
+}
