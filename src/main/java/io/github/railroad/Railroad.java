@@ -1,5 +1,6 @@
 package io.github.railroad;
 
+import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
 import io.github.railroad.project.Project;
 import io.github.railroad.project.settings.theme.Themes;
 import io.github.railroad.utility.WindowTools;
@@ -16,20 +17,21 @@ import net.arikia.dev.drpc.DiscordRichPresence;
  */
 public class Railroad extends Application {
     public static final String RAILROAD_CONFIG_FOLDER = System.getProperty("user.home") + "/.railroad/";
-
+    
     private static Project project;
     private DiscordEventHandlers discordHandlers;
     private DiscordRichPresence discordRichPresence;
-
+    
     private Setup setup;
-
+    
     @Override
     public void start(final Stage primaryStage) throws Exception {
+        SvgImageLoaderFactory.install();
         this.setup = new Setup(Themes.DARK_THEME, "en_us");
-
+        
         project = this.setup.project;
         setupDiscord(project);
-
+        
         final var scene = new Scene(this.setup.mainPane);
         scene.getStylesheets().add(Railroad.class.getResource("/default.css").toExternalForm());
         primaryStage.setScene(scene);
@@ -43,17 +45,17 @@ public class Railroad extends Application {
             WindowTools.displayQuitWindow(primaryStage, project.getTheme());
         });
         primaryStage.show();
-
+        
         scene.setOnKeyPressed(this.setup::handleKeyPress);
     }
-
+    
     @Override
     public void stop() {
         this.setup.codeEditor.executor.shutdown();
         this.setup.liveDirs.dispose();
         DiscordRPC.discordShutdown();
     }
-
+    
     /**
      * Sets up the Discord Rich Presence <br>
      */
@@ -68,7 +70,7 @@ public class Railroad extends Application {
             .setStartTimestamps(System.currentTimeMillis()).build();
         DiscordRPC.discordUpdatePresence(this.discordRichPresence);
     }
-
+    
     public static void resetDiscordPresence() {
         if (project != null) {
             final DiscordRichPresence newPresence = new DiscordRichPresence.Builder(

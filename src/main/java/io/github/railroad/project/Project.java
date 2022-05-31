@@ -4,24 +4,32 @@ import static io.github.railroad.project.lang.LangProvider.fromLang;
 
 import java.io.File;
 
-import com.sun.javafx.tk.Toolkit;
-
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.font.FontResources;
+import io.github.palexdev.materialfx.font.MFXFontIcon;
 import io.github.railroad.Railroad;
-import io.github.railroad.project.lang.LangProvider;
+import io.github.railroad.project.pages.ActionSelection;
+import io.github.railroad.project.pages.CreateProject;
+import io.github.railroad.project.pages.ImportProject;
+import io.github.railroad.project.pages.OpenProject;
+import io.github.railroad.project.pages.creation.CreateModProject;
+import io.github.railroad.project.pages.creation.CreatePluginProject;
+import io.github.railroad.project.pages.creation.mod.ForgeModProject;
 import io.github.railroad.project.settings.theme.Theme;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.geometry.Insets;
+import javafx.application.Platform;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
+import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 /**
  * @author TurtyWurty
@@ -40,86 +48,134 @@ public class Project {
      * a reason to format this. i just threw it here so you know how to use the
      * <b>temporary</b> solution
      */
-
+    
     private final Theme theme;
-
     private File projectFolder;
 
-    /**
-     * Creates the Project Settings and displays the initial "Project Directory
-     * Chooser".
-     *
-     * @param themeSettings - The {@link Theme} to apply.
-     */
+    private final ActionSelection actionSelection = new ActionSelection();
+    private final OpenProject openProject = new OpenProject();
+    private final ImportProject importProject = new ImportProject();
+    private final CreateProject createProject = new CreateProject();
+    private final CreateModProject createModProject = new CreateModProject();
+    private final CreatePluginProject createPluginProject = new CreatePluginProject();
+    private final ForgeModProject.Page1 forgeModProject1 = new ForgeModProject.Page1();
+    private final ForgeModProject.Page2 forgeModProject2 = new ForgeModProject.Page2();
+    
     public Project(final Theme themeSettings) {
         this.theme = themeSettings;
 
         final var window = new Stage();
 
-        final var dirChooser = new DirectoryChooser();
-        dirChooser.setTitle(LangProvider.fromLang("project.chooseFolder"));
-        dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        final var title = new Label("Action Selection");
+        title.setTextFill(Color.LIGHTSLATEGREY);
+        title.setStyle("-fx-font-weight: 600; -fx-font-size: 16;");
+        title.setTextAlignment(TextAlignment.CENTER);
 
-        final var textField = new TextField(System.getProperty("user.home"));
-        textField.autosize();
-        textField.deselect();
+        final var topMenu = new HBox(20, title);
+        topMenu.setAlignment(Pos.CENTER);
+        topMenu.setStyle("-fx-background-color: #0B151F;");
+        topMenu.setPrefHeight(30);
 
-        final var selectButton = new Button(fromLang("project.selectFolder"));
-        selectButton.setOnAction(event -> {
-            this.projectFolder = new File(textField.getText());
-            window.close();
-        });
+        final var separator = new Separator();
+        separator.setOrientation(Orientation.HORIZONTAL);
 
-        final var cancelButton = new Button(fromLang("project.cancelSelection"));
-        cancelButton.setOnAction(event -> {
-            window.close();
-            System.exit(0);
-        });
-        cancelButton.setId("projectCancelButton");
+        final var topStack = new StackPane(topMenu);
+        final var continueButton = new MFXButton("",
+            new MFXFontIcon(FontResources.ARROW_FORWARD.getDescription(), 25, Color.CRIMSON));
+        continueButton.setStyle("-fx-background-color: transparent;");
+        final var previousButton = new MFXButton("",
+            new MFXFontIcon(FontResources.ARROW_BACK.getDescription(), 25, Color.CRIMSON));
+        previousButton.setStyle("-fx-background-color: transparent;");
 
-        textField.setOnInputMethodTextChanged(event -> {
-            final var text = textField.getText();
-            selectButton.setDisable(!new File(text).exists());
-        });
-        textField.deselect();
-        new Timeline(new KeyFrame(Duration.millis(10), event -> textField.deselect())).play();
+        topStack.getChildren().add(continueButton);
+        StackPane.setAlignment(continueButton, Pos.CENTER_RIGHT);
 
-        final var browseButton = new Button(fromLang("project.browseFolders"));
-        browseButton.setOnAction(event -> {
-            final File chosenDir = dirChooser.showDialog(null);
-            if (chosenDir != null) {
-                textField.setText(chosenDir.getPath());
+        final var top = new VBox(topStack, separator);
+        top.setPickOnBounds(false);
+
+        final var layout = new BorderPane(this.actionSelection.getCore());
+        layout.setTop(top);
+        layout.setPickOnBounds(false);
+
+        continueButton.setOnMousePressed(event -> {
+            if (event.isPrimaryButtonDown()) {
+                if (layout.getCenter() == this.actionSelection.getCore()
+                    && this.actionSelection.currentlySelected.get() != null) {
+                    final BorderPane selected = this.actionSelection.currentlySelected.get();
+                    if (selected == this.actionSelection.openButton) {
+                        layout.setCenter(this.openProject.getCore());
+                        title.setText("Open Project");
+                    } else if (selected == this.actionSelection.importButton) {
+                        layout.setCenter(this.importProject.getCore());
+                        title.setText("Import Project");
+                    } else if (selected == this.actionSelection.createButton) {
+                        layout.setCenter(this.createProject.getCore());
+                        title.setText("Create Project");
+                    }
+
+                    topStack.getChildren().add(previousButton);
+                    StackPane.setAlignment(previousButton, Pos.CENTER_LEFT);
+                } else if (layout.getCenter() == this.createProject.getCore()
+                    && this.createProject.currentlySelected.get() != null) {
+                    final BorderPane selected = this.createProject.currentlySelected.get();
+                    if (selected == this.createProject.modButton) {
+                        layout.setCenter(this.createModProject.getCore());
+                        title.setText("Create Mod");
+                    } else if (selected == this.createProject.pluginButton) {
+                        layout.setCenter(this.createPluginProject.getCore());
+                        title.setText("Create Plugin");
+                    }
+                } else if (layout.getCenter() == this.createModProject.getCore()
+                    && this.createModProject.currentlySelected.get() != null) {
+                    final BorderPane selected = this.createModProject.currentlySelected.get();
+                    if (selected == this.createModProject.forgeButton) {
+                        layout.setCenter(this.forgeModProject1.getCore());
+                        title.setText("Create Forge Mod");
+                    }
+                } else if (layout.getCenter() == this.forgeModProject1.getCore()
+                    && this.forgeModProject1.isComplete()) {
+                    layout.setCenter(this.forgeModProject2.getCore());
+                }
             }
         });
 
-        final var rootDirLabel = new Label(fromLang("project.rootDirectory"));
-        final var descriptionLabel = new Label(fromLang("project.description"));
-        final var titleLabel = new Label(fromLang("project.selectProjectFolder"));
-        titleLabel.setId("projectTitleLabel");
-        descriptionLabel.setId("projectDescriptionLabel");
-        rootDirLabel.setWrapText(true);
-        descriptionLabel.setWrapText(true);
-        titleLabel.setWrapText(true);
+        previousButton.setOnMousePressed(event -> {
+            if (event.isPrimaryButtonDown()) {
+                if (layout.getCenter() == this.openProject.getCore()
+                    || layout.getCenter() == this.importProject.getCore()
+                    || layout.getCenter() == this.createProject.getCore()) {
+                    topStack.getChildren().remove(previousButton);
+                    layout.setCenter(this.actionSelection.getCore());
+                    title.setText("Action Selection");
+                } else if (layout.getCenter() == this.actionSelection.getCore()) {
+                    topStack.getChildren().remove(previousButton);
+                } else if (layout.getCenter() == this.createModProject.getCore()
+                    || layout.getCenter() == this.createPluginProject.getCore()) {
+                    layout.setCenter(this.createProject.getCore());
+                    title.setText("Create Project");
+                } else if (layout.getCenter() == this.forgeModProject1.getCore()) {
+                    layout.setCenter(this.createModProject.getCore());
+                    title.setText("Create Mod");
+                } else if (layout.getCenter() == this.forgeModProject2.getCore()) {
+                    layout.setCenter(this.forgeModProject1.getCore());
+                }
+            }
+        });
 
-        final var buttonLayout = new HBox(cancelButton, selectButton);
-        HBox.setMargin(cancelButton, new Insets(0, 5D, 0, 0));
-        buttonLayout.setAlignment(Pos.CENTER_RIGHT);
-
-        final var layout = new VBox(titleLabel, descriptionLabel, new HBox(rootDirLabel, textField, browseButton),
-            buttonLayout);
-        final var scene = new Scene(layout);
-        scene.getStylesheets().add(Railroad.class.getResource("/default.css").toExternalForm());
+        final var scene = new Scene(layout, 1200, 600);
+        scene.getStylesheets().add(Railroad.class.getResource("/project.css").toExternalForm());
 
         window.setOnCloseRequest(event -> {
-            window.close();
-            Toolkit.getToolkit().exitAllNestedEventLoops();
+            Platform.exit();
             System.exit(0);
         });
+
         window.setResizable(false);
         window.setScene(scene);
         window.setTitle(fromLang("project.selectWindowTitle"));
         window.requestFocus();
-        window.setAlwaysOnTop(true);
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.centerOnScreen();
         window.showAndWait();
     }
 
@@ -129,11 +185,11 @@ public class Project {
     public File getProjectFolder() {
         return this.projectFolder;
     }
-
+    
     public String getProjectName() {
         return getProjectFolder().getName();
     }
-
+    
     /**
      * @return The {@link Theme} used for this {@link Project}.
      */
