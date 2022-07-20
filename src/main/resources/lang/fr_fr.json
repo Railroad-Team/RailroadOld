@@ -1,0 +1,46 @@
+{
+	"menuBar.fileMenu.name": "Fichier",
+	"menuBar.fileMenu.open": "Ouvrir",
+	"menuBar.fileMenu.save": "Enregister",
+	"menuBar.fileMenu.newJson": "Nouveau Fichier Json",
+	
+	"menuBar.json.name": "Fichier Json",
+	"menuBar.json.itemModel": "Model d'Objet",
+	
+	"tabs.projectExplorer.name": "Explorateur de Projets",
+	
+	"project.chooseFolder": "Choisissez le dossier de votre projet",
+	"project.selectFolder": "Choisissez un Dossier",
+	"project.cancelSelection": "Annuler",
+	"project.browseFolders": "Séléctioner",
+	"project.rootDirectory": "Racine du Projet :",
+	"project.description": "Spécifiez le dossier racine du mod sur lequel vous voulez travailler !",
+	"project.selectProjectFolder": "Séléctionnez le dossier de votre projet",
+	"project.selectWindowTitle": "Séléctionnez un projet",
+
+	"project.rememberProject": "Souvenez vous de la position de votre projet",
+
+	"editor.loadFileInfo": "Chargez un fichier à l'aide du menu Fichier !",
+	"editor.loadError": "Impossible de charge le fichier depuis :\n ",
+	
+	"fileLoader.changesCheck": "Vérification des Modifications...",
+	
+	"buttons.loadChanges": "Chargement des Modifications",
+	"buttons.browse": "Rechercher",
+	"buttons.next": "Suivant",
+	"buttons.cancel": "Annuler",
+	"buttons.create": "Nouveau",
+	
+	"textArea.selectPath": "Choisissez un Dossier",
+	"textArea.fileName": "Nom du Fichier",
+	
+	"quitWindow.confirm": "Êtes-vous sûr de vouloir quitter Railroad IDE ?",
+	"quitWindow.yesBtn": "Oui",
+	"quitWindow.cancelBtn": "Annuler",
+	"quitWindow.title": "Quitter Railroad IDE",
+	
+	"jsonGenerator.parent": "Parent",
+	"jsonGenerator.modelTypeField": "Type de Model : ",
+	"jsonGenerator.layer0": "Layer0 Texture: "
+	
+}
