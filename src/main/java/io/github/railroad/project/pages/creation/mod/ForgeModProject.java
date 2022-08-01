@@ -36,131 +36,131 @@ public class ForgeModProject {
         public final Label nameLabel, artifactIdLabel, groupIdLabel, versionLabel;
         public final MFXTextField nameInput, artifactIdInput, groupIdInput, versionInput;
         public final VBox mainVertical;
-        
+
         public Page1() {
             super(new BorderPane());
-            
+
             this.mainPane = (BorderPane) getCore();
-            
+
             this.nameLabel = new Label("Mod Name:");
             this.artifactIdLabel = new Label("Artifact ID (modid):");
             this.groupIdLabel = new Label("Group ID (main package):");
             this.versionLabel = new Label("Version");
-
+            
             this.nameLabel.setTextFill(Color.WHITESMOKE);
             this.artifactIdLabel.setTextFill(Color.WHITESMOKE);
             this.groupIdLabel.setTextFill(Color.WHITESMOKE);
             this.versionLabel.setTextFill(Color.WHITESMOKE);
-            
+
             final String defaultName = OpenProject.getRandomProjectName();
             final String defaultModID = defaultName.toLowerCase().replaceAll("\s+", "").trim();
             final String defaultPackage = "com.yourname." + defaultModID;
             final String defaultVersion = "1.0-SNAPSHOT";
-            
+
             this.nameInput = new MFXTextField("", "Mod Name");
             this.artifactIdInput = new MFXTextField("", "Mod ID");
             this.groupIdInput = new MFXTextField("", "Main Package");
             this.versionInput = new MFXTextField("", "Version");
-
+            
             this.nameInput.setMinSize(200, 30);
             this.artifactIdInput.setMinSize(200, 30);
             this.groupIdInput.setMinSize(200, 30);
             this.versionInput.setMinSize(200, 30);
-
+            
             this.mainVertical = new VBox(60, new VBox(10, this.nameLabel, this.nameInput),
                 new VBox(10, this.artifactIdLabel, this.artifactIdInput),
                 new VBox(10, this.groupIdLabel, this.groupIdInput), new VBox(10, this.versionLabel, this.versionInput));
             this.mainVertical.setAlignment(Pos.CENTER_LEFT);
             this.mainVertical.setPadding(InsetsFactory.left(100));
-
+            
             this.mainPane.setCenter(this.mainVertical);
             this.mainPane.setStyle("-fx-background-color: #1B232C;");
         }
-        
+
         public boolean isComplete() {
             return true;
         }
     }
-
+    
     public static class Page2 extends Page {
         private static final String PROMS = "https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json";
         private static final String MAVEN = "https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata.xml";
-
+        
         public final BorderPane mainPane;
         public final Label mcVersionLabel, forgeVersionLabel, mappingsLabel, mappingsVersionLabel;
         public final MFXComboBox<String> mcVersion, forgeVersion, mappings, mappingsVersion;
         public final VBox mainVertical;
-        
+
         public Page2() {
             super(new BorderPane());
-            
+
             this.mainPane = (BorderPane) getCore();
-            
+
             this.mcVersionLabel = new Label("Minecraft Version:");
             this.forgeVersionLabel = new Label("Forge Version:");
             this.mappingsLabel = new Label("Mappings Channel:");
             this.mappingsVersionLabel = new Label("Mappings Version:");
-
+            
             this.mcVersionLabel.setTextFill(Color.WHITESMOKE);
             this.forgeVersionLabel.setTextFill(Color.WHITESMOKE);
             this.mappingsLabel.setTextFill(Color.WHITESMOKE);
             this.mappingsVersionLabel.setTextFill(Color.WHITESMOKE);
-            
+
             this.mcVersion = new MFXComboBox<>();
             this.forgeVersion = new MFXComboBox<>();
             this.mappings = new MFXComboBox<>();
             this.mappingsVersion = new MFXComboBox<>();
-            
+
             loadMinecraftVersions(this.mcVersion.getItems());
             this.forgeVersion.setDisable(true);
             this.mappings.setDisable(true);
             this.mappingsVersion.setDisable(true);
-            
+
             this.mcVersion.selectedItemProperty().addListener((observable, oldVal, newVal) -> {
                 if (newVal != null) {
                     loadForgeVersions(this.forgeVersion.getItems(), newVal);
                     this.forgeVersion.setDisable(false);
-                    
+
                     loadMappings(this.mappings.getItems(), newVal);
                     this.mappings.setDisable(false);
                 }
             });
-
+            
             this.mappingsVersion.selectedItemProperty().addListener((observable, oldVal, newVal) -> {
                 if (newVal != null) {
                     loadMappingsVersions(this.mappingsVersion.getItems(), this.mcVersion.getText(), newVal);
                     this.mappingsVersion.setDisable(false);
                 }
             });
-            
+
             this.mcVersion.setPromptText("Minecraft Version");
             this.forgeVersion.setPromptText("Forge Version");
             this.mappings.setPromptText("Mappings Channel");
             this.mappingsVersion.setPromptText("Mappings Version");
-
+            
             this.mcVersion.setMinSize(200, 30);
             this.forgeVersion.setMinSize(200, 30);
             this.mappings.setMinSize(200, 30);
             this.mappingsVersion.setMinSize(200, 30);
-
+            
             this.mainVertical = new VBox(60, new VBox(10, this.mcVersionLabel, this.mcVersion),
                 new VBox(10, this.forgeVersionLabel, this.forgeVersion),
                 new VBox(10, this.mappingsLabel, this.mappings),
                 new VBox(10, this.mappingsVersionLabel, this.mappingsVersion));
             this.mainVertical.setAlignment(Pos.CENTER_LEFT);
             this.mainVertical.setPadding(InsetsFactory.left(100));
-
+            
             this.mainPane.setCenter(this.mainVertical);
             this.mainPane.setStyle("-fx-background-color: #1B232C;");
         }
-
+        
         public boolean isComplete() {
             return true;
         }
-        
+
         private static void loadForgeVersions(ObservableList<String> options, String mcVersion) {
             options.clear();
-
+            
             try {
                 final URLConnection connection = new URL(MAVEN).openConnection();
                 final JSONObject xmlJson = XML
@@ -179,17 +179,17 @@ public class ForgeModProject {
                 throw new IllegalStateException("Unable to read forge versions!", exception);
             }
         }
-        
+
         private static void loadMappings(ObservableList<String> options, String mcVersion) {
             options.clear();
-
+            
             final String[] parts = mcVersion.split("\\.");
             try {
                 final Integer minor = Integer.parseInt(parts[1]);
                 if (minor >= 14) {
                     options.add("Yarn");
                 }
-
+                
                 if (minor > 16) {
                     options.addAll("Mojmap", "Parchment");
                 } else if (minor < 16) {
@@ -206,35 +206,35 @@ public class ForgeModProject {
                 throw new IllegalStateException("There was an error calculating Mappings Channels!", exception);
             }
         }
-        
+
         private static void loadMappingsVersions(ObservableList<String> options, String mcVersion,
             String mappingsChannel) {
             options.clear();
-
-            try {
-                if ("MCP".equals(mappingsChannel)) {
-
-                } else if ("Mojmap".equals(mappingsChannel)) {
-                    options.add(mcVersion);
-                } else if ("Parchment".equals(mappingsChannel)) {
-
-                } else if ("Yarn".equals(mappingsChannel)) {
-
-                }
-            } catch (final IOException exception) {
-                throw new IllegalStateException("", exception);
+            
+            // try {
+            if ("MCP".equals(mappingsChannel)) {
+                
+            } else if ("Mojmap".equals(mappingsChannel)) {
+                options.add(mcVersion);
+            } else if ("Parchment".equals(mappingsChannel)) {
+                
+            } else if ("Yarn".equals(mappingsChannel)) {
+                
             }
+            // } catch (final IOException exception) {
+            // throw new IllegalStateException("", exception);
+            // }
         }
-        
+
         private static void loadMinecraftVersions(ObservableList<String> options) {
             options.clear();
-            
+
             try {
                 final URLConnection connection = new URL(PROMS).openConnection();
                 final JsonObject response = Gsons.READING_GSON
                     .fromJson(new InputStreamReader(connection.getInputStream()), JsonObject.class);
                 final JsonObject promos = response.getAsJsonObject("promos");
-
+                
                 final List<String> versions = new ArrayList<>();
                 promos.entrySet().forEach(entry -> {
                     final String version = entry.getKey().replace("-latest", "").replace("-recommended", "")
@@ -243,9 +243,9 @@ public class ForgeModProject {
                         versions.add(version);
                     }
                 });
-                
-                Collections.reverse(versions);
 
+                Collections.reverse(versions);
+                
                 versions.forEach(options::add);
             } catch (final IOException exception) {
                 throw new IllegalStateException("Unable to load Minecraft Versions!", exception);
