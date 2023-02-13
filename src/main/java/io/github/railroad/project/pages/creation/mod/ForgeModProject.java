@@ -126,10 +126,10 @@ public class ForgeModProject {
                 }
             });
             
-            this.mappingsVersion.selectedItemProperty().addListener((observable, oldVal, newVal) -> {
+            this.mappings.selectedItemProperty().addListener((observable, oldVal, newVal) -> {
                 if (newVal != null) {
                     loadMappingsVersions(this.mappingsVersion.getItems(), this.mcVersion.getText(), newVal);
-                    this.mappingsVersion.setDisable(false);
+                    this.mappingsVersion.setDisable(this.mappingsVersion.getItems().isEmpty());
                 }
             });
 
@@ -185,7 +185,7 @@ public class ForgeModProject {
             
             final String[] parts = mcVersion.split("\\.");
             try {
-                final Integer minor = Integer.parseInt(parts[1]);
+                final int minor = Integer.parseInt(parts[1]);
                 if (minor >= 14) {
                     options.add("Yarn");
                 }
@@ -195,7 +195,7 @@ public class ForgeModProject {
                 } else if (minor < 16) {
                     options.add("MCP");
                 } else if (minor == 16) {
-                    final Integer subMinor = Integer.parseInt(parts[2]);
+                    final int subMinor = Integer.parseInt(parts[2]);
                     if (subMinor == 5) {
                         options.addAll("MCP", "Mojmap", "Parchment");
                     } else {
@@ -212,13 +212,13 @@ public class ForgeModProject {
             options.clear();
             
             // try {
-            if ("MCP".equals(mappingsChannel)) {
+            if ("MCP".equalsIgnoreCase(mappingsChannel)) {
                 
-            } else if ("Mojmap".equals(mappingsChannel)) {
+            } else if ("Mojmap".equalsIgnoreCase(mappingsChannel)) {
                 options.add(mcVersion);
             } else if ("Parchment".equals(mappingsChannel)) {
                 
-            } else if ("Yarn".equals(mappingsChannel)) {
+            } else if ("Yarn".equalsIgnoreCase(mappingsChannel)) {
                 
             }
             // } catch (final IOException exception) {
@@ -245,8 +245,8 @@ public class ForgeModProject {
                 });
 
                 Collections.reverse(versions);
-                
-                versions.forEach(options::add);
+
+                options.addAll(versions);
             } catch (final IOException exception) {
                 throw new IllegalStateException("Unable to load Minecraft Versions!", exception);
             }
