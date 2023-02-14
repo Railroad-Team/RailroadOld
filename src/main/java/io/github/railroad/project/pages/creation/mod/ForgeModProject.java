@@ -19,14 +19,11 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.util.Pair;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.asynchttpclient.*;
 import org.json.JSONObject;
 import org.json.XML;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -97,10 +94,8 @@ public class ForgeModProject {
     }
 
     public static class Page2 extends Page {
-        private static final String PROMS = "https://files.minecraftforge.net/net/minecraftforge/forge" +
-                "/promotions_slim.json";
-        private static final String MAVEN = "https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata"
-                + ".xml";
+        private static final String PROMS = "https://files.minecraftforge.net/net/minecraftforge/forge" + "/promotions_slim.json";
+        private static final String MAVEN = "https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata" + ".xml";
 
         public final BorderPane mainPane;
         public final Label mcVersionLabel, forgeVersionLabel, mappingsLabel, mappingsVersionLabel;
@@ -175,10 +170,6 @@ public class ForgeModProject {
             this.page1 = page1;
         }
 
-        public boolean isComplete() {
-            return true;
-        }
-
         private static void loadForgeVersions(ObservableList<String> options, String mcVersion) {
             options.clear();
 
@@ -201,50 +192,6 @@ public class ForgeModProject {
             }
         }
 
-        private static void loadMappingsVersions(ObservableList<String> options, String mcVersion, String mappingsChannel) {
-            options.clear();
-
-            if ("MCP".equalsIgnoreCase(mappingsChannel)) {
-                options.addAll(getMCPVersions(mcVersion));
-            } else if ("Mojmap".equalsIgnoreCase(mappingsChannel)) {
-                options.add(mcVersion);
-            } else if ("Parchment".equals(mappingsChannel)) {
-                options.addAll(getParchmentVersions(mcVersion));
-            } else if ("Yarn".equalsIgnoreCase(mappingsChannel)) {
-                options.addAll(getYarnVersions(mcVersion));
-            }
-        }
-
-        private static Collection<String> getParchmentVersions(String minecraftVersion) {
-            List<String> results = new ArrayList<>();
-            try {
-                String url = ("https://ldtteam.jfrog.io/artifactory/parchmentmc-public/org/parchmentmc/data/parchment-%s/maven-metadata.xml").formatted(
-                        minecraftVersion);
-                var file = new File(minecraftVersion + "-parchment.xml");
-                if (!file.exists()) {
-                    FileUtils.copyURLToFile(new URL(url), file);
-                }
-
-                // TODO: Figure out wtf is happening here
-                final String xmlJsonStr = XML.toJSONObject(Files.readString(file.toPath(), StandardCharsets.UTF_8))
-                        .toString(1);
-                final JsonObject xmlJson = Gsons.READING_GSON.fromJson(xmlJsonStr, JsonObject.class);
-                final JsonObject versioning = xmlJson.getAsJsonObject("metadata").getAsJsonObject("versioning");
-                final JsonArray versionsArray = versioning.getAsJsonObject("versions").getAsJsonArray("version");
-                for (final JsonElement element : versionsArray) {
-                    final String version = element.getAsString();
-                    if (!Pattern.matches("\\d+\\.\\d+(\\.\\d+)?", version)) continue;
-
-                    results.add(version);
-                }
-
-            } catch (final IOException exception) {
-                throw new IllegalStateException("Unable to read parchment versions!", exception);
-            }
-
-            return results;
-        }
-
         public static void loadMinecraftVersions(ObservableList<String> options) {
             options.clear();
 
@@ -257,7 +204,7 @@ public class ForgeModProject {
                 final List<String> versions = new ArrayList<>();
                 promos.entrySet().forEach(entry -> {
                     final String version = entry.getKey().replace("-latest", "").replace("-recommended", "")
-                                                .replace("_pre4", "");
+                            .replace("_pre4", "");
                     if (!versions.contains(version)) {
                         versions.add(version);
                     }
@@ -274,40 +221,17 @@ public class ForgeModProject {
         public boolean isComplete() {
             boolean mcVersion = this.mcVersion.getSelectedItem() != null && !this.mcVersion.getText().isBlank();
             boolean forgeVersion = this.forgeVersion.getSelectedItem() != null && !this.forgeVersion.getText()
-                                                                                                    .isBlank();
+                    .isBlank();
             boolean mappings = this.mappings.getSelectedItem() != null && !this.mappings.getText().isBlank();
             boolean mappingsVersion = this.mappingsVersion.getSelectedItem() != null && !this.mappingsVersion.getText()
-                                                                                                             .isBlank();
+                    .isBlank();
 
             return mcVersion && forgeVersion && mappings && mappingsVersion;
-        }
-
-        private static void loadForgeVersions(ObservableList<String> options, String mcVersion) {
-            options.clear();
-
-            try {
-                final URLConnection connection = new URL(MAVEN).openConnection();
-                final JSONObject xmlJson = XML.toJSONObject(
-                        IOUtils.toString(connection.getInputStream(), StandardCharsets.UTF_8));
-                final JsonObject json = Gsons.READING_GSON.fromJson(xmlJson.toString(), JsonObject.class);
-                final JsonObject versionObj = json.getAsJsonObject("metadata").getAsJsonObject("versioning")
-                                                  .getAsJsonObject("versions");
-                final JsonArray versions = versionObj.getAsJsonArray("version");
-                for (final JsonElement element : versions) {
-                    final String version = element.getAsString();
-                    if (version.startsWith(mcVersion + "-")) {
-                        options.add(version.replaceAll(mcVersion + "-", "").replaceAll("-" + mcVersion, ""));
-                    }
-                }
-            } catch (final IOException exception) {
-                throw new IllegalStateException("Unable to read forge versions!", exception);
-            }
         }
     }
 
     public static class Page3 extends Page {
-        private static final String MDK_URL = "https://maven.minecraftforge.net/net/minecraftforge/forge/%s-%s" +
-                "/forge-%s-%s-mdk.zip";
+        private static final String MDK_URL = "https://maven.minecraftforge.net/net/minecraftforge/forge/%s-%s" + "/forge-%s-%s-mdk.zip";
 
         private final BorderPane mainPane;
         private final MFXButton startButton;
@@ -345,7 +269,7 @@ public class ForgeModProject {
                     var totalSize = new BigInteger(connection.getHeaderField("Content-Length"));
 
                     asyncHttpClient.prepareGet(url)
-                                   .execute(new MdkDownloadHandler(new FileOutputStream("../forge.zip"), totalSize));
+                            .execute(new MdkDownloadHandler(new FileOutputStream("../forge.zip"), totalSize));
                     this.startButton.setDisable(true);
                 } catch (IOException exception) {
                     exception.printStackTrace();
