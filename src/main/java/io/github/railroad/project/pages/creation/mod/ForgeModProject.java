@@ -16,10 +16,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.json.XML;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -278,15 +280,19 @@ public class ForgeModProject {
         private static Collection<String> getParchmentVersions(String minecraftVersion) {
             List<String> results = new ArrayList<>();
             try {
-                String url = ("https://ldtteam.jfrog.io/ui/native/parchmentmc-public/org/parchmentmc/data/parchment-%s/maven-metadata.xml").formatted(
+                String url = ("https://ldtteam.jfrog.io/artifactory/parchmentmc-public/org/parchmentmc/data/parchment-%s/maven-metadata.xml").formatted(
                         minecraftVersion);
-                final URLConnection connection = new URL(url).openConnection();
+                var file = new File(minecraftVersion + "-parchment.xml");
+                if (!file.exists()) {
+                    FileUtils.copyURLToFile(new URL(url), file);
+                }
+
                 // TODO: Figure out wtf is happening here
-                final String xmlJsonStr = XML.toJSONObject(
-                        IOUtils.toString(connection.getInputStream(), StandardCharsets.UTF_8)).toString(1);
+                final String xmlJsonStr = XML.toJSONObject(Files.readString(file.toPath(), StandardCharsets.UTF_8))
+                        .toString(1);
                 final JsonObject xmlJson = Gsons.READING_GSON.fromJson(xmlJsonStr, JsonObject.class);
                 final JsonObject versioning = xmlJson.getAsJsonObject("metadata").getAsJsonObject("versioning");
-                final JsonArray versionsArray = versioning.getAsJsonArray("versions");
+                final JsonArray versionsArray = versioning.getAsJsonObject("versions").getAsJsonArray("version");
                 for (final JsonElement element : versionsArray) {
                     final String version = element.getAsString();
                     if (!Pattern.matches("\\d+\\.\\d+(\\.\\d+)?", version)) continue;
