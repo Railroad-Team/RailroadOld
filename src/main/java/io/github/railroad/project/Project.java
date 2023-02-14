@@ -48,7 +48,7 @@ public class Project {
      * a reason to format this. i just threw it here so you know how to use the
      * <b>temporary</b> solution
      */
-    
+
     private final Theme theme;
     private File projectFolder;
 
@@ -59,8 +59,9 @@ public class Project {
     private final CreateModProject createModProject = new CreateModProject();
     private final CreatePluginProject createPluginProject = new CreatePluginProject();
     private final ForgeModProject.Page1 forgeModProject1 = new ForgeModProject.Page1();
-    private final ForgeModProject.Page2 forgeModProject2 = new ForgeModProject.Page2();
-    
+    private final ForgeModProject.Page2 forgeModProject2 = new ForgeModProject.Page2(forgeModProject1);
+    private final ForgeModProject.Page3 forgeModProject3 = new ForgeModProject.Page3(forgeModProject2);
+
     public Project(final Theme themeSettings) {
         this.theme = themeSettings;
 
@@ -81,10 +82,10 @@ public class Project {
 
         final var topStack = new StackPane(topMenu);
         final var continueButton = new MFXButton("",
-            new MFXFontIcon(FontResources.ARROW_FORWARD.getDescription(), 25, Color.CRIMSON));
+                new MFXFontIcon(FontResources.ARROW_FORWARD.getDescription(), 25, Color.CRIMSON));
         continueButton.setStyle("-fx-background-color: transparent;");
         final var previousButton = new MFXButton("",
-            new MFXFontIcon(FontResources.ARROW_BACK.getDescription(), 25, Color.CRIMSON));
+                new MFXFontIcon(FontResources.ARROW_BACK.getDescription(), 25, Color.CRIMSON));
         previousButton.setStyle("-fx-background-color: transparent;");
 
         topStack.getChildren().add(continueButton);
@@ -99,8 +100,7 @@ public class Project {
 
         continueButton.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown()) {
-                if (layout.getCenter() == this.actionSelection.getCore()
-                    && this.actionSelection.currentlySelected.get() != null) {
+                if (layout.getCenter() == this.actionSelection.getCore() && this.actionSelection.currentlySelected.get() != null) {
                     final BorderPane selected = this.actionSelection.currentlySelected.get();
                     if (selected == this.actionSelection.openButton) {
                         layout.setCenter(this.openProject.getCore());
@@ -115,8 +115,7 @@ public class Project {
 
                     topStack.getChildren().add(previousButton);
                     StackPane.setAlignment(previousButton, Pos.CENTER_LEFT);
-                } else if (layout.getCenter() == this.createProject.getCore()
-                    && this.createProject.currentlySelected.get() != null) {
+                } else if (layout.getCenter() == this.createProject.getCore() && this.createProject.currentlySelected.get() != null) {
                     final BorderPane selected = this.createProject.currentlySelected.get();
                     if (selected == this.createProject.modButton) {
                         layout.setCenter(this.createModProject.getCore());
@@ -125,32 +124,29 @@ public class Project {
                         layout.setCenter(this.createPluginProject.getCore());
                         title.setText("Create Plugin");
                     }
-                } else if (layout.getCenter() == this.createModProject.getCore()
-                    && this.createModProject.currentlySelected.get() != null) {
+                } else if (layout.getCenter() == this.createModProject.getCore() && this.createModProject.currentlySelected.get() != null) {
                     final BorderPane selected = this.createModProject.currentlySelected.get();
                     if (selected == this.createModProject.forgeButton) {
                         layout.setCenter(this.forgeModProject1.getCore());
                         title.setText("Create Forge Mod");
                     }
-                } else if (layout.getCenter() == this.forgeModProject1.getCore()
-                    && this.forgeModProject1.isComplete()) {
+                } else if (layout.getCenter() == this.forgeModProject1.getCore() && this.forgeModProject1.isComplete()) {
                     layout.setCenter(this.forgeModProject2.getCore());
+                } else if (layout.getCenter() == this.forgeModProject2.getCore() && this.forgeModProject2.isComplete()) {
+                    layout.setCenter(this.forgeModProject3.getCore());
                 }
             }
         });
 
         previousButton.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown()) {
-                if (layout.getCenter() == this.openProject.getCore()
-                    || layout.getCenter() == this.importProject.getCore()
-                    || layout.getCenter() == this.createProject.getCore()) {
+                if (layout.getCenter() == this.openProject.getCore() || layout.getCenter() == this.importProject.getCore() || layout.getCenter() == this.createProject.getCore()) {
                     topStack.getChildren().remove(previousButton);
                     layout.setCenter(this.actionSelection.getCore());
                     title.setText("Action Selection");
                 } else if (layout.getCenter() == this.actionSelection.getCore()) {
                     topStack.getChildren().remove(previousButton);
-                } else if (layout.getCenter() == this.createModProject.getCore()
-                    || layout.getCenter() == this.createPluginProject.getCore()) {
+                } else if (layout.getCenter() == this.createModProject.getCore() || layout.getCenter() == this.createPluginProject.getCore()) {
                     layout.setCenter(this.createProject.getCore());
                     title.setText("Create Project");
                 } else if (layout.getCenter() == this.forgeModProject1.getCore()) {
@@ -185,11 +181,11 @@ public class Project {
     public File getProjectFolder() {
         return this.projectFolder;
     }
-    
+
     public String getProjectName() {
         return getProjectFolder().getName();
     }
-    
+
     /**
      * @return The {@link Theme} used for this {@link Project}.
      */
