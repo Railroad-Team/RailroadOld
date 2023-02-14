@@ -5,12 +5,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.controls.MFXProgressBar;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.factories.InsetsFactory;
 import io.github.railroad.project.pages.OpenProject;
 import io.github.railroad.project.pages.Page;
+import io.github.railroad.project.pages.creation.mod.task.DownloadMdkTask;
 import io.github.railroad.utility.Gsons;
 import io.github.railroad.utility.helper.MappingHelper;
 import javafx.collections.ObservableList;
@@ -20,7 +21,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.apache.commons.io.IOUtils;
-import org.asynchttpclient.*;
+import org.asynchttpclient.AsyncCompletionHandler;
+import org.asynchttpclient.HttpResponseBodyPart;
+import org.asynchttpclient.Response;
 import org.json.JSONObject;
 import org.json.XML;
 
@@ -36,6 +39,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class ForgeModProject {
+    private static final String FORGE_PROMOTIONS = "https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json";
+    private static final String FORGE_MAVEN = "https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata.xml";
+
     public static class Page1 extends Page {
         public final BorderPane mainPane;
         public final Label nameLabel, artifactIdLabel, groupIdLabel, versionLabel;
@@ -94,9 +100,6 @@ public class ForgeModProject {
     }
 
     public static class Page2 extends Page {
-        private static final String PROMS = "https://files.minecraftforge.net/net/minecraftforge/forge" + "/promotions_slim.json";
-        private static final String MAVEN = "https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata" + ".xml";
-
         public final BorderPane mainPane;
         public final Label mcVersionLabel, forgeVersionLabel, mappingsLabel, mappingsVersionLabel;
         public final MFXComboBox<String> mcVersion, forgeVersion, mappings, mappingsVersion;
@@ -174,7 +177,7 @@ public class ForgeModProject {
             options.clear();
 
             try {
-                final URLConnection connection = new URL(MAVEN).openConnection();
+                final URLConnection connection = new URL(FORGE_MAVEN).openConnection();
                 final JSONObject xmlJson = XML.toJSONObject(
                         IOUtils.toString(connection.getInputStream(), StandardCharsets.UTF_8));
                 final JsonObject json = Gsons.READING_GSON.fromJson(xmlJson.toString(), JsonObject.class);
@@ -196,7 +199,7 @@ public class ForgeModProject {
             options.clear();
 
             try {
-                final URLConnection connection = new URL(PROMS).openConnection();
+                final URLConnection connection = new URL(FORGE_PROMOTIONS).openConnection();
                 final JsonObject response = Gsons.READING_GSON.fromJson(
                         new InputStreamReader(connection.getInputStream()), JsonObject.class);
                 final JsonObject promos = response.getAsJsonObject("promos");
@@ -231,11 +234,9 @@ public class ForgeModProject {
     }
 
     public static class Page3 extends Page {
-        private static final String MDK_URL = "https://maven.minecraftforge.net/net/minecraftforge/forge/%s-%s" + "/forge-%s-%s-mdk.zip";
-
         private final BorderPane mainPane;
         private final MFXButton startButton;
-        private final MFXProgressBar progressBar;
+        private final MFXProgressSpinner progressSpinner;
 
         public final Page2 page2;
 
@@ -248,53 +249,43 @@ public class ForgeModProject {
             this.startButton.setButtonType(ButtonType.RAISED);
             this.startButton.setRippleColor(Color.WHITE);
 
-            this.progressBar = new MFXProgressBar();
-            this.progressBar.setAnimationSpeed(0.5D);
+            this.progressSpinner = new MFXProgressSpinner();
 
             this.mainPane.setCenter(this.startButton);
-            this.mainPane.setBottom(this.progressBar);
+            this.mainPane.setBottom(this.progressSpinner);
             this.mainPane.setStyle("-fx-background-color: #1B232C;");
-            BorderPane.setAlignment(this.progressBar, Pos.CENTER);
-            BorderPane.setMargin(this.progressBar, InsetsFactory.all(20));
+            BorderPane.setAlignment(this.progressSpinner, Pos.CENTER);
+            BorderPane.setMargin(this.progressSpinner, InsetsFactory.all(20));
 
             this.startButton.setOnAction(event -> {
-                try {
-                    AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient();
-                    String minecraftVersion = page2.mcVersion.getValue();
-                    String forgeVersion = page2.forgeVersion.getValue();
+                String minecraftVersion = page2.mcVersion.getValue();
+                String forgeVersion = page2.forgeVersion.getValue();
 
-                    String url = MDK_URL.formatted(minecraftVersion, forgeVersion, minecraftVersion, forgeVersion);
-                    System.out.println(url);
-                    URLConnection connection = new URL(url).openConnection();
-                    var totalSize = new BigInteger(connection.getHeaderField("Content-Length"));
-
-                    asyncHttpClient.prepareGet(url)
-                            .execute(new MdkDownloadHandler(new FileOutputStream("../forge.zip"), totalSize));
-                    this.startButton.setDisable(true);
-                } catch (IOException exception) {
-                    exception.printStackTrace();
-                }
+                new DownloadMdkTask(minecraftVersion, forgeVersion, this.progressSpinner).run();
+                this.startButton.setDisable(true);
             });
 
-            this.progressBar.visibleProperty().bind(this.startButton.disableProperty());
-            this.progressBar.managedProperty().bind(this.startButton.disableProperty());
+            this.progressSpinner.visibleProperty().bind(this.startButton.disableProperty());
+            this.progressSpinner.managedProperty().bind(this.startButton.disableProperty());
 
             this.page2 = page2;
         }
 
-        private class MdkDownloadHandler extends AsyncCompletionHandler<FileOutputStream> {
+        public static class MdkDownloadHandler extends AsyncCompletionHandler<FileOutputStream> {
             private final FileOutputStream fileOutputStream;
             private final BigInteger totalSize;
+            private final MFXProgressSpinner progressSpinner;
 
-            public MdkDownloadHandler(FileOutputStream fileOutputStream, BigInteger totalSize) {
+            public MdkDownloadHandler(FileOutputStream fileOutputStream, BigInteger totalSize, MFXProgressSpinner progressSpinner) {
                 this.fileOutputStream = fileOutputStream;
                 this.totalSize = totalSize;
+                this.progressSpinner = progressSpinner;
             }
 
             @Override
             public State onBodyPartReceived(HttpResponseBodyPart content) throws Exception {
                 var currentSize = BigInteger.valueOf(content.getBodyPartBytes().length);
-                Page3.this.progressBar.setProgress(currentSize.divide(this.totalSize).doubleValue());
+                this.progressSpinner.setProgress(currentSize.divide(this.totalSize).doubleValue());
                 this.fileOutputStream.getChannel().write(content.getBodyByteBuffer());
 
                 return State.CONTINUE;
@@ -302,14 +293,14 @@ public class ForgeModProject {
 
             @Override
             public FileOutputStream onCompleted(Response response) throws Exception {
-                Page3.this.progressBar.setProgress(1);
+                this.progressSpinner.setProgress(1);
+                this.fileOutputStream.close();
                 return this.fileOutputStream;
             }
 
             @Override
-            public void onThrowable(Throwable t) {
-                super.onThrowable(t);
-                t.printStackTrace();
+            public void onThrowable(Throwable throwable) {
+                throwable.printStackTrace();
             }
         }
     }

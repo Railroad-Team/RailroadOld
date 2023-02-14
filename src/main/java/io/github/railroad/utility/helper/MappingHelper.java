@@ -12,7 +12,6 @@ import org.json.XML;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -23,6 +22,9 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class MappingHelper {
+    private static final String YARN_MAVEN = "https://maven.fabricmc.net/net/fabricmc/yarn/maven-metadata.xml";
+    private static final String PARCHMENT_MAVEN = "https://ldtteam.jfrog.io/artifactory/parchmentmc-public/org/parchmentmc/data/parchment-%s/maven-metadata.xml";
+
     public static Map<String, Pair<String, Optional<String>>> getMCPVersions() {
         final Map<String, Pair<String, Optional<String>>> versions = new HashMap<>();
 
@@ -79,8 +81,7 @@ public class MappingHelper {
         final Map<String, Collection<String>> versions = new HashMap<>();
 
         try {
-            final URLConnection connection = new URL(
-                    "https://maven.fabricmc.net/net/fabricmc/yarn/maven-metadata.xml").openConnection();
+            final URLConnection connection = new URL(YARN_MAVEN).openConnection();
             final String xmlJsonStr = XML.toJSONObject(
                     IOUtils.toString(connection.getInputStream(), StandardCharsets.UTF_8)).toString(1);
             final JsonObject xmlJson = Gsons.READING_GSON.fromJson(xmlJsonStr, JsonObject.class);
@@ -125,8 +126,7 @@ public class MappingHelper {
     public static Collection<String> getParchmentVersions(String minecraftVersion) {
         List<String> results = new ArrayList<>();
         try {
-            String url = ("https://ldtteam.jfrog.io/artifactory/parchmentmc-public/org/parchmentmc/data/parchment-%s/maven-metadata.xml").formatted(
-                    minecraftVersion);
+            String url = PARCHMENT_MAVEN.formatted(minecraftVersion);
             var file = new File(minecraftVersion + "-parchment.xml");
             if (!file.exists()) {
                 FileUtils.copyURLToFile(new URL(url), file);
