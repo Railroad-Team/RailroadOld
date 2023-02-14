@@ -3,33 +3,37 @@ package io.github.railroad.project.pages.creation.mod;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
+import io.github.palexdev.materialfx.controls.MFXProgressBar;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.factories.InsetsFactory;
 import io.github.railroad.project.pages.OpenProject;
 import io.github.railroad.project.pages.Page;
 import io.github.railroad.utility.Gsons;
+import io.github.railroad.utility.helper.MappingHelper;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.util.Pair;
 import org.apache.commons.io.IOUtils;
+import org.asynchttpclient.*;
 import org.json.JSONObject;
 import org.json.XML;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ForgeModProject {
     public static class Page1 extends Page {
@@ -58,10 +62,10 @@ public class ForgeModProject {
             final String defaultPackage = "com.yourname." + defaultModID;
             final String defaultVersion = "1.0-SNAPSHOT";
 
-            this.nameInput = new MFXTextField("", "Mod Name");
-            this.artifactIdInput = new MFXTextField("", "Mod ID");
-            this.groupIdInput = new MFXTextField("", "Main Package");
-            this.versionInput = new MFXTextField("", "Version");
+            this.nameInput = new MFXTextField(defaultName, "Mod Name");
+            this.artifactIdInput = new MFXTextField(defaultModID, "Mod ID");
+            this.groupIdInput = new MFXTextField(defaultPackage, "Main Package");
+            this.versionInput = new MFXTextField(defaultVersion, "Version");
 
             this.nameInput.setMinSize(200, 30);
             this.artifactIdInput.setMinSize(200, 30);
@@ -80,20 +84,29 @@ public class ForgeModProject {
         }
 
         public boolean isComplete() {
-            return true;
+            boolean name = !this.nameInput.getText().isBlank();
+            boolean artifactId = !this.artifactIdInput.getText().isBlank();
+            boolean groupId = !this.groupIdInput.getText().isBlank();
+            boolean version = !this.versionInput.getText().isBlank();
+
+            return name && artifactId && groupId && version;
         }
     }
 
     public static class Page2 extends Page {
-        private static final String PROMS = "https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json";
-        private static final String MAVEN = "https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata.xml";
+        private static final String PROMS = "https://files.minecraftforge.net/net/minecraftforge/forge" +
+                "/promotions_slim.json";
+        private static final String MAVEN = "https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata"
+                + ".xml";
 
         public final BorderPane mainPane;
         public final Label mcVersionLabel, forgeVersionLabel, mappingsLabel, mappingsVersionLabel;
         public final MFXComboBox<String> mcVersion, forgeVersion, mappings, mappingsVersion;
         public final VBox mainVertical;
 
-        public Page2() {
+        public final Page1 page1;
+
+        public Page2(Page1 page1) {
             super(new BorderPane());
 
             this.mainPane = (BorderPane) getCore();
@@ -123,14 +136,15 @@ public class ForgeModProject {
                     loadForgeVersions(this.forgeVersion.getItems(), newVal);
                     this.forgeVersion.setDisable(false);
 
-                    loadMappings(this.mappings.getItems(), newVal);
+                    MappingHelper.loadMappings(this.mappings.getItems(), newVal);
                     this.mappings.setDisable(false);
                 }
             });
 
             this.mappings.selectedItemProperty().addListener((observable, oldVal, newVal) -> {
                 if (newVal != null) {
-                    loadMappingsVersions(this.mappingsVersion.getItems(), this.mcVersion.getText(), newVal);
+                    MappingHelper.loadMappingsVersions(this.mappingsVersion.getItems(), this.mcVersion.getText(),
+                            newVal);
                     this.mappingsVersion.setDisable(this.mappingsVersion.getItems().isEmpty());
                 }
             });
@@ -154,201 +168,11 @@ public class ForgeModProject {
 
             this.mainPane.setCenter(this.mainVertical);
             this.mainPane.setStyle("-fx-background-color: #1B232C;");
+
+            this.page1 = page1;
         }
 
-        public boolean isComplete() {
-            return true;
-        }
-
-        private static void loadForgeVersions(ObservableList<String> options, String mcVersion) {
-            options.clear();
-
-            try {
-                final URLConnection connection = new URL(MAVEN).openConnection();
-                final JSONObject xmlJson = XML.toJSONObject(
-                        IOUtils.toString(connection.getInputStream(), StandardCharsets.UTF_8));
-                final JsonObject json = Gsons.READING_GSON.fromJson(xmlJson.toString(), JsonObject.class);
-                final JsonObject versionObj = json.getAsJsonObject("metadata").getAsJsonObject("versioning")
-                        .getAsJsonObject("versions");
-                final JsonArray versions = versionObj.getAsJsonArray("version");
-                for (final JsonElement element : versions) {
-                    final String version = element.getAsString();
-                    if (version.startsWith(mcVersion + "-")) {
-                        options.add(version.replaceAll(mcVersion + "-", "").replaceAll("-" + mcVersion, ""));
-                    }
-                }
-            } catch (final IOException exception) {
-                throw new IllegalStateException("Unable to read forge versions!", exception);
-            }
-        }
-
-        private static void loadMappings(ObservableList<String> options, String mcVersion) {
-            options.clear();
-
-            final String[] parts = mcVersion.split("\\.");
-            try {
-                final int minor = Integer.parseInt(parts[1]);
-                if (minor >= 14) {
-                    options.add("Yarn");
-                }
-
-                if (minor > 16) {
-                    options.addAll("Mojmap", "Parchment");
-                } else if (minor < 16) {
-                    options.add("MCP");
-                } else {
-                    final int subMinor = Integer.parseInt(parts[2]);
-                    if (subMinor == 5) {
-                        options.addAll("MCP", "Mojmap", "Parchment");
-                    } else {
-                        options.add("MCP");
-                    }
-                }
-            } catch (NumberFormatException | IndexOutOfBoundsException exception) {
-                throw new IllegalStateException("There was an error calculating Mappings Channels!", exception);
-            }
-        }
-
-        private static void loadMappingsVersions(ObservableList<String> options, String mcVersion, String mappingsChannel) {
-            options.clear();
-
-            if ("MCP".equalsIgnoreCase(mappingsChannel)) {
-                options.addAll(getMCPVersions(mcVersion));
-            } else if ("Mojmap".equalsIgnoreCase(mappingsChannel)) {
-                options.add(mcVersion);
-            } else if ("Parchment".equals(mappingsChannel)) {
-                options.addAll(getParchmentVersions(mcVersion));
-            } else if ("Yarn".equalsIgnoreCase(mappingsChannel)) {
-                options.addAll(getYarnVersions(mcVersion));
-            }
-        }
-
-        private static Map<String, Pair<String, Optional<String>>> getMCPVersions() {
-            final Map<String, Pair<String, Optional<String>>> versions = new HashMap<>();
-
-            try {
-                Path path = Paths.get("src/main/resources", "mcp_mappings.json");
-                System.out.println(path.toAbsolutePath());
-                String content = Files.readString(path, StandardCharsets.UTF_8);
-                final JsonObject response = Gsons.READING_GSON.fromJson(content, JsonObject.class);
-                final JsonArray versionsArray = response.getAsJsonArray("versions");
-                for (final JsonElement element : versionsArray) {
-                    final JsonObject versionObj = element.getAsJsonObject();
-                    String version = versionObj.get("version").getAsString();
-                    String snapshot = versionObj.get("snapshot").getAsString();
-                    String stable = versionObj.has("stable") ? versionObj.get("stable").getAsString() : null;
-                    versions.put(version, new Pair<>(snapshot, Optional.ofNullable(stable)));
-                }
-            } catch (final IOException exception) {
-                throw new IllegalStateException("Unable to read MCP versions!", exception);
-            }
-
-            return versions;
-        }
-
-        private static Collection<String> getMCPVersions(String minecraftVersion) {
-            Map<String, Pair<String, Optional<String>>> versions = getMCPVersions();
-            List<String> results = new ArrayList<>();
-
-            if (versions.containsKey(minecraftVersion)) {
-                Pair<String, Optional<String>> pair = versions.get(minecraftVersion);
-                results.add("snapshot-" + pair.getKey());
-                pair.getValue().ifPresent(stable -> results.add("stable-" + stable));
-            } else {
-                for (Map.Entry<String, Pair<String, Optional<String>>> entry : versions.entrySet()) {
-                    String version = entry.getKey();
-                    if (version.endsWith("*")) {
-                        version = version.substring(0, version.length() - 1);
-                        if (minecraftVersion.startsWith(version)) {
-                            Pair<String, Optional<String>> pair = entry.getValue();
-                            results.add("snapshot-" + pair.getKey());
-                            pair.getValue().ifPresent(stable -> results.add("stable-" + stable));
-                        } else if (minecraftVersion.startsWith(version.substring(0, version.length() - 1))) {
-                            Pair<String, Optional<String>> pair = entry.getValue();
-                            results.add("snapshot-" + pair.getKey());
-                            pair.getValue().ifPresent(stable -> results.add("stable-" + stable));
-                        }
-                    }
-                }
-            }
-
-            return results;
-        }
-
-        private static Collection<String> getParchmentVersions(String minecraftVersion) {
-            List<String> results = new ArrayList<>();
-            try {
-                String url = ("https://ldtteam.jfrog.io/ui/native/parchmentmc-public/org/parchmentmc/data/parchment-%s/maven-metadata.xml").formatted(
-                        minecraftVersion);
-                final URLConnection connection = new URL(url).openConnection();
-                // TODO: Figure out wtf is happening here
-                final String xmlJsonStr = XML.toJSONObject(
-                        IOUtils.toString(connection.getInputStream(), StandardCharsets.UTF_8)).toString(1);
-                final JsonObject xmlJson = Gsons.READING_GSON.fromJson(xmlJsonStr, JsonObject.class);
-                final JsonObject versioning = xmlJson.getAsJsonObject("metadata").getAsJsonObject("versioning");
-                final JsonArray versionsArray = versioning.getAsJsonArray("versions");
-                for (final JsonElement element : versionsArray) {
-                    final String version = element.getAsString();
-                    if (!Pattern.matches("\\d+\\.\\d+(\\.\\d+)?", version)) continue;
-
-                    results.add(version);
-                }
-
-            } catch (final IOException exception) {
-                throw new IllegalStateException("Unable to read parchment versions!", exception);
-            }
-
-            return results;
-        }
-
-        private static Map<String, Collection<String>> getYarnVersions() {
-            final Map<String, Collection<String>> versions = new HashMap<>();
-
-            try {
-                final URLConnection connection = new URL(
-                        "https://maven.fabricmc.net/net/fabricmc/yarn/maven-metadata.xml").openConnection();
-                final String xmlJsonStr = XML.toJSONObject(
-                        IOUtils.toString(connection.getInputStream(), StandardCharsets.UTF_8)).toString(1);
-                final JsonObject xmlJson = Gsons.READING_GSON.fromJson(xmlJsonStr, JsonObject.class);
-                final JsonObject versioning = xmlJson.getAsJsonObject("metadata").getAsJsonObject("versioning");
-                final JsonArray versionsArray = versioning.getAsJsonObject("versions").getAsJsonArray("version");
-
-                for (final JsonElement element : versionsArray) {
-                    final String version = element.getAsString();
-                    if (Pattern.matches("\\d+w\\d+\\w\\.\\d+", version)) continue;
-
-                    if (!Pattern.matches("\\d+\\.\\d+(\\.\\d+)*\\+build\\.\\d+", version)) continue;
-
-                    String mcVersion = version.substring(0, version.indexOf('+'));
-                    if (!versions.containsKey(mcVersion)) {
-                        versions.put(mcVersion, new ArrayList<>());
-                    }
-
-                    versions.get(mcVersion).add(version);
-                }
-            } catch (final IOException exception) {
-                throw new IllegalStateException("Unable to read Yarn versions!", exception);
-            }
-
-            Map<String, Collection<String>> sortedVersions = new HashMap<>();
-            versions.forEach(
-                    (key, value) -> sortedVersions.put(key, value.stream().sorted(Comparator.reverseOrder()).toList()));
-            return sortedVersions;
-        }
-
-        private static Collection<String> getYarnVersions(String minecraftVersion) {
-            Map<String, Collection<String>> versions = getYarnVersions();
-
-            List<String> results = new ArrayList<>();
-
-            if (versions.containsKey(minecraftVersion)) {
-                results.addAll(versions.get(minecraftVersion));
-            }
-
-            return results;
-        }
-
-        private static void loadMinecraftVersions(ObservableList<String> options) {
+        public static void loadMinecraftVersions(ObservableList<String> options) {
             options.clear();
 
             try {
@@ -360,7 +184,7 @@ public class ForgeModProject {
                 final List<String> versions = new ArrayList<>();
                 promos.entrySet().forEach(entry -> {
                     final String version = entry.getKey().replace("-latest", "").replace("-recommended", "")
-                            .replace("_pre4", "");
+                                                .replace("_pre4", "");
                     if (!versions.contains(version)) {
                         versions.add(version);
                     }
@@ -371,6 +195,124 @@ public class ForgeModProject {
                 options.addAll(versions);
             } catch (final IOException exception) {
                 throw new IllegalStateException("Unable to load Minecraft Versions!", exception);
+            }
+        }
+
+        public boolean isComplete() {
+            boolean mcVersion = this.mcVersion.getSelectedItem() != null && !this.mcVersion.getText().isBlank();
+            boolean forgeVersion = this.forgeVersion.getSelectedItem() != null && !this.forgeVersion.getText()
+                                                                                                    .isBlank();
+            boolean mappings = this.mappings.getSelectedItem() != null && !this.mappings.getText().isBlank();
+            boolean mappingsVersion = this.mappingsVersion.getSelectedItem() != null && !this.mappingsVersion.getText()
+                                                                                                             .isBlank();
+
+            return mcVersion && forgeVersion && mappings && mappingsVersion;
+        }
+
+        private static void loadForgeVersions(ObservableList<String> options, String mcVersion) {
+            options.clear();
+
+            try {
+                final URLConnection connection = new URL(MAVEN).openConnection();
+                final JSONObject xmlJson = XML.toJSONObject(
+                        IOUtils.toString(connection.getInputStream(), StandardCharsets.UTF_8));
+                final JsonObject json = Gsons.READING_GSON.fromJson(xmlJson.toString(), JsonObject.class);
+                final JsonObject versionObj = json.getAsJsonObject("metadata").getAsJsonObject("versioning")
+                                                  .getAsJsonObject("versions");
+                final JsonArray versions = versionObj.getAsJsonArray("version");
+                for (final JsonElement element : versions) {
+                    final String version = element.getAsString();
+                    if (version.startsWith(mcVersion + "-")) {
+                        options.add(version.replaceAll(mcVersion + "-", "").replaceAll("-" + mcVersion, ""));
+                    }
+                }
+            } catch (final IOException exception) {
+                throw new IllegalStateException("Unable to read forge versions!", exception);
+            }
+        }
+    }
+
+    public static class Page3 extends Page {
+        private static final String MDK_URL = "https://maven.minecraftforge.net/net/minecraftforge/forge/%s-%s" +
+                "/forge-%s-%s-mdk.zip";
+
+        private final BorderPane mainPane;
+        private final MFXButton startButton;
+        private final MFXProgressBar progressBar;
+
+        public final Page2 page2;
+
+        public Page3(Page2 page2) {
+            super(new BorderPane());
+
+            this.mainPane = (BorderPane) getCore();
+
+            this.startButton = new MFXButton("Start");
+            this.startButton.setButtonType(ButtonType.RAISED);
+            this.startButton.setRippleColor(Color.WHITE);
+
+            this.progressBar = new MFXProgressBar();
+            this.progressBar.setAnimationSpeed(0.5D);
+
+            this.mainPane.setCenter(this.startButton);
+            this.mainPane.setBottom(this.progressBar);
+            this.mainPane.setStyle("-fx-background-color: #1B232C;");
+            BorderPane.setAlignment(this.progressBar, Pos.CENTER);
+            BorderPane.setMargin(this.progressBar, InsetsFactory.all(20));
+
+            this.startButton.setOnAction(event -> {
+                try {
+                    AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient();
+                    String minecraftVersion = page2.mcVersion.getValue();
+                    String forgeVersion = page2.forgeVersion.getValue();
+
+                    String url = MDK_URL.formatted(minecraftVersion, forgeVersion, minecraftVersion, forgeVersion);
+                    System.out.println(url);
+                    URLConnection connection = new URL(url).openConnection();
+                    var totalSize = new BigInteger(connection.getHeaderField("Content-Length"));
+
+                    asyncHttpClient.prepareGet(url)
+                                   .execute(new MdkDownloadHandler(new FileOutputStream("../forge.zip"), totalSize));
+                    this.startButton.setDisable(true);
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            });
+
+            this.progressBar.visibleProperty().bind(this.startButton.disableProperty());
+            this.progressBar.managedProperty().bind(this.startButton.disableProperty());
+
+            this.page2 = page2;
+        }
+
+        private class MdkDownloadHandler extends AsyncCompletionHandler<FileOutputStream> {
+            private final FileOutputStream fileOutputStream;
+            private final BigInteger totalSize;
+
+            public MdkDownloadHandler(FileOutputStream fileOutputStream, BigInteger totalSize) {
+                this.fileOutputStream = fileOutputStream;
+                this.totalSize = totalSize;
+            }
+
+            @Override
+            public State onBodyPartReceived(HttpResponseBodyPart content) throws Exception {
+                var currentSize = BigInteger.valueOf(content.getBodyPartBytes().length);
+                Page3.this.progressBar.setProgress(currentSize.divide(this.totalSize).doubleValue());
+                this.fileOutputStream.getChannel().write(content.getBodyByteBuffer());
+
+                return State.CONTINUE;
+            }
+
+            @Override
+            public FileOutputStream onCompleted(Response response) throws Exception {
+                Page3.this.progressBar.setProgress(1);
+                return this.fileOutputStream;
+            }
+
+            @Override
+            public void onThrowable(Throwable t) {
+                super.onThrowable(t);
+                t.printStackTrace();
             }
         }
     }
