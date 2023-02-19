@@ -5,13 +5,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.factories.InsetsFactory;
 import io.github.railroad.project.pages.OpenProject;
 import io.github.railroad.project.pages.Page;
 import io.github.railroad.project.pages.creation.mod.task.DownloadMdkTask;
+import io.github.railroad.project.pages.creation.mod.task.TaskProgressSpinner;
 import io.github.railroad.utility.Gsons;
 import io.github.railroad.utility.helper.MappingHelper;
 import javafx.collections.ObservableList;
@@ -236,7 +236,7 @@ public class ForgeModProject {
     public static class Page3 extends Page {
         private final BorderPane mainPane;
         private final MFXButton startButton;
-        private final MFXProgressSpinner progressSpinner;
+        private final TaskProgressSpinner progressSpinner;
 
         public final Page2 page2;
 
@@ -244,48 +244,37 @@ public class ForgeModProject {
             super(new BorderPane());
 
             this.mainPane = (BorderPane) getCore();
+            this.page2 = page2;
 
             this.startButton = new MFXButton("Start");
             this.startButton.setButtonType(ButtonType.RAISED);
             this.startButton.setRippleColor(Color.WHITE);
 
-            this.progressSpinner = new MFXProgressSpinner();
+            this.progressSpinner = new TaskProgressSpinner(new DownloadMdkTask(this.page2.mcVersion::getSelectedItem,
+                    this.page2.forgeVersion::getSelectedItem));
+            this.progressSpinner.setStartButton(this.startButton);
 
             this.mainPane.setCenter(this.startButton);
             this.mainPane.setBottom(this.progressSpinner);
             this.mainPane.setStyle("-fx-background-color: #1B232C;");
             BorderPane.setAlignment(this.progressSpinner, Pos.CENTER);
             BorderPane.setMargin(this.progressSpinner, InsetsFactory.all(20));
-
-            this.startButton.setOnAction(event -> {
-                String minecraftVersion = page2.mcVersion.getValue();
-                String forgeVersion = page2.forgeVersion.getValue();
-
-                new DownloadMdkTask(minecraftVersion, forgeVersion, this.progressSpinner).run();
-                this.startButton.setDisable(true);
-            });
-
-            this.progressSpinner.visibleProperty().bind(this.startButton.disableProperty());
-            this.progressSpinner.managedProperty().bind(this.startButton.disableProperty());
-
-            this.page2 = page2;
         }
 
         public static class MdkDownloadHandler extends AsyncCompletionHandler<FileOutputStream> {
             private final FileOutputStream fileOutputStream;
             private final BigInteger totalSize;
-            private final MFXProgressSpinner progressSpinner;
+            private double progress = 0.0;
 
-            public MdkDownloadHandler(FileOutputStream fileOutputStream, BigInteger totalSize, MFXProgressSpinner progressSpinner) {
+            public MdkDownloadHandler(FileOutputStream fileOutputStream, BigInteger totalSize) {
                 this.fileOutputStream = fileOutputStream;
                 this.totalSize = totalSize;
-                this.progressSpinner = progressSpinner;
             }
 
             @Override
             public State onBodyPartReceived(HttpResponseBodyPart content) throws Exception {
                 var currentSize = BigInteger.valueOf(content.getBodyPartBytes().length);
-                this.progressSpinner.setProgress(currentSize.divide(this.totalSize).doubleValue());
+                this.progress = currentSize.divide(this.totalSize).doubleValue();
                 this.fileOutputStream.getChannel().write(content.getBodyByteBuffer());
 
                 return State.CONTINUE;
@@ -293,7 +282,7 @@ public class ForgeModProject {
 
             @Override
             public FileOutputStream onCompleted(Response response) throws Exception {
-                this.progressSpinner.setProgress(1);
+                this.progress = 1.0;
                 this.fileOutputStream.close();
                 return this.fileOutputStream;
             }
@@ -301,6 +290,10 @@ public class ForgeModProject {
             @Override
             public void onThrowable(Throwable throwable) {
                 throwable.printStackTrace();
+            }
+
+            public double getProgress() {
+                return this.progress;
             }
         }
     }

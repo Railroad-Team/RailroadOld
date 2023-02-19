@@ -1,5 +1,7 @@
 package io.github.railroad.project.pages.creation.mod.task;
 
+import javafx.beans.property.DoubleProperty;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,19 +26,23 @@ public abstract class Task {
         this(taskName, "");
     }
 
-    public void run() {
+    public void run(DoubleProperty progress) {
         setTaskStatus(TaskStatus.IN_PROGRESS);
-        for (BiDirectionalRunnable process : this.processes) {
+        for (int index = 0; index < this.processes.size(); index++) {
+            BiDirectionalRunnable process = this.processes.get(index);
             process.run();
+            progress.set((double) index / this.processes.size());
         }
 
         setTaskStatus(TaskStatus.COMPLETE);
     }
 
-    public void revert() {
+    public void revert(DoubleProperty progress) {
         setTaskStatus(TaskStatus.ERROR);
-        for (BiDirectionalRunnable process : this.processes) {
+        for (int index = this.processes.size() - 1; index >= 0; index--) {
+            BiDirectionalRunnable process = this.processes.get(index);
             process.revert();
+            progress.setValue((double) index / this.processes.size());
         }
 
         setTaskStatus(TaskStatus.NOT_STARTED);

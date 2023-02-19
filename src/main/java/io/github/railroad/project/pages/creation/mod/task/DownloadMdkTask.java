@@ -1,6 +1,5 @@
 package io.github.railroad.project.pages.creation.mod.task;
 
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import io.github.railroad.project.pages.creation.mod.ForgeModProject;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.Dsl;
@@ -16,37 +15,39 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class DownloadMdkTask extends Task {
     private static final String MDK_URL = "https://maven.minecraftforge.net/net/minecraftforge/forge/%s-%s/forge-%s-%s-mdk.zip";
 
-    private final String minecraftVersion;
-    private final String forgeVersion;
-    private final MFXProgressSpinner progressSpinner;
+    private final Supplier<String> minecraftVersion, forgeVersion;
 
     private String mdkURL;
     private BigInteger downloadSize;
 
-    public DownloadMdkTask(String minecraftVersion, String forgeVersion, MFXProgressSpinner progressSpinner) {
+    public DownloadMdkTask(Supplier<String> minecraftVersion, Supplier<String> forgeVersion) {
         super("Download MDK", "Downloading MDK...");
 
         this.minecraftVersion = minecraftVersion;
         this.forgeVersion = forgeVersion;
-        this.progressSpinner = progressSpinner;
-
-        this.mdkURL = getMDKUrl();
     }
 
     @Override
     public Collection<BiDirectionalRunnable> getProcesses() {
         List<BiDirectionalRunnable> processes = new ArrayList<>();
+        processes.add(new BiDirectionalRunnable(this::grabMDKUrl, this::resetMDKUrl));
         processes.add(new BiDirectionalRunnable(this::getDownloadSize, this::resetDownloadSize));
         processes.add(new BiDirectionalRunnable(this::downloadMDK, this::deleteMDK));
         return processes;
     }
 
-    private String getMDKUrl() {
-        return MDK_URL.formatted(this.minecraftVersion, this.forgeVersion, this.minecraftVersion, this.forgeVersion);
+    private void grabMDKUrl() {
+        this.mdkURL = MDK_URL.formatted(this.minecraftVersion.get(), this.forgeVersion.get(),
+                this.minecraftVersion.get(), this.forgeVersion.get());
+    }
+
+    private void resetMDKUrl() {
+        this.mdkURL = null;
     }
 
     private BigInteger getDownloadSize() {
@@ -68,7 +69,7 @@ public class DownloadMdkTask extends Task {
             AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient();
             asyncHttpClient.prepareGet(this.mdkURL).execute(
                     new ForgeModProject.Page3.MdkDownloadHandler(new FileOutputStream("../forge.zip"),
-                            this.downloadSize, this.progressSpinner));
+                            this.downloadSize));
         } catch (IOException exception) {
             setTaskStatus(TaskStatus.ERROR);
         }
