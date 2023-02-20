@@ -11,6 +11,7 @@ import io.github.palexdev.materialfx.factories.InsetsFactory;
 import io.github.railroad.project.pages.OpenProject;
 import io.github.railroad.project.pages.Page;
 import io.github.railroad.project.pages.creation.mod.task.DownloadMdkTask;
+import io.github.railroad.project.pages.creation.mod.task.ExtractMdkTask;
 import io.github.railroad.project.pages.creation.mod.task.TaskProgressSpinner;
 import io.github.railroad.utility.Gsons;
 import io.github.railroad.utility.helper.MappingHelper;
@@ -251,7 +252,7 @@ public class ForgeModProject {
             this.startButton.setRippleColor(Color.WHITE);
 
             this.progressSpinner = new TaskProgressSpinner(new DownloadMdkTask(this.page2.mcVersion::getSelectedItem,
-                    this.page2.forgeVersion::getSelectedItem));
+                    this.page2.forgeVersion::getSelectedItem), new ExtractMdkTask());
             this.progressSpinner.setStartButton(this.startButton);
 
             this.mainPane.setCenter(this.startButton);
