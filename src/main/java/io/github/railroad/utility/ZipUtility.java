@@ -18,6 +18,9 @@ public final class ZipUtility {
 
         try (var stream = new ZipInputStream(new FileInputStream(path))) {
             ZipEntry entry = stream.getNextEntry();
+            if(entry == null)
+                throw new IllegalStateException("Failed to find entry in zip file: " + path.getAbsolutePath());
+
             while (entry != null) {
                 String extractPath = dest.getAbsolutePath() + File.separator + entry.getName();
                 if (entry.isDirectory()) {

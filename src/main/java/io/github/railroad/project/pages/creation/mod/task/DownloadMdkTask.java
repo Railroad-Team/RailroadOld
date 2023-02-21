@@ -50,13 +50,12 @@ public class DownloadMdkTask extends Task {
         this.mdkURL = null;
     }
 
-    private BigInteger getDownloadSize() {
+    private void getDownloadSize() {
         try {
             URLConnection connection = new URL(this.mdkURL).openConnection();
-            return new BigInteger(connection.getHeaderField("Content-Length"));
+            this.downloadSize = new BigInteger(connection.getHeaderField("Content-Length"));
         } catch (IOException exception) {
             setTaskStatus(TaskStatus.ERROR);
-            return BigInteger.ZERO;
         }
     }
 

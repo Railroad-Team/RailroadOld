@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.enums.ButtonType;
@@ -12,6 +13,7 @@ import io.github.railroad.project.pages.OpenProject;
 import io.github.railroad.project.pages.Page;
 import io.github.railroad.project.pages.creation.mod.task.DownloadMdkTask;
 import io.github.railroad.project.pages.creation.mod.task.ExtractMdkTask;
+import io.github.railroad.project.pages.creation.mod.task.ModifyBuildGradleTask;
 import io.github.railroad.project.pages.creation.mod.task.TaskProgressSpinner;
 import io.github.railroad.utility.Gsons;
 import io.github.railroad.utility.helper.MappingHelper;
@@ -45,8 +47,9 @@ public class ForgeModProject {
 
     public static class Page1 extends Page {
         public final BorderPane mainPane;
-        public final Label nameLabel, artifactIdLabel, groupIdLabel, versionLabel;
-        public final MFXTextField nameInput, artifactIdInput, groupIdInput, versionInput;
+        public final Label nameLabel, artifactIdLabel, groupIdLabel, versionLabel, authorLabel, useMixinsLabel;
+        public final MFXTextField nameInput, artifactIdInput, groupIdInput, versionInput, authorInput;
+        public final MFXCheckbox useMixinsCheckbox;
         public final VBox mainVertical;
 
         public Page1() {
@@ -58,31 +61,42 @@ public class ForgeModProject {
             this.artifactIdLabel = new Label("Artifact ID (modid):");
             this.groupIdLabel = new Label("Group ID (main package):");
             this.versionLabel = new Label("Version");
+            this.authorLabel = new Label("Author");
+            this.useMixinsLabel = new Label("Uses Mixins?");
 
             this.nameLabel.setTextFill(Color.WHITESMOKE);
             this.artifactIdLabel.setTextFill(Color.WHITESMOKE);
             this.groupIdLabel.setTextFill(Color.WHITESMOKE);
             this.versionLabel.setTextFill(Color.WHITESMOKE);
+            this.authorLabel.setTextFill(Color.WHITESMOKE);
+            this.useMixinsLabel.setTextFill(Color.WHITESMOKE);
 
             final String defaultName = OpenProject.getRandomProjectName();
-            final String defaultModID = defaultName.toLowerCase().replaceAll("\s+", "").trim();
+            final String defaultModID = defaultName.toLowerCase().replaceAll(" ", "").trim();
             final String defaultPackage = "com.yourname." + defaultModID;
             final String defaultVersion = "1.0-SNAPSHOT";
+            final String defaultAuthor = System.getProperty("user.name");
 
             this.nameInput = new MFXTextField(defaultName, "Mod Name");
             this.artifactIdInput = new MFXTextField(defaultModID, "Mod ID");
             this.groupIdInput = new MFXTextField(defaultPackage, "Main Package");
             this.versionInput = new MFXTextField(defaultVersion, "Version");
+            this.authorInput = new MFXTextField(defaultAuthor, "Author");
+            this.useMixinsCheckbox = new MFXCheckbox();
 
             this.nameInput.setMinSize(200, 30);
             this.artifactIdInput.setMinSize(200, 30);
             this.groupIdInput.setMinSize(200, 30);
             this.versionInput.setMinSize(200, 30);
+            this.authorInput.setMinSize(200, 30);
+            this.useMixinsCheckbox.setMinSize(30, 30);
 
-            this.mainVertical = new VBox(60, new VBox(10, this.nameLabel, this.nameInput),
+            this.mainVertical = new VBox(40, new VBox(10, this.nameLabel, this.nameInput),
                     new VBox(10, this.artifactIdLabel, this.artifactIdInput),
                     new VBox(10, this.groupIdLabel, this.groupIdInput),
-                    new VBox(10, this.versionLabel, this.versionInput));
+                    new VBox(10, this.versionLabel, this.versionInput),
+                    new VBox(10, this.authorLabel, this.authorInput),
+                    new VBox(10, this.useMixinsLabel, this.useMixinsCheckbox));
             this.mainVertical.setAlignment(Pos.CENTER_LEFT);
             this.mainVertical.setPadding(InsetsFactory.left(100));
 
@@ -95,8 +109,9 @@ public class ForgeModProject {
             boolean artifactId = !this.artifactIdInput.getText().isBlank();
             boolean groupId = !this.groupIdInput.getText().isBlank();
             boolean version = !this.versionInput.getText().isBlank();
+            boolean author = !this.authorInput.getText().isBlank();
 
-            return name && artifactId && groupId && version;
+            return name && artifactId && groupId && version && author;
         }
     }
 
@@ -252,7 +267,8 @@ public class ForgeModProject {
             this.startButton.setRippleColor(Color.WHITE);
 
             this.progressSpinner = new TaskProgressSpinner(new DownloadMdkTask(this.page2.mcVersion::getSelectedItem,
-                    this.page2.forgeVersion::getSelectedItem), new ExtractMdkTask());
+                    this.page2.forgeVersion::getSelectedItem), new ExtractMdkTask(),
+                    ModifyBuildGradleTask.buildFromPage(this.page2));
             this.progressSpinner.setStartButton(this.startButton);
 
             this.mainPane.setCenter(this.startButton);

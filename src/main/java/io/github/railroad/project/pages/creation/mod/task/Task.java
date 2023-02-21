@@ -26,6 +26,7 @@ public abstract class Task {
         this(taskName, "");
     }
 
+    // TODO: This doesn't work because the download happens asynchronously
     public void run(DoubleProperty progress) {
         setTaskStatus(TaskStatus.IN_PROGRESS);
 
