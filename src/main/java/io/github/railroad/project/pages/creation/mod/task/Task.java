@@ -28,6 +28,10 @@ public abstract class Task {
 
     public void run(DoubleProperty progress) {
         setTaskStatus(TaskStatus.IN_PROGRESS);
+
+        if(this.processes.isEmpty())
+            this.processes.addAll(getProcesses());
+
         for (int index = 0; index < this.processes.size(); index++) {
             BiDirectionalRunnable process = this.processes.get(index);
             process.run();
@@ -39,6 +43,10 @@ public abstract class Task {
 
     public void revert(DoubleProperty progress) {
         setTaskStatus(TaskStatus.ERROR);
+
+        if(this.processes.isEmpty())
+            this.processes.addAll(getProcesses());
+
         for (int index = this.processes.size() - 1; index >= 0; index--) {
             BiDirectionalRunnable process = this.processes.get(index);
             process.revert();
