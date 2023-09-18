@@ -1,4 +1,4 @@
-package io.github.railroad.project.pages.creation.mod;
+package io.github.railroad.project.pages.creation.mod.forge;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -12,6 +12,11 @@ import io.github.palexdev.materialfx.factories.InsetsFactory;
 import io.github.railroad.objects.PathBrowser;
 import io.github.railroad.project.pages.OpenProject;
 import io.github.railroad.project.pages.Page;
+import io.github.railroad.project.pages.creation.mod.forge.tasks.DeleteUnusedFilesStep;
+import io.github.railroad.project.pages.creation.mod.forge.tasks.DownloadMdkStep;
+import io.github.railroad.project.pages.creation.mod.forge.tasks.ExtractMdkStep;
+import io.github.railroad.project.task.Task;
+import io.github.railroad.project.task.ui.TaskProgressSpinner;
 import io.github.railroad.utility.Gsons;
 import io.github.railroad.utility.helper.MappingHelper;
 import javafx.application.Platform;
@@ -35,6 +40,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class ForgeModProject {
     private static final String FORGE_PROMOTIONS = "https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json";
@@ -250,6 +256,7 @@ public class ForgeModProject {
         private final PathBrowser pathBrowser;
         private final MFXTextField folderName;
         private final Label errorLabel;
+        private final TaskProgressSpinner progressSpinner;
 
         public final Page2 page2;
 
@@ -279,7 +286,20 @@ public class ForgeModProject {
             this.errorLabel.setTextFill(Color.RED);
             this.errorLabel.setVisible(false);
 
-            var content = new VBox(20, this.pathBrowser, this.startButton, this.folderName, this.errorLabel);
+            Supplier<Path> pathSupplier = () -> this.pathBrowser.getSelectedPath(false)
+                    .map(paths -> paths.get(0))
+                    .map(path -> path.resolve(this.folderName.getText()))
+                    .orElse(null);
+
+            var task = new Task("Setup MDK");
+            task.addStep(new DownloadMdkStep(page2.mcVersion::getText, page2.forgeVersion::getText, pathSupplier));
+            task.addStep(new ExtractMdkStep(pathSupplier));
+            task.addStep(new DeleteUnusedFilesStep(pathSupplier));
+
+            this.progressSpinner = new TaskProgressSpinner(task);
+            this.progressSpinner.setVisible(false);
+
+            var content = new VBox(20, this.pathBrowser, this.startButton, this.folderName, this.errorLabel, this.progressSpinner);
             content.setAlignment(Pos.CENTER);
 
             this.mainPane.setCenter(content);
@@ -293,7 +313,7 @@ public class ForgeModProject {
                     return;
                 }
 
-                if (!this.pathBrowser.hasValidPath()) {
+                if (!this.pathBrowser.hasValidPath(false)) {
                     this.errorLabel.setText("Please select a valid path for your mod folder!");
                     this.errorLabel.setVisible(true);
                     Platform.runLater(() -> this.pathBrowser.getPathField().requestFocus());
@@ -303,7 +323,7 @@ public class ForgeModProject {
                 // move to next page
                 this.errorLabel.setVisible(false);
                 try {
-                    Path path = this.pathBrowser.getSelectedPath().map(paths -> paths.get(0)).orElse(null);
+                    Path path = this.pathBrowser.getSelectedPath(false).map(paths -> paths.get(0)).orElse(null);
                     if(path == null)
                         throw new IOException("Path is provided is invalid!");
 
@@ -320,6 +340,9 @@ public class ForgeModProject {
                         case "linux" -> Runtime.getRuntime().exec("xdg-open " + modFolder.toAbsolutePath());
                         case "mac" -> Runtime.getRuntime().exec("open " + modFolder.toAbsolutePath());
                     }
+
+                    this.progressSpinner.setVisible(true);
+                    this.progressSpinner.start();
                 } catch(IOException exception) {
                     this.errorLabel.setText("Unable to create mod folder! " + exception.getLocalizedMessage());
                     this.errorLabel.setVisible(true);

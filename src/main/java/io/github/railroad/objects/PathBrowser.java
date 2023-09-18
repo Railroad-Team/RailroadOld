@@ -53,18 +53,18 @@ public class PathBrowser extends HBox {
         });
     }
 
-    public Optional<List<Path>> getSelectedPath() {
+    public Optional<List<Path>> getSelectedPath(boolean checkExistence) {
         String[] split = this.pathField.getText().split(";");
         if (split.length == 0 || split[0].isBlank()) {
             return Optional.empty();
         }
 
-        List<Path> paths = Stream.of(split).map(Path::of).filter(Files::exists).toList();
+        List<Path> paths = Stream.of(split).map(Path::of).filter(path -> !checkExistence || Files.exists(path)).toList();
         return paths.isEmpty() ? Optional.empty() : Optional.of(paths);
     }
 
-    public boolean hasValidPath() {
-        return !getSelectedPath().orElse(List.of()).isEmpty();
+    public boolean hasValidPath(boolean checkExistence) {
+        return !getSelectedPath(checkExistence).orElse(List.of()).isEmpty();
     }
 
     public boolean hasEmptyPath() {

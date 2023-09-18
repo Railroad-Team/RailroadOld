@@ -14,7 +14,7 @@ import io.github.railroad.project.pages.ImportProject;
 import io.github.railroad.project.pages.OpenProject;
 import io.github.railroad.project.pages.creation.CreateModProject;
 import io.github.railroad.project.pages.creation.CreatePluginProject;
-import io.github.railroad.project.pages.creation.mod.ForgeModProject;
+import io.github.railroad.project.pages.creation.mod.forge.ForgeModProject;
 import io.github.railroad.project.settings.theme.Theme;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
