@@ -9,14 +9,12 @@ import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.factories.InsetsFactory;
+import io.github.railroad.objects.PathBrowser;
 import io.github.railroad.project.pages.OpenProject;
 import io.github.railroad.project.pages.Page;
-import io.github.railroad.project.pages.creation.mod.task.DownloadMdkTask;
-import io.github.railroad.project.pages.creation.mod.task.ExtractMdkTask;
-import io.github.railroad.project.pages.creation.mod.task.ModifyBuildGradleTask;
-import io.github.railroad.project.pages.creation.mod.task.TaskProgressSpinner;
 import io.github.railroad.utility.Gsons;
 import io.github.railroad.utility.helper.MappingHelper;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -24,19 +22,16 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.apache.commons.io.IOUtils;
-import org.asynchttpclient.AsyncCompletionHandler;
-import org.asynchttpclient.HttpResponseBodyPart;
-import org.asynchttpclient.Response;
 import org.json.JSONObject;
 import org.json.XML;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -252,7 +247,9 @@ public class ForgeModProject {
     public static class Page3 extends Page {
         private final BorderPane mainPane;
         private final MFXButton startButton;
-        private final TaskProgressSpinner progressSpinner;
+        private final PathBrowser pathBrowser;
+        private final MFXTextField folderName;
+        private final Label errorLabel;
 
         public final Page2 page2;
 
@@ -266,52 +263,69 @@ public class ForgeModProject {
             this.startButton.setButtonType(ButtonType.RAISED);
             this.startButton.setRippleColor(Color.WHITE);
 
-            this.progressSpinner = new TaskProgressSpinner(new DownloadMdkTask(this.page2.mcVersion::getSelectedItem,
-                    this.page2.forgeVersion::getSelectedItem), new ExtractMdkTask(),
-                    ModifyBuildGradleTask.buildFromPage(this.page2));
-            this.progressSpinner.setStartButton(this.startButton);
+            this.pathBrowser = new PathBrowser(
+                    new PathBrowser.ChooserOptions()
+                            .title("Choose Project Location")
+                            .directorySelection());
 
-            this.mainPane.setCenter(this.startButton);
-            this.mainPane.setBottom(this.progressSpinner);
+            this.pathBrowser.getPathField().setMinSize(200, 30);
+            this.pathBrowser.getBrowseButton().setMinSize(200, 30);
+            this.pathBrowser.setAlignment(Pos.CENTER);
+
+            this.folderName = new MFXTextField("mod", "Folder Name");
+            this.folderName.setMinSize(200, 30);
+
+            this.errorLabel = new Label("Please fill out all fields!");
+            this.errorLabel.setTextFill(Color.RED);
+            this.errorLabel.setVisible(false);
+
+            var content = new VBox(20, this.pathBrowser, this.startButton, this.folderName, this.errorLabel);
+            content.setAlignment(Pos.CENTER);
+
+            this.mainPane.setCenter(content);
             this.mainPane.setStyle("-fx-background-color: #1B232C;");
-            BorderPane.setAlignment(this.progressSpinner, Pos.CENTER);
-            BorderPane.setMargin(this.progressSpinner, InsetsFactory.all(20));
-        }
 
-        public static class MdkDownloadHandler extends AsyncCompletionHandler<FileOutputStream> {
-            private final FileOutputStream fileOutputStream;
-            private final BigInteger totalSize;
-            private double progress = 0.0;
+            this.startButton.setOnAction(ignored -> {
+                if (this.pathBrowser.hasEmptyPath()) {
+                    this.errorLabel.setText("Please select a path for your mod folder!");
+                    this.errorLabel.setVisible(true);
+                    Platform.runLater(() -> this.pathBrowser.getPathField().requestFocus());
+                    return;
+                }
 
-            public MdkDownloadHandler(FileOutputStream fileOutputStream, BigInteger totalSize) {
-                this.fileOutputStream = fileOutputStream;
-                this.totalSize = totalSize;
-            }
+                if (!this.pathBrowser.hasValidPath()) {
+                    this.errorLabel.setText("Please select a valid path for your mod folder!");
+                    this.errorLabel.setVisible(true);
+                    Platform.runLater(() -> this.pathBrowser.getPathField().requestFocus());
+                    return;
+                }
 
-            @Override
-            public State onBodyPartReceived(HttpResponseBodyPart content) throws Exception {
-                var currentSize = BigInteger.valueOf(content.getBodyPartBytes().length);
-                this.progress = currentSize.divide(this.totalSize).doubleValue();
-                this.fileOutputStream.getChannel().write(content.getBodyByteBuffer());
+                // move to next page
+                this.errorLabel.setVisible(false);
+                try {
+                    Path path = this.pathBrowser.getSelectedPath().map(paths -> paths.get(0)).orElse(null);
+                    if(path == null)
+                        throw new IOException("Path is provided is invalid!");
 
-                return State.CONTINUE;
-            }
+                    if (Files.notExists(path))
+                        Files.createDirectories(path);
 
-            @Override
-            public FileOutputStream onCompleted(Response response) throws Exception {
-                this.progress = 1.0;
-                this.fileOutputStream.close();
-                return this.fileOutputStream;
-            }
+                    Path modFolder = path.resolve(this.folderName.getText());
+                    if (Files.notExists(modFolder))
+                        Files.createDirectories(modFolder);
 
-            @Override
-            public void onThrowable(Throwable throwable) {
-                throwable.printStackTrace();
-            }
-
-            public double getProgress() {
-                return this.progress;
-            }
+                    // open folder in explorer
+                    switch (System.getProperty("os.name").toLowerCase()) {
+                        case "windows" -> Runtime.getRuntime().exec("explorer.exe " + modFolder.toAbsolutePath());
+                        case "linux" -> Runtime.getRuntime().exec("xdg-open " + modFolder.toAbsolutePath());
+                        case "mac" -> Runtime.getRuntime().exec("open " + modFolder.toAbsolutePath());
+                    }
+                } catch(IOException exception) {
+                    this.errorLabel.setText("Unable to create mod folder! " + exception.getLocalizedMessage());
+                    this.errorLabel.setVisible(true);
+                    return;
+                }
+            });
         }
     }
 }
