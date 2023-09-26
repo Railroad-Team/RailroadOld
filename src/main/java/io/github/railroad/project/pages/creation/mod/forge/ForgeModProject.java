@@ -15,6 +15,7 @@ import io.github.railroad.project.pages.Page;
 import io.github.railroad.project.pages.creation.mod.forge.tasks.DeleteUnusedFilesStep;
 import io.github.railroad.project.pages.creation.mod.forge.tasks.DownloadMdkStep;
 import io.github.railroad.project.pages.creation.mod.forge.tasks.ExtractMdkStep;
+import io.github.railroad.project.pages.creation.mod.forge.tasks.ModifyBuildGradleStep;
 import io.github.railroad.project.task.Task;
 import io.github.railroad.project.task.ui.TaskProgressSpinner;
 import io.github.railroad.utility.Gsons;
@@ -295,6 +296,7 @@ public class ForgeModProject {
             task.addStep(new DownloadMdkStep(page2.mcVersion::getText, page2.forgeVersion::getText, pathSupplier));
             task.addStep(new ExtractMdkStep(pathSupplier));
             task.addStep(new DeleteUnusedFilesStep(pathSupplier));
+            task.addStep(new ModifyBuildGradleStep(this::fetchArguments, pathSupplier));
 
             this.progressSpinner = new TaskProgressSpinner(task);
             this.progressSpinner.setVisible(false);
@@ -349,6 +351,10 @@ public class ForgeModProject {
                     return;
                 }
             });
+        }
+
+        private ModifyBuildGradleStep.CreateForgeModArgs fetchArguments() {
+            return null;
         }
     }
 }
