@@ -42,7 +42,7 @@ public class ItemModelMenuItem extends JsonFileMenuItem {
         this.vbox = new VBox();
         this.pathArea.setText("");
         this.fileName.setText("");
-        this.directoryChooser.setInitialDirectory(this.project.getProjectFolder());
+        this.directoryChooser.setInitialDirectory(this.project.getProjectFolder().toFile());
     }
     
     @SuppressWarnings("unchecked")

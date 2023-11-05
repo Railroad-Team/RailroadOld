@@ -3,6 +3,8 @@ package io.github.railroad.project;
 import static io.github.railroad.project.lang.LangProvider.fromLang;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.font.FontResources;
@@ -50,7 +52,10 @@ public class Project {
      */
 
     private final Theme theme;
-    private File projectFolder;
+    private final Stage window;
+
+    private Path projectFolder;
+    private Runnable onReady;
 
     private final ActionSelection actionSelection = new ActionSelection();
     private final OpenProject openProject = new OpenProject();
@@ -60,12 +65,12 @@ public class Project {
     private final CreatePluginProject createPluginProject = new CreatePluginProject();
     private final ForgeModProject.Page1 forgeModProject1 = new ForgeModProject.Page1();
     private final ForgeModProject.Page2 forgeModProject2 = new ForgeModProject.Page2(forgeModProject1);
-    private final ForgeModProject.Page3 forgeModProject3 = new ForgeModProject.Page3(forgeModProject2);
+    private final ForgeModProject.Page3 forgeModProject3 = new ForgeModProject.Page3(this, forgeModProject2);
 
     public Project(final Theme themeSettings) {
         this.theme = themeSettings;
 
-        final var window = new Stage();
+        this.window = new Stage();
 
         final var title = new Label("Action Selection");
         title.setTextFill(Color.LIGHTSLATEGREY);
@@ -154,6 +159,8 @@ public class Project {
                     title.setText("Create Mod");
                 } else if (layout.getCenter() == this.forgeModProject2.getCore()) {
                     layout.setCenter(this.forgeModProject1.getCore());
+                } else if (layout.getCenter() == this.forgeModProject3.getCore()) {
+                    layout.setCenter(this.forgeModProject2.getCore());
                 }
             }
         });
@@ -172,18 +179,37 @@ public class Project {
         window.requestFocus();
         window.initModality(Modality.APPLICATION_MODAL);
         window.centerOnScreen();
-        window.showAndWait();
+        window.show();
     }
 
     /**
      * @return The Folder used for this {@link Project}.
      */
-    public File getProjectFolder() {
+    public Path getProjectFolder() {
         return this.projectFolder;
     }
 
+    /**
+     * Sets the folder for this {@link Project}.
+     *
+     * @param projectFolder The folder to set.
+     */
+    public void setProjectFolder(final Path projectFolder) {
+        if(projectFolder == null)
+            throw new IllegalArgumentException("Project folder cannot be null!");
+
+        if(this.projectFolder != null)
+            throw new IllegalStateException("Project folder is already set!");
+
+        if (!Files.isDirectory(projectFolder))
+            throw new IllegalArgumentException("Project folder must be a directory!");
+
+        this.projectFolder = projectFolder;
+        readyProject();
+    }
+
     public String getProjectName() {
-        return getProjectFolder().getName();
+        return getProjectFolder().getFileName().toString();
     }
 
     /**
@@ -191,5 +217,43 @@ public class Project {
      */
     public Theme getTheme() {
         return this.theme;
+    }
+
+    public void onReady(Runnable task) {
+        if (this.onReady != null)
+            throw new IllegalStateException("On ready task is already set!");
+
+        if (task == null)
+            throw new IllegalArgumentException("On ready task cannot be null!");
+
+        this.onReady = task;
+    }
+
+    public void readyProject() {
+        if (this.onReady == null) {
+            System.err.println("On ready task is not set!");
+            return;
+        }
+
+        Path path = getProjectFolder();
+        if(path == null) {
+            System.err.println("Project folder is not set!");
+            return;
+        }
+
+        if(Files.notExists(path)) {
+            System.err.println("Project folder does not exist!");
+            return;
+        }
+
+        if(!Files.isDirectory(path)) {
+            System.err.println("Project folder is not a directory!");
+            return;
+        }
+
+        // TODO: project.railroad file
+
+        this.window.close();
+        this.onReady.run();
     }
 }

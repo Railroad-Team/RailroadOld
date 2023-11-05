@@ -10,12 +10,10 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.factories.InsetsFactory;
 import io.github.railroad.objects.PathBrowser;
+import io.github.railroad.project.Project;
 import io.github.railroad.project.pages.OpenProject;
 import io.github.railroad.project.pages.Page;
-import io.github.railroad.project.pages.creation.mod.forge.tasks.DeleteUnusedFilesStep;
-import io.github.railroad.project.pages.creation.mod.forge.tasks.DownloadMdkStep;
-import io.github.railroad.project.pages.creation.mod.forge.tasks.ExtractMdkStep;
-import io.github.railroad.project.pages.creation.mod.forge.tasks.ModifyBuildGradleStep;
+import io.github.railroad.project.pages.creation.mod.forge.tasks.*;
 import io.github.railroad.project.task.Task;
 import io.github.railroad.project.task.ui.TaskProgressSpinner;
 import io.github.railroad.utility.Gsons;
@@ -41,6 +39,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 public class ForgeModProject {
@@ -49,8 +48,8 @@ public class ForgeModProject {
 
     public static class Page1 extends Page {
         public final BorderPane mainPane;
-        public final Label nameLabel, artifactIdLabel, groupIdLabel, versionLabel, authorLabel, useMixinsLabel;
-        public final MFXTextField nameInput, artifactIdInput, groupIdInput, versionInput, authorInput;
+        public final Label nameLabel, modidLabel, groupIdLabel, versionLabel, authorLabel, useMixinsLabel;
+        public final MFXTextField nameInput, modidInput, groupIdInput, versionInput, authorInput;
         public final MFXCheckbox useMixinsCheckbox;
         public final VBox mainVertical;
 
@@ -60,14 +59,14 @@ public class ForgeModProject {
             this.mainPane = (BorderPane) getCore();
 
             this.nameLabel = new Label("Mod Name:");
-            this.artifactIdLabel = new Label("Artifact ID (modid):");
+            this.modidLabel = new Label("Artifact ID (modid):");
             this.groupIdLabel = new Label("Group ID (main package):");
             this.versionLabel = new Label("Version");
             this.authorLabel = new Label("Author");
             this.useMixinsLabel = new Label("Uses Mixins?");
 
             this.nameLabel.setTextFill(Color.WHITESMOKE);
-            this.artifactIdLabel.setTextFill(Color.WHITESMOKE);
+            this.modidLabel.setTextFill(Color.WHITESMOKE);
             this.groupIdLabel.setTextFill(Color.WHITESMOKE);
             this.versionLabel.setTextFill(Color.WHITESMOKE);
             this.authorLabel.setTextFill(Color.WHITESMOKE);
@@ -80,21 +79,21 @@ public class ForgeModProject {
             final String defaultAuthor = System.getProperty("user.name");
 
             this.nameInput = new MFXTextField(defaultName, "Mod Name");
-            this.artifactIdInput = new MFXTextField(defaultModID, "Mod ID");
+            this.modidInput = new MFXTextField(defaultModID, "Mod ID");
             this.groupIdInput = new MFXTextField(defaultPackage, "Main Package");
             this.versionInput = new MFXTextField(defaultVersion, "Version");
             this.authorInput = new MFXTextField(defaultAuthor, "Author");
             this.useMixinsCheckbox = new MFXCheckbox();
 
             this.nameInput.setMinSize(200, 30);
-            this.artifactIdInput.setMinSize(200, 30);
+            this.modidInput.setMinSize(200, 30);
             this.groupIdInput.setMinSize(200, 30);
             this.versionInput.setMinSize(200, 30);
             this.authorInput.setMinSize(200, 30);
             this.useMixinsCheckbox.setMinSize(30, 30);
 
             this.mainVertical = new VBox(40, new VBox(10, this.nameLabel, this.nameInput),
-                    new VBox(10, this.artifactIdLabel, this.artifactIdInput),
+                    new VBox(10, this.modidLabel, this.modidInput),
                     new VBox(10, this.groupIdLabel, this.groupIdInput),
                     new VBox(10, this.versionLabel, this.versionInput),
                     new VBox(10, this.authorLabel, this.authorInput),
@@ -108,12 +107,12 @@ public class ForgeModProject {
 
         public boolean isComplete() {
             boolean name = !this.nameInput.getText().isBlank();
-            boolean artifactId = !this.artifactIdInput.getText().isBlank();
+            boolean modid = !this.modidInput.getText().isBlank();
             boolean groupId = !this.groupIdInput.getText().isBlank();
             boolean version = !this.versionInput.getText().isBlank();
             boolean author = !this.authorInput.getText().isBlank();
 
-            return name && artifactId && groupId && version && author;
+            return name && modid && groupId && version && author;
         }
     }
 
@@ -259,10 +258,14 @@ public class ForgeModProject {
         private final Label errorLabel;
         private final TaskProgressSpinner progressSpinner;
 
+        private final Project project;
+
         public final Page2 page2;
 
-        public Page3(Page2 page2) {
+        public Page3(Project project, Page2 page2) {
             super(new BorderPane());
+
+            this.project = project;
 
             this.mainPane = (BorderPane) getCore();
             this.page2 = page2;
@@ -296,7 +299,16 @@ public class ForgeModProject {
             task.addStep(new DownloadMdkStep(page2.mcVersion::getText, page2.forgeVersion::getText, pathSupplier));
             task.addStep(new ExtractMdkStep(pathSupplier));
             task.addStep(new DeleteUnusedFilesStep(pathSupplier));
+            task.addStep(new ReplaceGradleWithTemplateStep(pathSupplier, page2.mcVersion::getText));
+
+            // TODO: Generify
             task.addStep(new ModifyBuildGradleStep(this::fetchArguments, pathSupplier));
+            task.addStep(new ModifySettingsGradleStep(this::fetchArguments, pathSupplier));
+
+            // TODO: Yarn? Or maybe just remove yarn
+            task.addStep(new GenerateRunsStep(pathSupplier));
+
+            task.addStep(new LoadProjectStep(this.project, pathSupplier));
 
             this.progressSpinner = new TaskProgressSpinner(task);
             this.progressSpinner.setVisible(false);
@@ -348,13 +360,36 @@ public class ForgeModProject {
                 } catch(IOException exception) {
                     this.errorLabel.setText("Unable to create mod folder! " + exception.getLocalizedMessage());
                     this.errorLabel.setVisible(true);
-                    return;
                 }
             });
         }
 
         private ModifyBuildGradleStep.CreateForgeModArgs fetchArguments() {
-            return null;
+            String modId = this.page2.page1.modidInput.getText();
+            String name = this.page2.page1.nameInput.getText();
+            String description = "This is a description"; // TODO
+            String author = this.page2.page1.authorInput.getText();
+            String license = "ARR (All Rights Reserved)"; // TODO
+            String mcVersion = this.page2.mcVersion.getText();
+            String forgeVersion = this.page2.forgeVersion.getText();
+            String mappingChannel = this.page2.mappings.getText().toLowerCase(Locale.ROOT);
+            String mappingVersion = this.page2.mappingsVersion.getText();
+            String packageName = this.page2.page1.groupIdInput.getText();
+            String mainClass = "%s.%sMod".formatted(packageName, name); // TODO
+            boolean displayTest = false; // TODO
+            boolean usesAccessTransformers = false; // TODO
+            boolean sharedRunDirs = false; // TODO
+            boolean gradleKotlinDSL = false; // TODO
+            boolean usesMixins = false; // TODO
+            String mixinGradle = "0.8.2"; // TODO
+            String apiSourceSet = "main"; // TODO
+            String datagenSourceSet = "main"; // TODO
+
+            return new ModifyBuildGradleStep.CreateForgeModArgs(modId, name, description, author, license,
+                    mcVersion, forgeVersion, mappingChannel, mappingVersion,
+                    packageName, mainClass, displayTest, usesAccessTransformers,
+                    sharedRunDirs, gradleKotlinDSL, usesMixins, mixinGradle,
+                    apiSourceSet, datagenSourceSet);
         }
     }
 }

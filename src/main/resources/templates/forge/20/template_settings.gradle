@@ -13,8 +13,8 @@ pluginManagement {
             out.print("""
         resolutionStrategy {
             eachPlugin {
-                if (requested.id.toString() == 'org.spongepowered.mixin') {
-                    useModule("org.spongepowered:mixingradle:\${requested.version}")
+                if (${props.usesMixins}) {
+                    useModule("org.spongepowered:mixingradle:${props.mixinGradle}")
                 }
             }
         }""")
@@ -22,4 +22,5 @@ pluginManagement {
                 %>
     }
 }
+
 rootProject.name = '${modName ?: modId}'

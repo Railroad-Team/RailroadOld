@@ -142,7 +142,7 @@ public class MappingHelper {
                 final String version = element.getAsString();
                 if (!Pattern.matches("\\d+\\.\\d+(\\.\\d+)?", version)) continue;
 
-                results.add(version);
+                results.add(version + "-" + minecraftVersion);
             }
 
         } catch (final IOException exception) {

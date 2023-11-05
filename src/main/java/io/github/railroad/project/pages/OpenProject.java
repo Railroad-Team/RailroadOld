@@ -1,6 +1,8 @@
 package io.github.railroad.project.pages;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.commons.lang3.text.WordUtils;
@@ -60,7 +62,7 @@ public class OpenProject extends Page {
         this.recent = new ListView<>();
         this.recent.setId("recentlyOpened");
         this.recent.setMaxSize(300, 450);
-        // testPopulation();
+        //testPopulation();
         
         final var selectButton = new MFXButton("Select");
         this.leftVBox = new VBox(10, this.recent, selectButton);
@@ -82,7 +84,7 @@ public class OpenProject extends Page {
         final Constraint existsConstraint = Constraint.Builder.build().setSeverity(Severity.ERROR)
             .setMessage("Directory does not exist!")
             .setCondition(Bindings.createBooleanBinding(
-                () -> new File(this.directoryField.textProperty().get()).exists(), this.directoryLabel.textProperty()))
+                () -> Files.exists(Path.of(this.directoryField.textProperty().get())), this.directoryLabel.textProperty()))
             .get();
 
         this.directoryField.getValidator().constraint(existsConstraint);

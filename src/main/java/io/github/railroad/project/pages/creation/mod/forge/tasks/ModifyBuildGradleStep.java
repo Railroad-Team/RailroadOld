@@ -1,12 +1,12 @@
 package io.github.railroad.project.pages.creation.mod.forge.tasks;
 
 import groovy.lang.Binding;
-import groovy.lang.GroovyRuntimeException;
 import groovy.lang.GroovyShell;
 import groovy.text.StreamingTemplateEngine;
 import io.github.railroad.project.task.Task;
 import org.codehaus.groovy.runtime.StringBufferWriter;
 
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -14,8 +14,12 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class ModifyBuildGradleStep extends Task.Step {
-    private static final StreamingTemplateEngine TEMPLATE_ENGINE = new StreamingTemplateEngine();
-    private static final GroovyShell SHELL = new GroovyShell();
+
+    // TODO: Extract
+    public static final StreamingTemplateEngine TEMPLATE_ENGINE = new StreamingTemplateEngine();
+
+    // TODO: Extract
+    public static final GroovyShell SHELL = new GroovyShell();
 
     public ModifyBuildGradleStep(Supplier<CreateForgeModArgs> arguments, Supplier<Path> folderSupplier) {
         super("Modify build.gradle", 75, () -> {
@@ -31,23 +35,35 @@ public class ModifyBuildGradleStep extends Task.Step {
                 Map<String, Object> args = createArgs(arguments.get());
 
                 String buildGradleContent = Files.readString(buildGradle);
-                Binding binding = new Binding(args);
-                Object result = SHELL.parse(buildGradleContent, binding).run();
-                if (result instanceof String str)
-                    buildGradleContent = str;
-                else
-                    throw new GroovyRuntimeException("Unable to parse build.gradle!");
+                if (buildGradleContent.startsWith("// fileName:")) {
+                    int newLineIndex = buildGradleContent.indexOf('\n');
+                    Binding binding = new Binding(args);
+                    binding.setVariable("defaultName",
+                            folder.relativize(buildGradle.toAbsolutePath()).toString());
+                    Object result = SHELL.parse(
+                            buildGradleContent.substring("// fileName:".length() + 1, newLineIndex),
+                            binding).run();
+                    if (result == null)
+                        throw new IllegalStateException("Unable to parse build.gradle!");
+
+                    buildGradleContent = buildGradleContent.substring(newLineIndex + 1);
+                }
 
                 var buffer = new StringBuffer();
-                TEMPLATE_ENGINE.createTemplate(buildGradleContent).make(args).writeTo(new StringBufferWriter(buffer));
+                TEMPLATE_ENGINE.createTemplate(new StringReader(buildGradleContent))
+                        .make(args)
+                        .writeTo(new StringBufferWriter(buffer));
                 Files.writeString(buildGradle, buffer);
             } catch (final Exception exception) {
                 throw new IllegalStateException("Unable to modify build.gradle!", exception);
             }
-        }, () -> {});
+        }, () -> {
+            // TODO: Make reversible
+        });
     }
 
-    private static Map<String, Object> createArgs(CreateForgeModArgs arguments) {
+    // TODO: Extract
+    public static Map<String, Object> createArgs(CreateForgeModArgs arguments) {
         final HashMap<String, Object> map = new HashMap<>();
         map.put("modId", arguments.modId());
         map.put("modName", arguments.name());
@@ -81,8 +97,12 @@ public class ModifyBuildGradleStep extends Task.Step {
     }
 
     public record CreateForgeModArgs(String modId, String name, String description, String author, String license,
-                                     String mcVersion, String forgeVersion, String mappingChannel, String mappingVersion,
-                                     String packageName, String mainClass, boolean displayTest, boolean usesAccessTransformers,
-                                     boolean sharedRunDirs, boolean gradleKotlinDSL, boolean usesMixins, String mixinGradle,
-                                     String apiSourceSet, String datagenSourceSet) {}
+                                     String mcVersion, String forgeVersion, String mappingChannel,
+                                     String mappingVersion,
+                                     String packageName, String mainClass, boolean displayTest,
+                                     boolean usesAccessTransformers,
+                                     boolean sharedRunDirs, boolean gradleKotlinDSL, boolean usesMixins,
+                                     String mixinGradle,
+                                     String apiSourceSet, String datagenSourceSet) {
+    }
 }

@@ -1,17 +1,7 @@
 package io.github.railroad;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-
-import org.apache.commons.lang3.tuple.Triple;
-
 import com.panemu.tiwulfx.control.dock.DetachableTab;
 import com.panemu.tiwulfx.control.dock.DetachableTabPane;
-
-import io.github.railroad.config.JsonConfigs;
 import io.github.railroad.editor.CodeEditor;
 import io.github.railroad.editor.SimpleFileEditorController;
 import io.github.railroad.menu.json.JsonFileMenu;
@@ -20,7 +10,6 @@ import io.github.railroad.objects.RailroadMenuBar;
 import io.github.railroad.objects.RailroadMenuBar.FileMenu;
 import io.github.railroad.project.Project;
 import io.github.railroad.project.lang.LangProvider;
-import io.github.railroad.project.settings.theme.Theme;
 import io.github.railroad.projectexplorer.core.LiveDirs;
 import io.github.railroad.projectexplorer.ui.FileItem;
 import io.github.railroad.projectexplorer.ui.PathItem;
@@ -31,13 +20,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -47,12 +30,20 @@ import javafx.stage.Screen;
 import javafx.util.Duration;
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
+import org.apache.commons.lang3.tuple.Triple;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
 
 /**
  * @author TurtyWurty
  */
-public class Setup {
+public class IDESetup {
     protected final CodeEditor codeEditor;
+    @SuppressWarnings("FieldCanBeLocal")
     private final SimpleFileEditorController baseController;
     private final List<SimpleFileEditorController> fileControllers = new ArrayList<>();
     protected final Rectangle2D primaryScreenBounds;
@@ -72,19 +63,13 @@ public class Setup {
 
     protected String language;
 
-    public Setup(final Theme theme, String language) {
-
-        // Always cache the lang first (else there will be no text for the project
-        // selection)
+    public IDESetup(Project project, String language) {
         this.language = language;
-        LangProvider.cacheLang(language);
-
-        JsonConfigs.register();
 
         // Core
         this.primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
-        this.project = new Project(theme);
+        this.project = project;
 
         // Code Editor
         this.codeEditor = new CodeEditor(Executors.newSingleThreadExecutor());
@@ -103,13 +88,15 @@ public class Setup {
         this.menuBar = createTopMenu();
         this.mainSplitPane = createMainSplit();
         this.anchorPane = anchorMainSplit();
-        /* this.fileLoadPlacement = */placeFileLoad();
+        /* this.fileLoadPlacement = */
+        placeFileLoad(); // TODO: Hopefully remove this when we have automatic file updates
 
         onMenuAction();
         onProjectExplorerAction();
     }
 
     // TODO: key bindings in here
+    @SuppressWarnings("unused")
     public void handleKeyPress(KeyEvent e) {
 
     }
@@ -126,11 +113,10 @@ public class Setup {
     }
 
     private void createCodeArea(final DetachableTabPane tabPane, final RailroadCodeArea codeArea, final File file) {
-
         if (file != null) {
             if (tabPane.getProperties().get("RealParent") == null
-                && codeArea.getProperties().get("RealParent") instanceof final SplitPane parent
-                && parent.getProperties().get("RealParent") instanceof AnchorPane) {
+                    && codeArea.getProperties().get("RealParent") instanceof final SplitPane parent
+                    && parent.getProperties().get("RealParent") instanceof AnchorPane) {
                 final var codeAreaIndex = parent.getItems().indexOf(codeArea);
                 parent.getItems().remove(codeAreaIndex);
 
@@ -188,6 +174,12 @@ public class Setup {
                 controller.textArea = newCodeArea;
                 controller.setFile(file);
             }
+
+            final DiscordRichPresence newPresence = new DiscordRichPresence.Builder(
+                    "Working on " + this.project.getProjectName()).setDetails("Editing " + file.getName())
+                    .setBigImage("logo", "Railroad IDE").setSmallImage("logo", "An IDE built for modders, made by modders.")
+                    .setParty("", 0, 0).setStartTimestamps(System.currentTimeMillis()).build();
+            DiscordRPC.discordUpdatePresence(newPresence);
         } else if (this.editorTabPane.getTabs().isEmpty()) {
             if (this.mainSplitPane.getItems().size() > 1) {
                 this.mainSplitPane.getItems().remove(1);
@@ -198,12 +190,6 @@ public class Setup {
             this.mainSplitPane.getItems().add(this.baseCodeArea);
             this.baseCodeArea.getProperties().put("RealParent", this.mainSplitPane);
         }
-
-        final DiscordRichPresence newPresence = new DiscordRichPresence.Builder(
-            "Working on " + this.project.getProjectName()).setDetails("Editing " + file.getName())
-                .setBigImage("logo", "Railroad IDE").setSmallImage("logo", "An IDE built for modders, made by modders.")
-                .setParty("", 0, 0).setStartTimestamps(System.currentTimeMillis()).build();
-        DiscordRPC.discordUpdatePresence(newPresence);
 
         // TODO: Use this. But fix the tab pane and scroll bar issues that occur
         // dividerAdjust();
@@ -230,10 +216,10 @@ public class Setup {
 
             SimpleFileEditorController selectedFileController = null;
             if (((Node) this.editorTabPane.getProperties().get("RealParent")).getProperties().get("RealParent")
-                .equals(this.anchorPane)) {
+                    .equals(this.anchorPane)) {
                 final Node possibleArea = this.editorTabPane.getSelectionModel().getSelectedItem().getContent();
                 final List<SimpleFileEditorController> controllers = this.fileControllers.stream()
-                    .filter(controller -> controller.textArea.equals(possibleArea)).toList();
+                        .filter(controller -> controller.textArea.equals(possibleArea)).toList();
                 if (controllers.isEmpty()) {
                     loadChangesBtn.setDisable(true);
                     return;
@@ -243,7 +229,7 @@ public class Setup {
 
             if (this.baseCodeArea != null && this.baseCodeArea.getParent() != null) {
                 final List<SimpleFileEditorController> controllers = this.fileControllers.stream()
-                    .filter(controller -> controller.textArea.equals(this.baseCodeArea)).toList();
+                        .filter(controller -> controller.textArea.equals(this.baseCodeArea)).toList();
                 if (controllers.isEmpty()) {
                     loadChangesBtn.setDisable(true);
                     return;
@@ -262,10 +248,10 @@ public class Setup {
 
     private DetachableTabPane createLeftTabPane() {
         final var tabPane = new DetachableTabPane();
-        final var projExplTab = new DetachableTab(LangProvider.fromLang("tabs.projectExplorer.name"),
-            this.projectExplorer);
-        projExplTab.setOnCloseRequest(Event::consume);
-        tabPane.getTabs().add(projExplTab);
+        final var projectExplorerTab = new DetachableTab(LangProvider.fromLang("tabs.projectExplorer.name"),
+                this.projectExplorer);
+        projectExplorerTab.setOnCloseRequest(Event::consume);
+        tabPane.getTabs().add(projectExplorerTab);
         return tabPane;
     }
 
@@ -282,11 +268,12 @@ public class Setup {
         explorer.setShowRoot(false);
         try {
             final LiveDirs dirs = LiveDirs.getInstance(null);
-            dirs.addTopLevelDirectory(this.project.getProjectFolder().toPath());
+            dirs.addTopLevelDirectory(this.project.getProjectFolder());
             explorer.setRoot(dirs.model().getRoot());
             this.liveDirs = dirs;
         } catch (final IOException ex) {
             ex.printStackTrace();
+            // TODO: Create a logger
         }
         return explorer;
     }
@@ -332,12 +319,12 @@ public class Setup {
 
             SimpleFileEditorController selectedFileController = null;
             if (this.editorTabPane.getProperties().get("RealParent") != null
-                && ((Node) this.editorTabPane.getProperties().get("RealParent")).getProperties().get("RealParent")
+                    && ((Node) this.editorTabPane.getProperties().get("RealParent")).getProperties().get("RealParent")
                     .equals(this.anchorPane)) {
                 final var possibleArea = (RailroadCodeArea) this.editorTabPane.getSelectionModel().getSelectedItem()
-                    .getContent();
+                        .getContent();
                 final List<SimpleFileEditorController> controllers = this.fileControllers.stream()
-                    .filter(controller -> controller.textArea.equals(possibleArea)).toList();
+                        .filter(controller -> controller.textArea.equals(possibleArea)).toList();
                 if (controllers.isEmpty()) {
                     this.menuBar.fileMenu.saveItem.setDisable(true);
                     return;
@@ -347,7 +334,7 @@ public class Setup {
 
             if (this.baseCodeArea != null && this.baseCodeArea.getParent() != null) {
                 final List<SimpleFileEditorController> controllers = this.fileControllers.stream()
-                    .filter(controller -> controller.textArea.equals(this.baseCodeArea)).toList();
+                        .filter(controller -> controller.textArea.equals(this.baseCodeArea)).toList();
                 if (controllers.isEmpty()) {
                     this.menuBar.fileMenu.saveItem.setDisable(true);
                     return;
@@ -378,16 +365,17 @@ public class Setup {
         tab.setOnClosed(event -> createCodeArea(this.editorTabPane, this.baseCodeArea, null));
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private HBox placeFileLoad() {
-        final var hboxLeft = new HBox(this.fileLoadItems.getLeft(), this.fileLoadItems.getMiddle());
-        hboxLeft.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(hboxLeft, Priority.ALWAYS);
+        final var hBoxLeft = new HBox(this.fileLoadItems.getLeft(), this.fileLoadItems.getMiddle());
+        hBoxLeft.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(hBoxLeft, Priority.ALWAYS);
 
-        final var hboxRight = new HBox(this.fileLoadItems.getRight());
-        hboxRight.setAlignment(Pos.CENTER_RIGHT);
-        HBox.setHgrow(hboxRight, Priority.ALWAYS);
+        final var hBoxRight = new HBox(this.fileLoadItems.getRight());
+        hBoxRight.setAlignment(Pos.CENTER_RIGHT);
+        HBox.setHgrow(hBoxRight, Priority.ALWAYS);
 
-        final var hbox = new HBox(hboxLeft, hboxRight);
+        final var hbox = new HBox(hBoxLeft, hBoxRight);
         hbox.setPadding(new Insets(0, 5, 5, 5));
         this.mainPane.setBottom(hbox);
         return hbox;

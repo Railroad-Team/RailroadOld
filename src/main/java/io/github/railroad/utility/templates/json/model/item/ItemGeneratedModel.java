@@ -45,7 +45,7 @@ public class ItemGeneratedModel extends JsonTemplate {
 
             jsonObject.add("textures", texturesObj);
 
-            final var file = new File(this.project.getProjectFolder(), this.fileName + ".json");
+            final var file = new File(this.project.getProjectFolder().toFile(), this.fileName + ".json");
 
             if (file.exists()) {
                 final var alert = new Alert(AlertType.ERROR);
