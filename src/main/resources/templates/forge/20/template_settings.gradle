@@ -1,0 +1,26 @@
+// fileName: props.gradleKotlinDSL ? null : defaultName
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url = 'https://maven.minecraftforge.net/' }<%
+        if (mappings.channel == 'parchment') {
+            out.print("\n        maven { url = 'https://maven.parchmentmc.org' }")
+        }
+        if (props.modsDotGroovy) {
+            out.print("\n        maven { url = 'https://maven.moddinginquisition.org/releases' }")
+        }
+        if (props.mixinGradle) {
+            out.print("""
+        resolutionStrategy {
+            eachPlugin {
+                if (${props.usesMixins}) {
+                    useModule("org.spongepowered:mixingradle:${props.mixinGradle}")
+                }
+            }
+        }""")
+        }
+                %>
+    }
+}
+
+rootProject.name = '${modName ?: modId}'

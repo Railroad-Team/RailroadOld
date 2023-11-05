@@ -1,0 +1,33 @@
+.separator .line {
+    -fx-background-color: #778899;
+    -fx-border-color: #778899;
+}
+
+#recentlyOpened {
+    -fx-background-color: #27323F;
+}
+
+#recentlyOpened .list-cell {
+    -fx-background-color: #27323F;
+}
+
+#recentlyOpened .list-cell:hover {
+    -fx-background-color: #303f4f;
+}
+
+#recentlyOpened .list-cell:selected {
+    -fx-background-color: #44586f;
+}
+
+#recentlyOpened .list-cell .label {
+    -fx-text-fill: #f8f8f8;
+    -fx-font-size: 12pt;
+    -fx-font-weight: bold;
+}
+
+/*
+* {
+  -fx-border-color: red;
+  -fx-border-style: solid;
+  -fx-border-width: 1px;
+}*/

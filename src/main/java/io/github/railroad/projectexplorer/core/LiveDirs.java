@@ -42,7 +42,6 @@ import javafx.scene.control.TreeView;
  * <p>
  * The directory model can be used directly as a model for {@link TreeView}.
  *
- * @param <I> type of the initiator of I/O actions.
  */
 public class LiveDirs {
     private final EventSource<Throwable> localErrors = new EventSource<>();
@@ -56,17 +55,17 @@ public class LiveDirs {
     /**
      * Creates a LiveDirs instance to be used from a designated thread.
      *
-     * @param  projector            converts the ({@link T})
+     * @param  projector            converts the ({@link Path})
      *                              {@link TreeItem#getValue()} into a {@link Path}
      *                              object
      * @param  injector             converts a given {@link Path} object into
-     *                              {@link T}. The reverse of {@code projector}
+     *                              {@link Path}. The reverse of {@code projector}
      * @param  externalInitiator    object to represent an initiator of an external
      *                              file-system change.
      * @param  clientThreadExecutor executor to execute actions on the caller
      *                              thread. Used to publish updates and errors on
      *                              the caller thread.
-     * @throws IOException
+     * @throws IOException         if an I/O error occurs
      */
     public LiveDirs(Path externalInitiator, UnaryOperator<Path> projector, UnaryOperator<Path> injector,
         Executor clientThreadExecutor) throws IOException {

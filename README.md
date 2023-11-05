@@ -12,7 +12,7 @@ This project was started by [TurtyWurty](https://www.youtube.com/channel/UCicAXL
 
 ### Is there a Discord server I can join?
 
-There is not a dedicated Discord server for Railroad IDE, but there is a section in TurtyWurty's server dedicated to it. The server is available [here](https://discord.gg/d5cGhKQ).
+There is not a dedicated Discord server for Railroad IDE, but there is a section in TurtyWurty's server dedicated to it. The server is available [here](https://discord.gg/BAYB3A38wn).
 
 ### Is Railroad IDE complete?
 
