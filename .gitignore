@@ -12,3 +12,4 @@ Testing
 *.project
 .idea
 *.log
+*.xml

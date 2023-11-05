@@ -6,6 +6,7 @@ plugins {
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
+    maven { url 'https://repo.gradle.org/gradle/libs-releases' }
 }
 
 dependencies {
@@ -18,6 +19,11 @@ dependencies {
     implementation(group: 'com.panemu', name: 'tiwulfx-dock', version: '0.2')
     implementation(group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0')
     implementation(group: 'io.github.palexdev', name: 'materialfx', version: '11.14.0-EA3')
+    implementation(group: 'com.github.dhiraj072', name: 'random-word-generator', version: '1.1.0')
+    implementation(group: 'org.apache.xmlgraphics', name: 'batik-transcoder', version: '1.14')
+    implementation(group: 'de.codecentric.centerdevice', name: 'javafxsvg', version: '1.3.0')
+    implementation(group: 'org.apache.groovy', name: 'groovy-all', version: '4.0.7')
+    implementation 'org.gradle:gradle-tooling-api:7.3-20210825160000+0000'
 
     testImplementation(platform('org.junit:junit-bom:5.9.1'))
     testImplementation(group: 'org.junit.jupiter',name: 'junit-jupiter')
