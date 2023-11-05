@@ -25,7 +25,7 @@ dependencies {
     implementation(group: 'org.apache.groovy', name: 'groovy-all', version: '4.0.7')
     implementation 'org.gradle:gradle-tooling-api:7.3-20210825160000+0000'
 
-    testImplementation(platform('org.junit:junit-bom:5.9.1'))
+    testImplementation(platform('org.junit:junit-bom:5.9.2'))
     testImplementation(group: 'org.junit.jupiter',name: 'junit-jupiter')
 }
 
